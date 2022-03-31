@@ -36,7 +36,7 @@ You can look at the [CONDA CHEAT SHEET](https://docs.conda.io/projects/conda/en/
 * `conda env list` - listing the existing environments (`planty` must be among them)
 * `conda activate planty` - activating `planty` environment
 * `conda deactivate` - deactivating current environment
-* `conda env update --file conda.yml --prune` - updates environment (for example, someone added a new library to the `conda.yml` environment specification, and you want to keep up with the changes), option `--prune` will uninstall all the libraries, which you have installed previously, but which are not specified in the `conda.yml` anymore
-* `conda env export --name planty > conda.yml` - exporting a current environment specification to the `conda.yml` file (delete the prefix path from the file either by hand, or using `conda env export --name planty | <wsl?> grep -v "^prefix: " > conda.yml`, it does not have any effect, so there is no need of it)
+* `pip install -r requirements.txt` - installing all the PIP packages required to run an application
+* `pip freeze > requirements.txt` - writing all the currently installed packages to `requirements.txt` (do this while the conda environment is activated)
 
-NOTE: if you update the library version, add a new library or remove the existing, then update the `conda.yml` file. It must be up to date and contain a minimal requirements to run the application.
+NOTE: if you update the library version, add a new library or remove the existing, then update the `requirements.txt` file. It must be up to date and contain a minimal requirements to run the application.
