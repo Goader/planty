@@ -1,0 +1,12 @@
+{
+  "name": "planty",
+  "version": "1.0.0",
+  "description": "Web application designed to help you make plant care a pleasant hobby, not a burden.",
+  "main": "index.js",
+  "repository": "https://github.com/Goader/planty",
+  "author": "Plants vs Developers",
+  "license": "GPL-3.0-only",
+  "dependencies": {
+    "react": "^18.0.0"
+  }
+}
