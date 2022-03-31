@@ -1,4 +1,8 @@
-# Planty
+# Planty :herb:
+
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/45573077/161089548-f4432533-6c42-40fe-8a5b-839ebfec7f47.png" />
+</p>
 
 Web application designed to help you make plant care a pleasant hobby, not a burden.
 
