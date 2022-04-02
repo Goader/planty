@@ -1,0 +1,14 @@
+version: "3.7"
+
+services:
+  mail:
+    build:
+      context: mail
+      dockerfile: Dockerfile
+    # uncomment this if you want the service to be available outside of docker network
+    # ports:
+    #   - 12014:12014
+    restart: always
+    environment:
+      - GMAIL_USERNAME=${GMAIL_USERNAME}
+      - GMAIL_PASSWORD=${GMAIL_PASSWORD}
