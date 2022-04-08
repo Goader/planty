@@ -15,3 +15,5 @@ class Mail:
         send_command = f'msmtp {target}'
 
         os.system(' | '.join([cat_command, send_command]))
+
+        os.remove(temp_filename)
