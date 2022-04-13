@@ -26,17 +26,14 @@
 .plantyNavbar a{
     width: 245px;
     height: 96px;
-
     /* Inside auto layout */
-
     flex: none;
     order: 0;
     flex-grow: 0;
     margin: 0 0;
-
     position: absolute;
-    left: 0%;
-    right: 0%;
+    left: 0;
+    right: 0;
     top: 19.79%;
     bottom: 18.75%;
 
@@ -48,22 +45,24 @@
     display: flex;
     align-items: center;
     text-align: center;
-
     /* Primary-500 */
-
     color: #367B00;
 }
 
 .singButton{
-    position: absolute;
-    margin-top: 18px;
+    position: fixed;
+    top: 18px;
     border-radius: 7px;
     padding: 16px;
-    background-color: red;
     right: 20px;
 }
 .secBut{
     right: 100px;
+    color: #FFFFFF;
+    background-color: #367B00;
+}
+.fisBut{
+    color: #367B00;
 }
 .singButton:hover{
     cursor: pointer;

@@ -8,8 +8,11 @@ function PlantyNavbar() {
             <div className={"plantyNavbar"}>
                 <a>PLANTY</a>
             </div>
-            <div className={"singButton secBut"}>Sing up</div>
-            <div className={"singButton"}>Sing in</div>
+            <div className={"singButton secBut"}>Sing in</div>
+            <div className={"singButton fisBut"}>Sing up</div>
+
+
+
             <div className={"ghost"}/>
         </header>
     )

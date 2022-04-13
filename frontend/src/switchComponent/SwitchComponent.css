@@ -1,0 +1,25 @@
+.switch{
+    padding: 5px 70px;
+    font-size: 24px;
+    color: #3C3C43;
+    width: 35%;
+    float: left;
+}
+
+.switchCom{
+    width: 100%;
+    padding: 30px;
+}
+
+.active{
+    background-color: white;
+    border: 1px solid #3C3C43;
+    border-radius: 15px;
+}
+.backForSwitches{
+    background-color: #c5ff99;
+    border-radius: 15px;
+    width: 63.6%;
+    height: 100%;
+    float: left;
+}
