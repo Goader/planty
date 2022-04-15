@@ -75,6 +75,10 @@ CORS_ORIGIN_WHITELIST = (
     # 'localhost:3000',
 )
 
+JWT_AUTH = {
+    'JWT_RESPONSE_PAYLOAD_HANDLER': 'planty.utils.jwt_response_handler'
+}
+
 ROOT_URLCONF = 'planty.urls'
 
 TEMPLATES = [
