@@ -106,8 +106,12 @@ WSGI_APPLICATION = 'planty.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'djongo',
+        'NAME': 'docker_mongodb',
+        'CLIENT': {
+            'host': 'localhost',
+            'port': 27017
+        }
     }
 }
 
