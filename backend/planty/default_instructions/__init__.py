@@ -1,0 +1,1 @@
+default_app_config = 'planty.default_instructions.apps.UserConfig'
