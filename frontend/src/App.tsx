@@ -6,7 +6,6 @@ import PlantyNavbar from "./components/navbar/PlantyNavbar";
 import Footer from "./components/footer/Footer";
 
 function App() {
-    console.log('render app')
     return (
         <div className="App">
             <PlantyNavbar/>
