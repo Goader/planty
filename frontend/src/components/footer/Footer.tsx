@@ -5,7 +5,7 @@ function Footer() {
 
     return (
         <footer className={"mainFooter set_bg"} style={{
-            backgroundImage: `url(${require('../assets/footerBackground.png')})`,
+            backgroundImage: `url(${require('../footerBackground.png')})`,
             width: `100%`,
             height: `562px`,
             backgroundRepeat: `no-repeat`
