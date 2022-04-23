@@ -1,0 +1,51 @@
+version: "3.7"
+
+services:
+  mongo:
+    image: mongo
+    container_name: planty_mongodb
+    hostname: planty-mongodb
+    restart: on-failure
+    environment:
+      MONGO_INITDB_DATABASE: ${MONGO_DATABASE}
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+      MONGO_REPLICA_SET_NAME: ${MONGO_REPLICA_SET_NAME}
+    volumes:
+      - planty_mongo_volume_data:/data/db
+      - ./.docker/mongodb/keyfile:/opt/keyfile/keyfile
+      - ./.docker/mongodb/mongod.conf:/etc/mongod.conf
+    # uncomment this if you want the service to be available outside of docker network
+    ports:
+      - 27017:27017
+    healthcheck:
+      test: test $$(echo "rs.initiate().ok || rs.status().ok" | mongo -u $${MONGO_USERNAME} -p $${MONGO_PASSWORD} --quiet) -eq 1
+      interval: 10s
+      start_period: 30s
+    networks:
+      - planty_mongo_net
+    command: "--bind_ip_all --keyFile /opt/keyfile/keyfile --replSet ${MONGO_REPLICA_SET_NAME}"
+
+  mongo-replica-setup:
+    container_name: planty_mongodb_setup
+    image: mongo
+    restart: on-failure
+    environment:
+        MONGO_PRIMARY_NODE_HOST: planty-mongodb
+        MONGO_REPLICA_SET_NAME: ${MONGO_REPLICA_SET_NAME}
+        MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME}
+        MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+    depends_on:
+        - mongo
+    entrypoint: ["bash", "/scripts/mongosetup.sh" ]
+    volumes:
+      - ./.docker/mongodb/mongosetup.sh:/scripts/mongosetup.sh
+    networks:
+      - planty_mongo_net
+
+volumes:
+  planty_mongo_volume_data:
+
+networks:
+  planty_mongo_net:
+    driver: bridge
