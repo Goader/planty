@@ -7,7 +7,7 @@ function PlantyNavbar() {
     return (
         <Navbar className={cx('PlantyNavbar', 'mb-3', 'shadow-sm')}>
             <Container>
-                <Navbar.Brand href="#home">Planty</Navbar.Brand>
+                <Navbar.Brand className={'PlantyNavbar-Brand'} href="#home">Planty</Navbar.Brand>
                 <Navbar.Toggle/>
                 {/* uncomment and link to login/register when it's done */}
                 {/*<Navbar.Collapse className="justify-content-end">
