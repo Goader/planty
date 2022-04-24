@@ -41,7 +41,7 @@ function CalendarView() {
         }
         const componentList = new Array<JSX.Element>();
         plantMap.forEach((plantEvents, plant) => {
-            componentList.push(<div><CalendarPlantInfo name={plant} events={plantEvents}/></div>);
+            componentList.push(<div key={plant}><CalendarPlantInfo name={plant} events={plantEvents}/></div>);
         });
         return <div className={'planty-calendar-events'}><Stack gap={1}>{componentList}</Stack></div>;
     };
