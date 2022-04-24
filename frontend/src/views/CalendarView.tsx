@@ -53,6 +53,7 @@ function CalendarView() {
             }
             <Calendar
                 value={new Date()}
+                activeStartDate={new Date()}
                 locale={"en"}
                 className={"planty-calendar"}
                 minDetail={'month'}
