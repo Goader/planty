@@ -1,14 +1,16 @@
 import React, {useEffect, useState} from 'react';
 import Calendar, {CalendarTileProperties} from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
-import SwitchComponent from "../components/switchComponent/SwitchComponent";
-import './CalendarStyle.css'
-import {fetchCalendarData} from "../data/calendarData";
-import {CalendarEvent} from "../components/model/calendar";
+import {fetchCalendarData} from "../data/calendar-data";
+import {PlantEvent} from "../model/calendar";
+import {Alert, Container, Stack} from "react-bootstrap";
+import "./CalendarView.css";
+import CalendarPlantInfo from "../components/CalendarPlantInfo";
 
 
 function CalendarView() {
-    const [events, setEvents] = useState<Array<CalendarEvent>>([])
+    const [events, setEvents] = useState<Array<PlantEvent>>([]);
+    const [error, setError] = useState<boolean>(false);
 
 
     useEffect(() => {
@@ -18,33 +20,49 @@ function CalendarView() {
         let lastDay = new Date(y, m + 1, 0);
         fetchCalendarData(firstDay, lastDay)
             .then(events => {
-                setEvents(events)
-            }); // TODO: error handling
-    },[])
+                setError(false);
+                setEvents(events);
+            })
+            .catch(err => setError(true));
+    },[]);
 
 
     const getTileContent = (props: CalendarTileProperties): JSX.Element => {
-        console.log(props.date)
         const eventList = events
-            .filter(event => event.date === props.date) // filtering doesn't work (no events are rendered)
-            .map((event) => (<div>{event.plant}</div>))
-        console.log(eventList)
-        return <div>{eventList}</div>
-    }
+            .filter(event => event.date.getTime() === props.date.getTime());
+        const plantMap = new Map<string, Array<PlantEvent>>();
+        for (let event of eventList) {
+            let plantEvents: Array<PlantEvent> | undefined = plantMap.get(event.plant);
+            if (plantEvents === undefined || plantEvents === null) {
+                plantEvents = new Array<PlantEvent>();
+                plantMap.set(event.plant, plantEvents);
+            }
+            plantEvents.push(event);
+        }
+        const componentList = new Array<JSX.Element>();
+        plantMap.forEach((plantEvents, plant) => {
+            componentList.push(<div><CalendarPlantInfo name={plant} events={plantEvents}/></div>);
+        });
+        return <div className={'planty-calendar-events'}><Stack gap={1}>{componentList}</Stack></div>;
+    };
 
     return (
-        <div className={"calendarView"}>
-            <SwitchComponent/>
+        <Container>
+            {error &&
+                <Alert variant={'danger'}>Failed to download data. Check your internet connection.</Alert>
+            }
             <Calendar
                 value={new Date()}
                 locale={"en"}
-                className={"calendarStyle"}
+                className={"planty-calendar"}
                 minDetail={'month'}
                 maxDetail={'month'}
+                showNavigation={false}
                 tileContent={(props) => getTileContent(props)}
+                tileClassName={'planty-calendar-tile'}
             />
-        </div>
-    )
+        </Container>
+    );
 }
 
 export default CalendarView;

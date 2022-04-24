@@ -1,5 +1,5 @@
 import React from "react";
-import './Footer.css'
+import './Footer.css';
 
 function Footer() {
 
@@ -20,7 +20,7 @@ function Footer() {
                 Plants vs Developers
             </div>
         </footer>
-    )
+    );
 }
 
 export default Footer;

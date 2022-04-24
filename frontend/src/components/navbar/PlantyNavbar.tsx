@@ -1,28 +1,22 @@
 import React from "react";
-import {Alignment, Button, Navbar} from "@blueprintjs/core";
+import {Button, Container, Navbar, Stack} from "react-bootstrap";
 
 function PlantyNavbar() {
     return (
         <Navbar>
-            <Navbar.Group align={Alignment.LEFT}>
-                <Navbar.Heading>Planty</Navbar.Heading>
-                <Navbar.Divider/>
-                <Button className="bp4-minimal" text="Sign in"/>
-                <Button className="bp4-minimal" text="Sign out"/>
-            </Navbar.Group>
+            <Container>
+                <Navbar.Brand href="#home">Planty</Navbar.Brand>
+                <Navbar.Toggle/>
+                {/* uncomment and link to login/register when it's done */}
+                {/*<Navbar.Collapse className="justify-content-end">
+                    <Stack direction={'horizontal'} gap={2}>
+                        <Button variant={'outline-primary'}>Log in</Button>
+                        <Button variant={'primary'}>Sign in</Button>
+                    </Stack>
+                </Navbar.Collapse>*/}
+            </Container>
         </Navbar>
-        /*<header>
-            <div className={"plantyNavbar"}>
-                <a>PLANTY</a>
-            </div>
-            <div className={"singButton secBut"}>Sing in</div>
-            <div className={"singButton fisBut"}>Sing up</div>
-
-
-
-            <div className={"ghost"}/>
-        </header>*/
-    )
+    );
 }
 
 export default PlantyNavbar;
