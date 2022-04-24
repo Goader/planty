@@ -1,9 +1,11 @@
 import React from "react";
 import {Button, Container, Navbar, Stack} from "react-bootstrap";
+import './PlantyNavbar.css';
+import cx from 'classnames';
 
 function PlantyNavbar() {
     return (
-        <Navbar>
+        <Navbar className={cx('PlantyNavbar', 'mb-3', 'shadow-sm')}>
             <Container>
                 <Navbar.Brand href="#home">Planty</Navbar.Brand>
                 <Navbar.Toggle/>

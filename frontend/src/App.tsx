@@ -22,7 +22,7 @@ function App() {
                 </Tabs>
             </Container>*/}
             <CalendarView/>
-            <Footer/>
+            {/*<Footer/>*/}
         </div>
     );
 }
