@@ -24,8 +24,8 @@ app = FastAPI(
 mail = Mail()
 
 
-@app.get('/send', response_model=SendMailResponse)
-async def extract_entities(body: SendMailRequest = Body(...)):
+@app.post('/send', response_model=SendMailResponse)
+async def send(body: SendMailRequest = Body(...)):
     target = body.target
     subject = body.subject
     content = body.content
