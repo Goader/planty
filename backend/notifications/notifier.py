@@ -1,5 +1,3 @@
-from cmath import log
-from re import sub
 import requests
 import logging
 
