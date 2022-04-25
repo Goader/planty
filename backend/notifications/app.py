@@ -1,5 +1,6 @@
 from datetime import datetime
 import logging
+import pytz
 import os
 
 from fastapi import FastAPI
@@ -28,9 +29,10 @@ app = FastAPI(
 
 notifier = Notifier(os.getenv('MAIL_SERVICE_HOST'), os.getenv('MAIL_SERVICE_PORT'), 'send')
 scheduler = Scheduler(notifier)
+scheduler.run()
 
 
-@app.get('/schedule', response_model=ScheduleNotificationResponse)
+@app.post('/schedule', response_model=ScheduleNotificationResponse)
 async def schedule(body: ScheduleNotificationRequest = Body(...)):
     target = body.target
     subject = body.subject
@@ -45,7 +47,10 @@ async def schedule(body: ScheduleNotificationRequest = Body(...)):
     logger.info(f'Scheduling "{subject}" {target} mail')
 
     try:
+        utc = pytz.utc
+
         scheduled = datetime.strptime(scheduled, '%Y-%m-%d %H:%M:%S')
+        scheduled = scheduled.replace(tzinfo=utc)
 
         if category == 'watering':
             strategy = os.getenv('WATERING_NOTIFICATION_STRATEGY')
@@ -56,8 +61,9 @@ async def schedule(body: ScheduleNotificationRequest = Body(...)):
 
         scheduler.remove(tags)
         scheduler.schedule(scheduled, target, subject, contents, strategy, tags=tags)
+        
     except Exception as ex:
-        logger.exception()
-        return {"message": str(ex)}
+        logger.exception(f'{type(ex).__name__}: {ex}')
+        return {"message": f'{type(ex).__name__}: {ex}'}
 
     return {"message": "done"}
