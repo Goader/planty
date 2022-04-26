@@ -1,0 +1,13 @@
+.register-card {
+    max-width: 500px;
+}
+
+.center-header {
+    width: 100%;
+    text-align: center;
+}
+
+.login-view-button {
+    width: 100%;
+    margin-bottom: 10px;
+}
