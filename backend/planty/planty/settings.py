@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'corsheaders',
 
     # local django apps
-    'users.apps.UsersConfig'
+    'users.apps.UsersConfig',
+    'user_plants.apps.UserPlantsConfig'
 ]
 
 MIDDLEWARE = [
