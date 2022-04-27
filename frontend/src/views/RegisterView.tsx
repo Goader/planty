@@ -1,33 +1,30 @@
 import {Button, Card, Container, Form} from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './LoginRegisterView.css';
-import {useState} from "react";
-import * as yup from 'yup';
-import {Formik, FormikValues} from "formik";
-import {register} from "../api/auth";
+import * as Yup from 'yup';
+import {Formik, FormikHelpers} from "formik";
+import {register, RegisterInputError} from "../api/auth";
 
-const schema = yup.object().shape({
-    username: yup.string().required(),
-    password: yup.string().required(),
-    repeatPassword: yup.string().required()
+const schema = Yup.object().shape({
+    username: Yup.string().required('Name is required'),
+    password: Yup.string().required('Password is required'),
+    repeatPassword: Yup.string().required('You must confirm the password').oneOf([Yup.ref('password')], 'Passwords must match')
 });
 
 export default function RegisterView() {
-
-    const [activeButton, setActiveButton] = useState(0)
-    const button_Data = [
-        {
-            "name": "Next",
-            "value": "name"
-        }
-    ]
-
-    const submit = (values: FormikValues): void => {
+    const submit = (values: any, helpers: FormikHelpers<any>): void => {
         register(values.username, values.password)
             .then(user => alert('registered ' + user))
-            .catch(err => alert('failed to register: ' + err));
-    }
-
+            .catch(err => {
+                if (err instanceof RegisterInputError) {
+                    for (const field in err.errors) {
+                        helpers.setFieldError(field, err.errors[field][0]);
+                    }
+                } else {
+                    alert('failed to register: ' + err);
+                }
+            });
+    };
     return (
         <Container>
             <Card className={'register-card p-5 mx-auto'}>
@@ -42,6 +39,7 @@ export default function RegisterView() {
                         password: '',
                         repeatPassword: ''
                     }}
+                    validateOnBlur={false}
                 >
                     {({
                           handleSubmit,
@@ -50,39 +48,51 @@ export default function RegisterView() {
                           values,
                           touched,
                           isValid,
-                          errors,
+                          errors
                       }) => (
-                        <Form onSubmit={handleSubmit}>
-                            <Form.Group className={'mb-3'}>
+                        <Form onSubmit={handleSubmit} noValidate>
+                            <Form.Group className={'auth-group'}>
                                 <Form.Label>Name</Form.Label>
                                 <Form.Control
                                     name={'username'}
                                     type={'text'}
                                     placeholder={'Name'}
                                     value={values.username}
-                                    onChange={handleChange}/>
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    isInvalid={touched.username && !!errors.username}
+                                />
+                                <Form.Control.Feedback type={'invalid'}>{errors.username}</Form.Control.Feedback>
                             </Form.Group>
-                            <Form.Group className={'mb-3'}>
+                            <Form.Group className={'auth-group'}>
                                 <Form.Label>Password</Form.Label>
                                 <Form.Control
                                     name={'password'}
                                     type={'password'}
                                     placeholder={'Password'}
                                     value={values.password}
-                                    onChange={handleChange}/>
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    isInvalid={touched.password && !!errors.password}
+                                />
+                                <Form.Control.Feedback type={'invalid'}>{errors.password}</Form.Control.Feedback>
                             </Form.Group>
-                            <Form.Group className={'mb-4'}>
+                            <Form.Group className={'auth-group'}>
                                 <Form.Label>Repeat password</Form.Label>
                                 <Form.Control
                                     name={'repeatPassword'}
                                     type={'password'}
                                     placeholder={'Repeat password'}
                                     value={values.repeatPassword}
-                                    onChange={handleChange}/>
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    isInvalid={touched.repeatPassword && !!errors.repeatPassword}
+                                />
+                                <Form.Control.Feedback type={'invalid'}>{errors.repeatPassword}</Form.Control.Feedback>
                             </Form.Group>
-                            <Button type={'submit'}>Next</Button>
+                            <Button type={'submit'} className={'mt-3'} disabled={!isValid}>Next</Button>
                         </Form>
-                        )}
+                    )}
                 </Formik>
             </Card>
         </Container>

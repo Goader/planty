@@ -1,7 +1,17 @@
 import {RegisterResponse, TokenPair, UserData} from "../model/auth";
-import axios from "axios";
+import axios, {AxiosError} from "axios";
 
-const url = 'http://localhost:3001/users/'
+const url = 'http://localhost:3001/users/';
+
+export class RegisterInputError extends Error {
+    public errors: any;
+
+    constructor(msg: string, errors: object) {
+        super(msg);
+        this.errors = errors;
+        Object.setPrototypeOf(this, RegisterInputError.prototype);
+    }
+}
 
 export function getSavedAccessToken() {
     return localStorage.getItem('token');
@@ -25,8 +35,8 @@ export async function fetchCurrentUser(): Promise<UserData> {
         headers: {
             Authorization: `JWT ${getSavedAccessToken()}`
         }
-    })
-    if (response.status == 401) {
+    });
+    if (response.status === 401) {
         throw new Error('unauthorized');
     }
     return response.data;
@@ -40,28 +50,35 @@ export async function login(username: string, password: string): Promise<UserDat
         headers: {
             'Content-Type': 'application/json'
         }
-    })
-    if (response.status == 401) {
-        throw new Error('unauthorized')
+    });
+    if (response.status === 401) {
+        throw new Error('unauthorized');
     }
     const tokenPair = response.data;
     localStorage.setItem('token', tokenPair.access);
-    localStorage.setItem('refreshToken', tokenPair.refresh)
+    localStorage.setItem('refreshToken', tokenPair.refresh);
     return await fetchCurrentUser();
 }
 
 export async function register(username: string, password: string): Promise<RegisterResponse> {
-    console.log('register')
-    const response = await axios.post<RegisterResponse>(url + 'signup/', {
-        username: username,
-        password: password
-    }, {
-        headers: {
-            'Content-Type': 'application/json'
+    console.log('register');
+    try {
+        const response = await axios.post<RegisterResponse>(url + 'signup/', {
+            username: username,
+            password: password
+        }, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        return response.data;
+    } catch (e: any) {
+        console.log('catch');
+        if (e instanceof AxiosError && e.response?.status === 400) {
+            console.log('catch2');
+            throw new RegisterInputError('Invalid input', e.response?.data);
+        } else {
+            throw e;
         }
-    });
-    if (response.status == 400) {
-        throw new Error('invalid_input');
     }
-    return response.data;
 }

@@ -5,13 +5,13 @@ import {useState} from "react";
 
 export default function LoginView() {
 
-    const [activeButton, setActiveButton] = useState(0)
+    const [activeButton, setActiveButton] = useState(0);
     const button_Data = [
         {
             "name": "Next",
             "value": "name"
         }
-    ]
+    ];
 
     return (
         <Container>
@@ -33,7 +33,7 @@ export default function LoginView() {
                         <Button
                             className={`btn ${activeButton === index ? 'btn-success' : null}`}
                             value={item.value}
-                            onClick={ () => {setActiveButton(index)} }
+                            onClick={ () => setActiveButton(index) }
                         >
                             {item.name}
                         </Button>
