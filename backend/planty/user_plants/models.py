@@ -11,10 +11,13 @@ class Plant(models.Model):
     plant_id = models.CharField()
     name = models.CharField(max_length=50)
     photo_url = models.URLField(blank=True, null=True)
+    species = models.CharField(max_length=50, blank=True, default="")
 
     watering = models.CharField(max_length=50, blank=True, default="")
     insolation = models.CharField(max_length=50, blank=True, default="")
     fertilizing = models.CharField(max_length=50, blank=True, default="")
+
+    other_info = models.CharField(max_length=400, blank=True, default="")
 
 
 class UserPlants(models.Model):
