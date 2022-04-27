@@ -31,7 +31,7 @@ class UserPlantsView(APIView):
         return Response(user_plants.plant_collection, status=status.HTTP_200_OK)
 
     # Only id is required
-    def patch(self, request):
+    def put(self, request):
         user = request.user
         username = user.get_username()
 
