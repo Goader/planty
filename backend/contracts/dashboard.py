@@ -1,14 +1,12 @@
-from pydantic import BaseModel, Field
 from uuid import UUID
 
 
 # GET /dashboard/plants auth
-class PlantsRequest(BaseModel):
+class PlantsRequest:
     pass
 
 
-
-class Plant(BaseModel):
+class Plant:
     id: UUID
     name: str
     image: str  # maybe link to an image?
@@ -21,12 +19,12 @@ class Plant(BaseModel):
     other_info: str
 
 # GET /dashboard/plants auth
-class PlantsResponse(BaseModel):
+class PlantsResponse:
     plants: list[Plant]
 
 
 # POST /dashboard/plants auth
-class PlantsRequest(BaseModel):
+class PlantsRequest:
     name: str
     image: bytes  # base64 encoding
     species: str
@@ -39,12 +37,12 @@ class PlantsRequest(BaseModel):
     other_info: str
 
 # POST /dashboard/plants auth
-class PlantsResponse(BaseModel):
+class PlantsResponse:
     pass
 
 
 # PUT /dashboard/plants auth
-class PlantsRequest(BaseModel):
+class PlantsRequest:
     id: UUID
     name: str
     species: str
@@ -56,15 +54,15 @@ class PlantsRequest(BaseModel):
 
     other_info: str
 
-# POST /dashboard/plants auth
-class PlantsResponse(BaseModel):
+# PUT /dashboard/plants auth
+class PlantsResponse:
     pass
 
 
 # DELETE /dashboard/plants auth
-class PlantsRequest(BaseModel):
+class PlantsRequest:
     id: UUID
 
 # DELETE /dashboard/plants auth
-class PlantsResponse(BaseModel):
+class PlantsResponse:
     pass
