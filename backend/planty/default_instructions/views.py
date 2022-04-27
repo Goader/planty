@@ -4,12 +4,12 @@ from rest_framework import permissions, status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .serializers import UserSerializer, UserSerializerWithToken
+from .serializers import DefaultInstructionsSerializer
 
 
-@method_decorator(csrf_exempt, name='dispatch')
 class DefaultInstructionsApiView(APIView):
 
+    @api_view(['POST'])
     def post(self, request):
 
         data = json.loads(request.body.decode("utf-8"))
@@ -27,6 +27,7 @@ class DefaultInstructionsApiView(APIView):
         }
         return JsonResponse(data, status=201)
 
+    @api_view(['GET'])
     def get(self, request):
         item = CartItem.objects.all()[0]
 

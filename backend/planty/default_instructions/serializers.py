@@ -2,7 +2,6 @@ from rest_framework import serializers
 
 
 class DefaultInstructionsSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = DefaultInstructions
-        fields = ('watering_days', 'fertilizing_days', 'insolation')
+    watering_days = serializers.IntegerField()
+    fertilizing_days = serializers.IntegerField()
+    insolation = serializers.CharField(max_length=50)
