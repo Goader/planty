@@ -4,15 +4,7 @@
 }
 
 body {
-  font-family: 'Rasa', sans-serif;
+  font-family: "Rasa", sans-serif !important;
   margin: 0;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
   font-style: normal;
-
-}
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
 }

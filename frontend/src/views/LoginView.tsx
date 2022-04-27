@@ -1,7 +1,6 @@
 import {Button, Card, Container, Form} from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './LoginRegisterView.css';
-import { Formik } from "formik";
 import {useState} from "react";
 
 export default function LoginView() {
@@ -18,7 +17,7 @@ export default function LoginView() {
         <Container>
             <Card className={'register-card p-5 mx-auto'}>
                 <div className={'center-header'}>
-                    <h2>SignT in</h2>
+                    <h2>Sign in</h2>
                 </div>
                 <Form>
                     <Form.Group className={'mb-3'}>
