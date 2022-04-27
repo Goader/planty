@@ -1,8 +1,18 @@
 import {Button, Card, Container, Form} from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './LoginRegisterView.css';
+import {useState} from "react";
 
 export default function RegisterView() {
+
+    const [activeButton, setActiveButton] = useState(0)
+    const button_Data = [
+        {
+            "name": "Next",
+            "value": "name"
+        }
+    ]
+
     return (
         <Container>
             <Card className={'register-card p-5 mx-auto'}>
@@ -23,7 +33,15 @@ export default function RegisterView() {
                         <Form.Control type={'password'} placeholder={'Repeat password'}/>
                     </Form.Group>
                 </Form>
-                <Button variant={'primary'} type={'submit'}>Next</Button>
+                {button_Data.map((item, index) => (
+                    <Button
+                        className={`btn ${activeButton === index ? 'btn-success' : null}`}
+                        value={item.value}
+                        onClick={ () => {setActiveButton(index)} }
+                    >
+                        {item.name}
+                    </Button>
+                ))}
             </Card>
         </Container>
     );

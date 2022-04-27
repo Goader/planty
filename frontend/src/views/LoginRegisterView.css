@@ -1,3 +1,6 @@
+Conteiner {
+    background-color: white;
+}
 .register-card {
     max-width: 500px;
 }
@@ -10,4 +13,15 @@
 .login-view-button {
     width: 100%;
     margin-bottom: 10px;
+    background-color: #367B00;
+    border-color: #367B00;
+}
+
+.login-view-button:hover {
+    background-color: #275900;
+    border-color: #275900;
+}
+
+.login-view-button:active, .login-view-button:focus {
+    border-color: #275900;
 }
