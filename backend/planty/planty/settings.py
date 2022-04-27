@@ -39,11 +39,14 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # external packages
+    'oauth2_provider',
     'rest_framework',
     'corsheaders',
+    
 
     # local django apps
-    'users.apps.UsersConfig'
+    'users',
+    'unicorn'
 ]
 
 MIDDLEWARE = [
@@ -51,6 +54,7 @@ MIDDLEWARE = [
 
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'oauth2_provider.middleware.OAuth2TokenMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -60,24 +64,21 @@ MIDDLEWARE = [
 ]
 
 REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
+        'rest_framework.authentication.SessionAuthentication', # To keep the Browsable API
+    ),
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
     ),
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
-    ),
 }
 
-# TODO change to the address of React (probably using .env and environment variables)
-CORS_ORIGIN_WHITELIST = (
-    # 'localhost:3000',
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend' # To keep the Browsable API
+    'oauth2_provider.backends.OAuth2Backend',
 )
 
-JWT_AUTH = {
-    'JWT_RESPONSE_PAYLOAD_HANDLER': 'planty.utils.jwt_response_handler'
-}
+ALLOWED_HOSTS = ['0.0.0.0']  # TODO check if works without it
 
 ROOT_URLCONF = 'planty.urls'
 

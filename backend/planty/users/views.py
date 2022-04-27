@@ -1,33 +1,103 @@
-from django.http import HttpResponseRedirect
-from django.contrib.auth.models import User
-from rest_framework import permissions, status
-from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework.views import APIView
-from .serializers import UserSerializer, UserSerializerWithToken
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
+
+import requests
+
+from .serializers import CreateUserSerializer
 
 
-@api_view(['GET'])
-def current_user(request):
-    """
-    Determine the current user by their token, and return their data
-    """
-    
-    serializer = UserSerializer(request.user)
-    return Response(serializer.data)
+CLIENT_ID = '<client-id>'
+CLIENT_SECRET = '<client-secret>'
 
 
-class UserList(APIView):
-    """
-    Create a new user. It's called 'UserList' because normally we'd have a get
-    method here too, for retrieving a list of all User objects.
-    """
 
-    permission_classes = (permissions.AllowAny,)
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def register(request):
+    '''
+    Registers user to the server. Input should be in the format:
+    {"username": "username", "password": "1234abcd"}
+    '''
+    # Put the data from the request into the serializer 
+    serializer = CreateUserSerializer(data=request.data) 
+    # Validate the data
+    if serializer.is_valid():
+        # If it is valid, save the data (creates a user).
+        serializer.save() 
+        # Then we get a token for the created user.
+        # This could be done differentley 
+        r = requests.post('http://0.0.0.0:8000/o/token/', 
+            data={
+                'grant_type': 'password',
+                'username': request.data['username'],
+                'password': request.data['password'],
+                'client_id': CLIENT_ID,
+                'client_secret': CLIENT_SECRET,
+            },
+        )
+        return Response(r.json())
+    return Response(serializer.errors)
 
-    def post(self, request, format=None):
-        serializer = UserSerializerWithToken(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def token(request):
+    '''
+    Gets tokens with username and password. Input should be in the format:
+    {"username": "username", "password": "1234abcd"}
+    '''
+    r = requests.post(
+    'http://0.0.0.0:8000/o/token/', 
+        data={
+            'grant_type': 'password',
+            'username': request.data['username'],
+            'password': request.data['password'],
+            'client_id': CLIENT_ID,
+            'client_secret': CLIENT_SECRET,
+        },
+    )
+    return Response(r.json())
+
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def refresh_token(request):
+    '''
+    Registers user to the server. Input should be in the format:
+    {"refresh_token": "<token>"}
+    '''
+    r = requests.post(
+    'http://0.0.0.0:8000/o/token/', 
+        data={
+            'grant_type': 'refresh_token',
+            'refresh_token': request.data['refresh_token'],
+            'client_id': CLIENT_ID,
+            'client_secret': CLIENT_SECRET,
+        },
+    )
+    return Response(r.json())
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def revoke_token(request):
+    '''
+    Method to revoke tokens.
+    {"token": "<token>"}
+    '''
+    r = requests.post(
+        'http://0.0.0.0:8000/o/revoke_token/', 
+        data={
+            'token': request.data['token'],
+            'client_id': CLIENT_ID,
+            'client_secret': CLIENT_SECRET,
+        },
+    )
+    # If it goes well return sucess message (would be empty otherwise) 
+    if r.status_code == requests.codes.ok:
+        return Response({'message': 'token revoked'}, r.status_code)
+    # Return the error if it goes badly
+    return Response(r.json(), r.status_code)
