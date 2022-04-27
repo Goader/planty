@@ -6,8 +6,8 @@ import RegisterView from "./views/RegisterView";
 function App() {
   return (
     <div className="App">
-        <RegisterView></RegisterView>
-      <LoginView></LoginView>
+        <RegisterView/>
+      <LoginView/>
     </div>
   );
 }
