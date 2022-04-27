@@ -1,0 +1,32 @@
+version: "3.7"
+
+services:
+  mail:
+    build:
+      context: mail
+      dockerfile: Dockerfile
+    # uncomment this if you want the service to be available outside of docker network
+    # ports:
+    #   - 12014:12014
+    restart: always
+    environment:
+      - GMAIL_USERNAME=${GMAIL_USERNAME}
+      - GMAIL_PASSWORD=${GMAIL_PASSWORD}
+
+  mongo:
+    image: mongo
+    container_name: mongodb
+    restart: unless-stopped
+    environment:
+      - MONGO_INITDB_DATABASE=${MONGO_DATABASE}
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}
+    volumes:
+      - mongo_volume_data:/data/db
+    # uncomment this if you want the service to be available outside of docker network
+    # ports:
+    #   - 27017:27017
+
+
+volumes:
+  mongo_volume_data:
