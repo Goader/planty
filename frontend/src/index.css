@@ -1,10 +1,42 @@
 @font-face {
-  font-family: 'Rasa';
-  src: local('Rasa'), url(./fonts/Rasa-VariableFont_wght.ttf) format('truetype');
+  font-family: 'Rasa-Bold';
+  src: local('Rasa'), url(./fonts/Rasa-Bold.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: 'Rasa-Semi-Bold';
+  src: local('Rasa'), url(./fonts/Rasa-SemiBold.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: 'Rasa-Medium';
+  src: local('Rasa'), url(./fonts/Rasa-Medium.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: 'Rasa-Regular';
+  src: local('Rasa'), url(./fonts/Rasa-Regular.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: 'Rasa-Light';
+  src: local('Rasa'), url(./fonts/Rasa-Light.ttf) format('truetype');
 }
 
 body {
-  font-family: "Rasa", sans-serif !important;
+  font-family: "Roboto", sans-serif;
   margin: 0;
   font-style: normal;
+}
+
+h1 {
+  font-family: 'Rasa-Bold', sans-serif !important;
+}
+
+h2 {
+  font-family: 'Rasa-Semi-Bold', sans-serif !important;
+}
+
+h3 {
+  font-family: 'Rasa-Medium', sans-serif !important;
 }

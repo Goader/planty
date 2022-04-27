@@ -20,15 +20,15 @@ export default function RegisterView() {
                     <h2>Create an account</h2>
                 </div>
                 <Form>
-                    <Form.Group className={'mb-3'}>
+                    <Form.Group className={'mb-3  margin-top'}>
                         <Form.Label>Email</Form.Label>
                         <Form.Control type={'email'} placeholder={'Email'}/>
                     </Form.Group>
-                    <Form.Group className={'mb-3'}>
+                    <Form.Group className={'mb-3  margin-top'}>
                         <Form.Label>Password</Form.Label>
                         <Form.Control type={'password'} placeholder={'Password'}/>
                     </Form.Group>
-                    <Form.Group className={'mb-4'}>
+                    <Form.Group className={'mb-4  margin-top'}>
                         <Form.Label>Repeat password</Form.Label>
                         <Form.Control type={'password'} placeholder={'Repeat password'}/>
                     </Form.Group>

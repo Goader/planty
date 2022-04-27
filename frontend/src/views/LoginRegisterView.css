@@ -3,11 +3,18 @@ Conteiner {
 }
 .register-card {
     max-width: 500px;
+    border-color: #275900;
+    border-radius: 16px;
 }
 
 .center-header {
     width: 100%;
     text-align: center;
+}
+
+.center-header h2 {
+    font-size: 48px;
+    line-height: 55px;
 }
 
 .login-view-button {
@@ -24,4 +31,19 @@ Conteiner {
 
 .login-view-button:active, .login-view-button:focus {
     border-color: #275900;
+}
+
+.labels {
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 24px;
+}
+
+Form {
+    margin-bottom: 30px;
+}
+
+.margin-top {
+    margin-top: 30px;
 }

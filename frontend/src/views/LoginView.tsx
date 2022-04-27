@@ -20,14 +20,15 @@ export default function LoginView() {
                     <h2>Sign in</h2>
                 </div>
                 <Form>
-                    <Form.Group className={'mb-3'}>
-                        <Form.Label>Email</Form.Label>
+                    <Form.Group className={'mb-3 margin-top'}>
+                        <Form.Label className={'labels'}>Email</Form.Label>
                         <Form.Control type={'email'} placeholder={'Email'}/>
                     </Form.Group>
-                    <Form.Group className={'mb-3'}>
-                        <Form.Label>Password</Form.Label>
+                    <Form.Group className={'mb-3 margin-top'}>
+                        <Form.Label className={'labels'}>Password</Form.Label>
                         <Form.Control type={'password'} placeholder={'Password'}/>
                     </Form.Group>
+                </Form>
                     {button_Data.map((item, index) => (
                         <Button
                             className={`btn ${activeButton === index ? 'btn-success' : null}`}
@@ -37,7 +38,6 @@ export default function LoginView() {
                             {item.name}
                         </Button>
                     ))}
-                    </Form>
                 <div>
                     <p>Don't have an account? <a href={'#'}>Sign up</a></p>
                 </div>
