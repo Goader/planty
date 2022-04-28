@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import Calendar, {CalendarTileProperties} from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
-import {fetchCalendarData} from "../data/calendar-data";
+import {fetchCalendarData} from "../api/calendar-data";
 import {PlantEvent} from "../model/calendar";
 import {Alert, Container, Stack} from "react-bootstrap";
 import "./CalendarView.css";
