@@ -7,7 +7,8 @@ type AuthContextType = {
     user: AuthData | null,
     login: (username: string, password: string) => Promise<AuthData>,
     logout: () => void,
-    register: (username: string, password: string) => Promise<AuthData>
+    register: (username: string, password: string) => Promise<AuthData>,
+    request: <T, >(config: AxiosRequestConfig) => Promise<T>
 }
 
 const AuthContext = React.createContext<AuthContextType>(null!);
