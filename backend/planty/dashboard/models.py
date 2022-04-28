@@ -1,3 +1,5 @@
+from datetime import date
+
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator
 from django.db import models
@@ -27,6 +29,9 @@ class Plant(models.Model):
     species = models.CharField(max_length=50)
     photo_url = models.URLField(blank=True, null=True)
     other_info = models.CharField(max_length=400, blank=True, default="")
+
+    last_watered = models.DateField(default=date.today)
+    last_fertilized = models.DateField(default=date.today)
 
     class Meta:
         app_label = 'dashboard'

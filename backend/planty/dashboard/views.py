@@ -1,6 +1,7 @@
+from datetime import timedelta, date, datetime
 from uuid import uuid4
+from math import ceil
 
-from django.forms.models import model_to_dict
 from django.contrib.auth.models import User
 from django.db.models import Model
 
@@ -9,11 +10,14 @@ from rest_framework.request import Request
 from rest_framework.views import APIView
 from rest_framework import status
 
+from .notifier import Notifier
 from .models import Plant, Instruction
 from .serializers import (
+    EventCreateSerializer,
     PlantCreateSerializer,
     PlantUpdateSerializer,
-    PlantDeleteSerializer
+    PlantDeleteSerializer,
+    TimeSpanSerializer
 )
 
 
@@ -175,5 +179,115 @@ class PlantsView(APIView):
             plant.delete()
         else:
             return Response(status=status.HTTP_403_FORBIDDEN)
+
+        return Response(status=status.HTTP_200_OK)
+
+
+class EventsView(APIView):
+    def get(self, request: Request):
+        user: User = request.user
+        serializer = TimeSpanSerializer(data=request.data)
+
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        start_date = serializer.validated_data['start_date']
+        end_date = serializer.validated_data['end_date']
+        today = date.today()
+
+        events = []
+
+        # history events
+        if start_date < today:
+            history_start_date = start_date
+            history_end_date = min(today, end_date)
+            # TODO add this
+
+        # upcoming events
+        if end_date >= today:
+            # FIXME wtf?? what if start_date is long ahead
+            upcoming_start_date = max(today, start_date)
+            upcoming_end_date = end_date
+
+            def calculate_events(plant: Plant, action: str, last: date, interval: int):
+                interval = timedelta(days=interval)
+                planned_date: date = last + interval
+                real_date: date = max(planned_date, today)
+
+                # if it is not the first upcoming event, then we cannot assign
+                # a priority to it, because it depends when the first will end
+                first = real_date >= upcoming_start_date
+
+                # if the start_date is far away, then we need to start iterating
+                # from the first date in the requested period
+                n = ceil((upcoming_start_date - real_date) / interval)
+                real_date += n * interval
+
+                while real_date < upcoming_end_date:
+                    priority = (today - planned_date).days if first else 0
+
+                    events.append({
+                        'date': real_date.strftime('%Y-%m-%d'),
+                        'plant': str(plant.id),
+                        'action': action,
+                        'priority': priority,
+                        'message': ''
+                    })
+                    real_date += interval
+                    first = False
+
+            for plant in Plant.objects.filter(user=user).iterator():
+
+                calculate_events(plant, 'water', 
+                                 plant.last_watered, 
+                                 plant.instruction.watering)
+
+                calculate_events(plant, 'fertilize',
+                                 plant.last_fertilized,
+                                 plant.instruction.fertilizing)
+
+        return Response(events, status=status.HTTP_200_OK)
+
+    def post(self, request: Request):
+        user: User = request.user
+        serializer = EventCreateSerializer(data=request.data)
+
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            plant: Plant = Plant.objects.get(id=serializer.validated_data['plant'])
+        except Model.DoesNotExist:
+            return Response({
+                'plant': ['plant does not exist']
+            }, status=status.HTTP_404_NOT_FOUND)
+
+        if plant.user != user:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
+        action = serializer.validated_data['action']
+        event_date: datetime = serializer.validated_data['event_date']
+
+        # notifier = Notifier()
+        # ok = notifier.notify(
+        #     user=user,
+        #     plant=plant,
+        #     subject='?',
+        #     contents=['?', '?', '?', '?', '?', '?'],
+        #     scheduled_datetime=event_date,
+        #     action=action
+        # )
+
+        # if not ok:
+        #     return Response(data={
+
+        #     })
+
+        if action == 'water':
+            plant.last_watered = event_date.date()
+        elif action == 'fertilize':
+            plant.last_fertilized = event_date.date()
+
+        plant.save()
 
         return Response(status=status.HTTP_200_OK)
