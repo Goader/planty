@@ -205,7 +205,6 @@ class EventsView(APIView):
 
         # upcoming events
         if end_date >= today:
-            # FIXME wtf?? what if start_date is long ahead
             upcoming_start_date = max(today, start_date)
             upcoming_end_date = end_date
 
@@ -220,11 +219,11 @@ class EventsView(APIView):
 
                 # if the start_date is far away, then we need to start iterating
                 # from the first date in the requested period
-                n = ceil((upcoming_start_date - real_date) / interval)
+                n = max(0, ceil((upcoming_start_date - real_date) / interval))
                 real_date += n * interval
 
                 while real_date < upcoming_end_date:
-                    priority = (today - planned_date).days if first else 0
+                    priority = max(0, (today - planned_date).days) if first else 0
 
                     events.append({
                         'date': real_date.strftime('%Y-%m-%d'),

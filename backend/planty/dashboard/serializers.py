@@ -73,6 +73,8 @@ class TimeSpanSerializer(serializers.Serializer):
         if data['start_date'] > data['end_date']:
             raise serializers.ValidationError('end_date must occur after start_date')
 
+        return data
+
 
 class EventCreateSerializer(serializers.Serializer):
     event_date = serializers.DateTimeField(required=False, default=datetime.now)
