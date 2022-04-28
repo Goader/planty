@@ -6,4 +6,4 @@ export type PlantEvent = {
     message: string
 }
 
-export type Action = 'water' | 'move' | 'fertilize'
+export type Action = 'watering' | 'insolation' | 'fertilizing'
