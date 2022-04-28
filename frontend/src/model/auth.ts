@@ -7,4 +7,4 @@ export type TokenPair = {
     refresh: string
 }
 
-export type RegisterResponse = UserData & TokenPair
+export type AuthData = UserData & TokenPair
