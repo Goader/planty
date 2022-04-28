@@ -1,5 +1,5 @@
 import {RegisterResponse, TokenPair, UserData} from "../model/auth";
-import axios, {AxiosError} from "axios";
+import axios, {AxiosError, AxiosRequestHeaders} from "axios";
 
 const url = 'http://localhost:3001/users/';
 
@@ -25,43 +25,56 @@ export function isAccessTokenSaved() {
     return getSavedAccessToken() != null;
 }
 
+export function getAuthHeaders(): AxiosRequestHeaders {
+    return {
+        Authorization: `Bearer ${getSavedAccessToken()}`
+    };
+}
+
 
 export async function fetchCurrentUser(): Promise<UserData> {
     const token = getSavedAccessToken();
     if (token === null) {
-        throw new Error('unauthorized');
+        throw new Error('no_token');
     }
-    const response = await axios.get<UserData>(url + 'current_user/', {
-        headers: {
-            Authorization: `JWT ${getSavedAccessToken()}`
+    try {
+        const response = await axios.get<UserData>(url + 'current_user/', {
+            headers: getAuthHeaders()
+        });
+        return response.data;
+    } catch (e: any) {
+        if (e instanceof AxiosError && e.response?.status === 401) {
+            throw new Error('unauthorized');
+        } else {
+            throw e;
         }
-    });
-    if (response.status === 401) {
-        throw new Error('unauthorized');
     }
-    return response.data;
 }
 
 export async function login(username: string, password: string): Promise<UserData> {
-    const response = await axios.post<TokenPair>(url + 'token/', {
-        username: username,
-        password: password
-    }, {
-        headers: {
-            'Content-Type': 'application/json'
+    try {
+        const response = await axios.post<TokenPair>(url + 'token/', {
+            username: username,
+            password: password
+        }, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        const tokenPair = response.data;
+        localStorage.setItem('token', tokenPair.access);
+        localStorage.setItem('refreshToken', tokenPair.refresh);
+        return await fetchCurrentUser();
+    } catch (e: any) {
+        if (e instanceof AxiosError && e.response?.status === 401) {
+            throw new Error('unauthorized');
+        } else {
+            throw e;
         }
-    });
-    if (response.status === 401) {
-        throw new Error('unauthorized');
     }
-    const tokenPair = response.data;
-    localStorage.setItem('token', tokenPair.access);
-    localStorage.setItem('refreshToken', tokenPair.refresh);
-    return await fetchCurrentUser();
 }
 
 export async function register(username: string, password: string): Promise<RegisterResponse> {
-    console.log('register');
     try {
         const response = await axios.post<RegisterResponse>(url + 'signup/', {
             username: username,
@@ -73,9 +86,7 @@ export async function register(username: string, password: string): Promise<Regi
         });
         return response.data;
     } catch (e: any) {
-        console.log('catch');
         if (e instanceof AxiosError && e.response?.status === 400) {
-            console.log('catch2');
             throw new RegisterInputError('Invalid input', e.response?.data);
         } else {
             throw e;

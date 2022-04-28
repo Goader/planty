@@ -13,8 +13,9 @@ const schema = Yup.object().shape({
 
 export default function RegisterView() {
     const submit = (values: any, helpers: FormikHelpers<any>): void => {
+        helpers.setSubmitting(true);
         register(values.username, values.password)
-            .then(user => alert('registered ' + user))
+            .then(user => alert('registered ' + user.username)) // TODO: replace with redirect
             .catch(err => {
                 if (err instanceof RegisterInputError) {
                     for (const field in err.errors) {
@@ -23,7 +24,8 @@ export default function RegisterView() {
                 } else {
                     alert('failed to register: ' + err);
                 }
-            });
+            })
+            .finally(() => helpers.setSubmitting(false));
     };
     return (
         <Container>
@@ -48,7 +50,8 @@ export default function RegisterView() {
                           values,
                           touched,
                           isValid,
-                          errors
+                          errors,
+                          isSubmitting
                       }) => (
                         <Form onSubmit={handleSubmit} noValidate>
                             <Form.Group className={'auth-group'}>
@@ -90,7 +93,7 @@ export default function RegisterView() {
                                 />
                                 <Form.Control.Feedback type={'invalid'}>{errors.repeatPassword}</Form.Control.Feedback>
                             </Form.Group>
-                            <Button type={'submit'} className={'mt-3'} disabled={!isValid}>Next</Button>
+                            <Button type={'submit'} className={'mt-3'} disabled={!isValid || isSubmitting}>Next</Button>
                         </Form>
                     )}
                 </Formik>
