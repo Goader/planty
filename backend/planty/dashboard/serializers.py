@@ -1,10 +1,23 @@
 from rest_framework import serializers
 from drf_extra_fields.fields import Base64ImageField
 
+from .models import Instruction, Plant
 from .validators import (
     MinValueValidator,
     InsolationValidator
 )
+
+
+# class PlantSerializer(serializers.Serializer):
+#     class Meta:
+#         model = Plant
+#         fields = ['id', 'name', 'photo_url', 'species', 'other_info']
+
+
+# class InstructionSerializer(serializers.Serializer):
+#     class Meta:
+#         model = Instruction
+#         fields = ['watering', 'insolation', 'fertilizing']
 
 
 class PlantCreateSerializer(serializers.Serializer):
@@ -20,10 +33,10 @@ class PlantCreateSerializer(serializers.Serializer):
     other_info = serializers.CharField(required=False, max_length=400, default='')
 
     def validate(self, data: dict):
-        if 'used_instruction' not in data or (
+        if 'used_instruction' not in data and (
                 'watering' not in data \
-                    and 'insolation' not in data \
-                    and 'fertilizing' not in data
+                    or 'insolation' not in data \
+                    or 'fertilizing' not in data
             ):
 
             raise serializers.ValidationError('you must either specify the used instruction or fill the fields for a new one')

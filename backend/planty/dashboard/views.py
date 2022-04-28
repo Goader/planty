@@ -23,14 +23,28 @@ class PlantsView(APIView):
         plants = Plant.objects.filter(user=user)
         
         plants_json = []
-        for plant in plants:
-            instruction = Instruction.objects.filter(user=user, plant=plant)
+        for plant in plants.iterator():
 
-            plant_json = model_to_dict(plant, fields=['id', 'name', 'photo_url', 'species', 'other_info'])
-            instruction_json = model_to_dict(instruction, fields=['watering', 'insolation', 'fertilizing'])
+            plant_json = {
+                'id': str(plant.id),
+                'name': plant.name,
+                'image': plant.photo_url,
+                'species': plant.species,
 
-            plant_json.update(instruction_json)
-            plants_json.append(plants_json)
+                'watering': plant.instruction.watering,
+                'insolation': plant.instruction.insolation,
+                'fertilizing': plant.instruction.fertilizing,
+
+                'other_info': plant.other_info
+            }
+
+            # plant_json = PlantSerializer(plant).data
+            # instruction_json = InstructionSerializer(plant.instruction).data
+            # print(plant_json)
+
+            # plant_json.update(instruction_json)
+            # print(plant_json)
+            plants_json.append(plant_json)
 
         return Response(plants_json, status=status.HTTP_200_OK)
 
@@ -73,7 +87,7 @@ class PlantsView(APIView):
             name=request.data['name'],
             species=request.data['species'],
             photo_url=image_url,
-            other_info=request.get('other_info', '')
+            other_info=request.data.get('other_info', '')
         )
         new_plant.save()
 
@@ -123,7 +137,7 @@ class PlantsView(APIView):
                 species=data.get('species', plant.species),
                 watering=data.get('watering', previous_instruction.watering),
                 insolation=data.get('insolation', previous_instruction.insolation),
-                fertilizing=data('fertilizing', previous_instruction.fertilizing)
+                fertilizing=data.get('fertilizing', previous_instruction.fertilizing)
             )
             instruction.save()
 

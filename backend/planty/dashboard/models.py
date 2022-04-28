@@ -7,7 +7,7 @@ class Instruction(models.Model):
     id = models.UUIDField(primary_key=True)
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    species = models.CharField(primary_key=True, max_length=50)
+    species = models.CharField(max_length=50)
 
     watering = models.PositiveIntegerField(validators=[MinValueValidator(1)])
     insolation = models.CharField(max_length=50)
