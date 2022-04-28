@@ -27,7 +27,7 @@ export const internalAuthProvider = {
             const tokenPair = response.data;
             localStorage.setItem('token', tokenPair.access);
             localStorage.setItem('refreshToken', tokenPair.refresh);
-            let user = await fetchCurrentUser();
+            let user = await fetchCurrentUser(tokenPair.access);
             return {...user, ...tokenPair};
         } catch (e: any) {
             if (e instanceof AxiosError && e.response?.status === 401) {
@@ -77,8 +77,7 @@ export function getAuthHeaders(): AxiosRequestHeaders {
 }
 
 
-async function fetchCurrentUser(): Promise<UserData> {
-    const token = getSavedAccessToken();
+export async function fetchCurrentUser(token: string): Promise<UserData> {
     if (token === null) {
         throw new Error('no_token');
     }
