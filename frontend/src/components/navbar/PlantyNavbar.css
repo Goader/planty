@@ -1,0 +1,13 @@
+@font-face {
+    font-family: 'Rubik Mono One';
+    src: local('Rubik Mono One'), url(../../fonts/RubikMonoOne-Regular.ttf) format('truetype');
+}
+
+.PlantyNavbar {
+    background-color: white;
+}
+
+.PlantyNavbar-Brand {
+    font-family: "Rubik Mono One", sans-serif;
+    color: #367B00 !important;
+}
