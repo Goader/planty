@@ -8,33 +8,8 @@ from .serializers import DefaultInstructionsSerializer
 
 
 class DefaultInstructionsApiView(APIView):
-
-    @api_view(['POST'])
-    def post(self, request):
-
-        data = json.loads(request.body.decode("utf-8"))
-
-        product_data = {
-            'watering_days': data.get('watering_days'),
-            'fertilizing_days': data.get('fertilizing_days'),
-            'insolation': data.get('insolation'),
-        }
-
-        DefaultInstructions.objects.create(**product_data)
-
-        data = {
-            "message": "New item added to DefaultInstructions "
-        }
-        return JsonResponse(data, status=201)
-
-    @api_view(['GET'])
+    # @api_view(['GET'])
     def get(self, request):
-        item = CartItem.objects.all()[0]
-
-        data = {
-            'watering_days': item.watering_days,
-            'fertilizing_days': item.fertilizing_days,
-            'insolation': item.insolation,
-        }
-
-        return JsonResponse(data)
+        instructions = Snippet.objects.all()
+        serializer = DefaultInstructionsSerializer(instructions, many=True)
+        return Response(serializer.data)
