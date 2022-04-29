@@ -1,9 +1,10 @@
 import React from 'react';
 import 'react-calendar/dist/Calendar.css';
-import {Col, Container, Row} from "react-bootstrap";
+import {Button, Col, Container, Row} from "react-bootstrap";
 import "./GardenView.css";
 import '../components/card/Card.css';
 import PlantCard, {Plant} from "../components/card/PlantCard";
+import {Link} from "react-router-dom";
 
 
 function GardenView() {
@@ -56,6 +57,9 @@ function GardenView() {
                     <PlantCard plant={plant}/>
                 </Col>))}
             </Row>
+            <div>
+                <Link to={'/plants/add'}><Button variant={'primary'}>Add plant</Button></Link>
+            </div>
         </Container>
     );
 }
