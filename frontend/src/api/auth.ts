@@ -51,7 +51,7 @@ export const internalAuthProvider = {
     },
     register: async (username: string, password: string): Promise<AuthData> => {
         try {
-            const response = await axios.post<AuthData>(url + 'signup/', {
+            const response = await axios.post<{ username: string, token: TokenPair }>(url + 'signup/', {
                 username: username,
                 password: password
             }, {
@@ -59,7 +59,10 @@ export const internalAuthProvider = {
                     'Content-Type': 'application/json'
                 }
             });
-            return response.data;
+            return {
+                username: response.data.username,
+                ...response.data.token
+            };
         } catch (e: any) {
             if (e instanceof AxiosError && e.response?.status === 400) {
                 throw new RegisterInputError('Invalid input', e.response?.data);

@@ -4,7 +4,8 @@ import {Formik, FormikHelpers} from "formik";
 import {handleUnauthorized} from "../api/auth";
 import {Button, Card, Container, Form} from "react-bootstrap";
 import * as Yup from "yup";
-import {createPlantsRequestConfig} from "../api/plants";
+import {createPlantsPostRequestConfig} from "../api/plants";
+import {AxiosError} from "axios";
 
 const schema = Yup.object().shape({
     name: Yup.string().required('Name is required'),
@@ -19,12 +20,18 @@ function AddPlantFormView() {
     const navigate = useNavigate();
     const submit = (values: any, helpers: FormikHelpers<any>): void => {
         helpers.setSubmitting(true);
-        request(createPlantsRequestConfig(values))
+        request(createPlantsPostRequestConfig(values))
             .then(() => navigate('/'))
             .catch(err => handleUnauthorized(err, () => navigate('/login')))
             .catch(err => {
-                alert('Unexpected error');
-                console.log(err);
+                if (err instanceof AxiosError && err.response?.status === 400) {
+                    for (const field in err.response.data) {
+                        helpers.setFieldError(field, err.response.data[field][0]);
+                    }
+                } else {
+                    alert('Unexpected error');
+                    console.log(err);
+                }
             })
             .finally(() => helpers.setSubmitting(false));
     };

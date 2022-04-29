@@ -1,16 +1,7 @@
 import React from "react";
 import './Card.css';
 import {Button, Card, Col, Container, Row} from "react-bootstrap";
-
-export type Plant = {
-    id: string,
-    name: string,
-    image: string,
-    species: string,
-    watering: number,
-    insolation: string,
-    fertilizing: number
-}
+import {Plant} from "../../model/plants";
 
 function PlantCard({plant}: { plant: Plant }) {
     const imageUrl = "https://picsum.photos/250";
