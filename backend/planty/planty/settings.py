@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
 from pathlib import Path
+import datetime
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -77,8 +78,16 @@ CORS_ORIGIN_WHITELIST = (
 )
 
 JWT_AUTH = {
-    'JWT_RESPONSE_PAYLOAD_HANDLER': 'planty.utils.jwt_response_handler'
+    'JWT_RESPONSE_PAYLOAD_HANDLER': 'planty.utils.jwt_response_handler',
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=10),
+    'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=30)
 }
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': datetime.timedelta(days=10),
+    'REFRESH_TOKEN_LIFETIME': datetime.timedelta(days=20)
+}
+
 
 ROOT_URLCONF = 'planty.urls'
 
@@ -155,6 +164,8 @@ STATIC_URL = 'static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
+
+NOTIFIER_ENDPOINT = 'http://127.0.0.1:12012/schedule'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 

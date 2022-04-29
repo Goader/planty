@@ -1,3 +1,5 @@
+from datetime import date, datetime
+
 from rest_framework import serializers
 from drf_extra_fields.fields import Base64ImageField
 
@@ -52,6 +54,7 @@ class PlantUpdateSerializer(serializers.Serializer):
 
     used_instruction = serializers.UUIDField(required=False)
     watering = serializers.IntegerField(required=False, validators=[MinValueValidator(1)])
+    # TODO change to ChoiceField for insolation
     insolation = serializers.CharField(required=False, validators=[InsolationValidator()])
     fertilizing = serializers.IntegerField(required=False, validators=[MinValueValidator(1)])
 
@@ -60,3 +63,22 @@ class PlantUpdateSerializer(serializers.Serializer):
 
 class PlantDeleteSerializer(serializers.Serializer):
     id = serializers.UUIDField()
+
+
+class TimeSpanSerializer(serializers.Serializer):
+    start_date = serializers.DateField(format='%Y-%m-%d', input_formats=['%Y-%m-%d'])
+    end_date = serializers.DateField(format='%Y-%m-%d', input_formats=['%Y-%m-%d'])
+
+    def validate(self, data: dict):
+        if data['start_date'] > data['end_date']:
+            raise serializers.ValidationError('end_date must occur after start_date')
+
+        return data
+
+
+class EventCreateSerializer(serializers.Serializer):
+    event_date = serializers.DateTimeField(required=False, default=datetime.now)
+    plant = serializers.UUIDField()
+    # TODO add move when there is a possibility to add custom events
+    action = serializers.ChoiceField(['water', 'fertilize'])
+    message = serializers.CharField(required=False, max_length=400, default='')
