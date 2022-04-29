@@ -1,10 +1,8 @@
 import React from 'react';
 import './App.css';
 import 'react-calendar/dist/Calendar.css';
-import CalendarView from "./views/CalendarView";
 import PlantyNavbar from "./components/navbar/PlantyNavbar";
-import Footer from "./components/footer/Footer";
-import {Container, Tab, Tabs} from "react-bootstrap";
+import GardenView from "./views/GardenView";
 
 function App() {
     return (
@@ -21,7 +19,7 @@ function App() {
                     </Tab>
                 </Tabs>
             </Container>*/}
-            <CalendarView/>
+            <GardenView/>
             {/*<Footer/>*/}
         </div>
     );

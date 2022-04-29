@@ -1,47 +1,31 @@
-.card-style {
-    margin: 15px;
+.plant-card {
     border-radius: 16px !important;
     border: solid 2px #367B00 !important;
-    padding: 10px;
     background-color: #F6FFEF !important;
 }
 
-.left {
-    float: left;
-    height: 100%;
-}
-
-.card-layout {
-    border-radius: 16px !important;
-    height: 100%;
-    width: 100%;
-    margin-bottom: 5px;
-}
-
 .info-card {
-    display: flex;
-    margin-top: 15px;
-    margin-bottom: 15px;
     background-color: #FFFFFF;
     -webkit-box-shadow: 3px 7px 10px -4px rgba(66, 68, 90, 1);
     -moz-box-shadow: 3px 7px 10px -4px rgba(66, 68, 90, 1);
     box-shadow: 3px 7px 10px -4px rgba(66, 68, 90, 1);
     border-radius: 6px !important;
-    padding: 5px;
     font-size: 11px;
 }
 
-.plant-name-card {
+.plant-name {
     font-family: 'Rasa', sans-serif;
     font-size: 24px;
 }
 
-.text-right {
+.info-card .text-right {
     text-align: right;
-    width: 70%;
 }
 
-.plant-species-card {
+.info-card .text-left {
+}
+
+.plant-species {
     font-family: Roboto, sans-serif;
     font-style: italic;
     font-size: 14px;

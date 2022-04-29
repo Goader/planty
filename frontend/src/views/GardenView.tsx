@@ -1,62 +1,61 @@
 import React from 'react';
 import 'react-calendar/dist/Calendar.css';
-import {Card, Container} from "react-bootstrap";
+import {Col, Container, Row} from "react-bootstrap";
 import "./GardenView.css";
-import PlantCard from "../components/card/PlantCard";
+import '../components/card/Card.css';
+import PlantCard, {Plant} from "../components/card/PlantCard";
 
 
 function GardenView() {
 
     const imageUrl = "https://picsum.photos/250";
 
-    const plants = [
+    const plants: Array<Plant> = [
         {
+            id: '1',
             image: imageUrl,
             name: "Paprotka1",
             species: "Paprotkus Normalus",
-            water: "every 3 days",
-            sun: "very much",
-            replant: "every winter"
+            watering: 3,
+            insolation: "very much",
+            fertilizing: 5
         },
         {
+            id: '2',
             image: imageUrl,
             name: "Paprotka2",
             species: "Paprotkus Normalu2",
-            water: "every 3 days2",
-            sun: "very much2",
-            replant: "every winter2"
+            watering: 3,
+            insolation: "very much",
+            fertilizing: 5
         },
         {
+            id: '3',
             image: imageUrl,
             name: "Paprotka3",
             species: "Paprotkus Normalus3",
-            water: "every 3 days3",
-            sun: "very much3",
-            replant: "every winter3"
+            watering: 3,
+            insolation: "very much",
+            fertilizing: 5
         },
         {
+            id: '4',
             image: imageUrl,
             name: "Paprotka3",
             species: "Paprotkus Normalus3",
-            water: "every 3 days3",
-            sun: "very much3",
-            replant: "every winter3"
+            watering: 3,
+            insolation: "very much",
+            fertilizing: 5
         },
     ];
 
-    var result = plants.map( plant => {
-        return (<div className={'col-sm-6 col-md-6 col-lg-4'}>
-            <PlantCard obj={plant}/>
-        </div>);
-    });
-
     return (
         <Container>
-            <div className={'container'}>
-                <div className={'row'}>
-                    {result}
-                </div>
-            </div>
+            <Row>
+                {plants.map(plant => (<Col xs={12} sm={6} xxl={4} className={'mb-3'}>
+                    <PlantCard plant={plant}/>
+                </Col>))}
+            </Row>
         </Container>
     );
 }
