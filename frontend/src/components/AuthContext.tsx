@@ -7,7 +7,9 @@ type AuthContextType = {
     user: AuthData | null,
     login: (username: string, password: string) => Promise<AuthData>,
     logout: () => void,
-    register: (username: string, password: string) => Promise<AuthData>
+    register: (username: string, password: string) => Promise<AuthData>,
+    request: <T, >(config: AxiosRequestConfig) => Promise<T>,
+    refresh: () => Promise<AuthData>
 }
 
 const AuthContext = React.createContext<AuthContextType>(null!);
@@ -83,7 +85,23 @@ export function AuthProvider({children}: { children: React.ReactNode }) {
         }
     };
 
-    let value = {user, login, logout, register, request};
+    const refresh = async (): Promise<AuthData> => {
+        let refreshToken: string | null;
+        if (user != null) {
+            refreshToken = user.refresh;
+        } else {
+            refreshToken = getSavedRefreshToken();
+        }
+        if (refreshToken == null) {
+            throw new Error('unauthorized');
+        }
+        const currentUser = await requestRefresh(refreshToken);
+        setUser(currentUser);
+        localStorage.setItem('token', currentUser.access);
+        return currentUser;
+    };
+
+    let value = {user, login, logout, register, request, refresh};
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

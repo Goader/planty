@@ -13,6 +13,18 @@ export class RegisterInputError extends Error {
     }
 }
 
+export function isErrorUnauthorized(err: any): boolean {
+    return err.message === 'unauthorized' || (err instanceof AxiosError && err.response?.status === 401);
+}
+
+export function handleUnauthorized(err: any, callback: () => void) {
+    if (isErrorUnauthorized(err)) {
+        callback();
+    } else {
+        throw err;
+    }
+}
+
 export const internalAuthProvider = {
     login: async (username: string, password: string): Promise<AuthData> => {
         try {

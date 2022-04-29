@@ -6,6 +6,7 @@ import {Route, Routes} from 'react-router-dom';
 import LoginView from "./views/LoginView";
 import RegisterView from "./views/RegisterView";
 import MainView from "./views/MainView";
+import AddPlantFormView from "./views/AddPlantFormView";
 
 function App() {
     return (
@@ -13,8 +14,9 @@ function App() {
             <PlantyNavbar/>
             <Routes>
                 <Route path="/" element={<MainView/>}/>
-                <Route path="login" element={<LoginView/>}/>
-                <Route path="register" element={<RegisterView/>}/>
+                <Route path="/login" element={<LoginView/>}/>
+                <Route path="/register" element={<RegisterView/>}/>
+                <Route path="/plants/add" element={<AddPlantFormView/>}/>
             </Routes>
             {/*<Footer/>*/}
         </div>
