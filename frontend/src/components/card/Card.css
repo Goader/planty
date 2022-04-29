@@ -1,0 +1,44 @@
+.plant-card {
+    border-radius: 16px !important;
+    border: solid 2px #367B00 !important;
+    background-color: #F6FFEF !important;
+}
+
+.info-card {
+    background-color: #FFFFFF;
+    -webkit-box-shadow: 3px 7px 10px -4px rgba(66, 68, 90, 1);
+    -moz-box-shadow: 3px 7px 10px -4px rgba(66, 68, 90, 1);
+    box-shadow: 3px 7px 10px -4px rgba(66, 68, 90, 1);
+    border-radius: 6px !important;
+    font-size: 11px;
+}
+
+.plant-name {
+    font-family: 'Rasa', sans-serif;
+    font-size: 24px;
+}
+
+.info-card .text-right {
+    text-align: right;
+}
+
+.info-card .text-left {
+}
+
+.plant-species {
+    font-family: Roboto, sans-serif;
+    font-style: italic;
+    font-size: 14px;
+    line-height: 24px;
+    color: #9E9E9E;
+}
+
+.button-card {
+    width: 100% !important;
+    background-color: #367B00 !important;
+    border-color: #51BA00 !important;
+}
+
+.button-card:active, .button-card:focus {
+    border-color: #51BA00 !important;
+}
