@@ -15,9 +15,6 @@ export default function CalendarPlantInfo(props: CalendarPlantInfoProps) {
             variant = 'success';
             break;
         case 1:
-            variant = 'secondary';
-            break;
-        case 2:
             variant = 'warning';
             break;
         default:

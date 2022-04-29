@@ -44,7 +44,7 @@ INSTALLED_APPS = [
 
     # local django apps
     'users.apps.UsersConfig',
-    'user_plants.apps.UserPlantsConfig'
+    'dashboard.apps.DashboardConfig'
 ]
 
 MIDDLEWARE = [
@@ -107,12 +107,12 @@ WSGI_APPLICATION = 'planty.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'djongo',
-        'NAME': 'docker_mongodb',
-        'CLIENT': {
-            'host': 'localhost',
-            'port': 27017
-        }
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'postgres',
+        'USER': 'postgres',
+        'PASSWORD': 'postgres',
+        'HOST': 'localhost',
+        'PORT': '5432'
     }
 }
 
@@ -159,5 +159,5 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_URL = '/users/login/'
-LOGIN_REDIRECT_URL = '/plants/'
+LOGIN_REDIRECT_URL = '/dashboard/plants/'
 LOGOUT_REDIRECT_URL = '/'
