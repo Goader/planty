@@ -43,26 +43,48 @@ NOTE: if you update the library version, add a new library or remove the existin
 
 ### Frontend
 
-#### Install yarn
+#### Install node.js and npm
 
 * Windows
-  * Install `node`
-  * Download [MSI installer](https://classic.yarnpkg.com/latest.msi) and run it
+  * Download node.js installer from [official website](https://nodejs.org/en/download/)
+  * Run installer
 * MacOS
-  * Run `brew install yarn`
-* Linux (Ubuntu)
-  * Run this to update the repositories 
-      ```bash
-      curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
-      echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
-      ```
-  * Run `sudo apt update && sudo apt install yarn` to install `yarn`
+  * Run `brew install yarn` 
+* Linux (Ubuntu/Debian)
+  * Using node repository
+    ```bash
+    # Using Ubuntu
+    curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+    sudo apt-get install -y nodejs
 
-If you need `yarn` for any other platform, or any problem occurs, use this [website](https://classic.yarnpkg.com/lang/en/docs/install/#debian-stable) for help!
+    # Using Debian, as root
+    curl -fsSL https://deb.nodesource.com/setup_16.x | bash -
+    apt-get install -y nodejs
+    ```
+  * Using node version manager
+    * Install node version manager
+      ```bash
+      curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+      ```
+    * Install `node` version 16 (latest LTS) using `nvm`
+      ```bash
+      nvm install 16
+      ```
+Verify that `node` and `npm` commands work in your terminal
+```bash
+node -v
+npm -v
+```
+
+#### Install yarn
+Install yarn using `npm`
+```bash
+npm install -g yarn
+```
 
 #### Using yarn
 
-You can use this [guide](https://classic.yarnpkg.com/lang/en/docs/creating-a-project/) or look [here](https://classic.yarnpkg.com/en/docs/cli/) to find all the commands you need!
+You can use this [guide](https://yarnpkg.com/getting-started/usage) or look [here](https://yarnpkg.com/cli) to find all the commands you need!
 
 * `yarn add [package]` - adding a new package to `package.json` and `yarn.lock`
 * `yarn remove [package]` - removing a package from `package.json` and `yarn.lock`
