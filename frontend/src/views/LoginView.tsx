@@ -1,6 +1,6 @@
 import {Button, Card, Container, Form} from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './LoginRegisterView.css';
+import './FormView.css';
 import {Formik, FormikHelpers} from "formik";
 import * as Yup from "yup";
 import {useAuth} from "../components/AuthContext";
@@ -28,7 +28,7 @@ export default function LoginView() {
     return (
         <Container>
             {user != null ? <Navigate to={'/'}/> :
-                <Card className={'register-card p-5 mx-auto'}>
+                <Card className={'form-card p-5 mx-auto'}>
                     <div className={'center-header'}>
                         <h2>Sign in</h2>
                     </div>
