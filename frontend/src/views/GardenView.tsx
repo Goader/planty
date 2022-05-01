@@ -20,16 +20,14 @@ function GardenView() {
     useEffect(() => {
         request<Array<PlantResponse>>(createPlantsGetRequestConfig())
             .then(plants => plants.map(plant => mapResponseToPlant(plant)))
-            .then(plants => {
-                setPlants(plants);
-                setFetching(false);
-            })
+            .then(plants => setPlants(plants))
             .catch(err => handleUnauthorized(err, () => navigate('/login')))
             .catch(err => {
                 alert('Unexpected error');
                 console.log(err);
-            });
-    }, []);
+            })
+            .finally(() => setFetching(false));
+    }, [navigate, request]);
 
     return (
         <Container>
