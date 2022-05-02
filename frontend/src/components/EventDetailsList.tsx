@@ -33,7 +33,8 @@ function EventListItem(props: EventListItemProps) {
     return <ListGroup.Item className={'d-flex justify-content-between'}
                            variant={getItemVariant(props.event.priority)}>
         <p className={'m-0'}>{props.event.plantDetails.name}</p>
-        {props.event.priority > 0 && <p>{props.event.priority} {getInterval(props.event.action)} overdue</p>}
+        {props.event.priority > 0 &&
+            <p className={'m-0'}>{props.event.priority} {getInterval(props.event.action)} overdue</p>}
     </ListGroup.Item>;
 }
 

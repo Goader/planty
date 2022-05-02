@@ -9,8 +9,8 @@ export type EventsDetailsProps = {
     show: boolean
 }
 
-function EventsDetailsModal(props: EventsDetailsProps) {
-    return <Modal show={props.show} size={'lg'} onHide={props.onHide} centered>
+function EventDetailsModal(props: EventsDetailsProps) {
+    return <Modal show={props.show} size={'lg'} onHide={props.onHide} fullscreen={'sm-down'} centered>
         <Modal.Header closeButton>
             <Modal.Title>
                 {props.date.toDateString()} events
@@ -22,4 +22,4 @@ function EventsDetailsModal(props: EventsDetailsProps) {
     </Modal>;
 }
 
-export default EventsDetailsModal;
+export default EventDetailsModal;

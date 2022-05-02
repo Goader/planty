@@ -1,5 +1,5 @@
 import React from "react";
-import './Card.css';
+import './PlantCard.scss';
 import {Button, Card, Col, Container, Row} from "react-bootstrap";
 import {Plant} from "../../model/plants";
 

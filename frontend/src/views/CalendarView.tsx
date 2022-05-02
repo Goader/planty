@@ -4,14 +4,14 @@ import 'react-calendar/dist/Calendar.css';
 import {createCalendarFetchConfig} from "../api/calendar";
 import {PlantEvent, PlantEventDetails, PlantEventResponse} from "../model/calendar";
 import {Alert, Container, Spinner, Stack} from "react-bootstrap";
-import "./CalendarView.css";
+import "./CalendarView.scss";
 import CalendarPlantInfo from "../components/CalendarPlantInfo";
 import {useAuth} from "../components/AuthContext";
 import {handleUnauthorized} from "../api/auth";
 import {useNavigate} from "react-router-dom";
 import {Plant, PlantResponse} from "../model/plants";
 import {createPlantsGetRequestConfig, mapResponseToPlant} from "../api/plants";
-import EventsDetailsModal from "../components/EventsDetailsModal";
+import EventDetailsModal from "../components/EventDetailsModal";
 
 function CalendarView() {
     const [events, setEvents] = useState<Map<string, PlantEvent[]>>(new Map());
@@ -34,7 +34,6 @@ function CalendarView() {
             .then(fetchedEvents => {
                 const eventMap = new Map<string, PlantEvent[]>();
                 fetchedEvents.forEach(event => {
-                    console.log(event);
                     let [year, month, day] = event.date.split('-');
                     let dateObj = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
                     const convertedEvent: PlantEvent = {
@@ -86,17 +85,40 @@ function CalendarView() {
             }
             plantEvents.push(event);
         }
-        const componentList = new Array<JSX.Element>();
+        const entryList = new Array<{ plant: Plant, plantEvents: PlantEvent[] }>();
         plantMap.forEach((plantEvents, plantId) => {
             const plant = plants.get(plantId);
             if (plant === undefined) {
                 console.error('No plant found with id ' + plantId);
             } else {
-                componentList.push(<div key={plantId}><CalendarPlantInfo name={plant.name} events={plantEvents}/>
-                </div>);
+                entryList.push({
+                    plant: plant,
+                    plantEvents: plantEvents
+                });
             }
         });
-        return <div className={'planty-calendar-events'}><Stack gap={1}>{componentList}</Stack></div>;
+        const componentList = entryList.slice(0, 3).map((entry, index) => <div key={index}>
+            <CalendarPlantInfo name={entry.plant.name} events={entry.plantEvents}/>
+        </div>);
+        if (entryList.length > 3) {
+            const remaining = entryList.length - 2;
+            const remainingEvents = entryList.slice(2).flatMap(entry => entry.plantEvents);
+            componentList[2] = <div key={2}>
+                <CalendarPlantInfo name={`${remaining} more...`} events={remainingEvents}/>
+            </div>;
+        }
+        return <>
+            <div className={'planty-calendar-events full-view'}>
+                <Stack gap={1} className={'calendar-stack'}>
+                    {componentList}
+                </Stack>
+            </div>
+            {eventList.length > 0 && <div className={'planty-calendar-events mobile-view ms-auto'}>
+                <Stack gap={1} className={'calendar-stack'}>
+                    <div><CalendarPlantInfo name={eventList.length.toString()} events={eventList}/></div>
+                </Stack>
+            </div>}
+        </>;
     };
 
     const onModalHide = () => {
@@ -144,10 +166,10 @@ function CalendarView() {
                         tileClassName={'planty-calendar-tile'}
                         onClickDay={handleDayClick}
                     />
-                    <EventsDetailsModal events={detailsEvents}
-                                        date={detailsDate}
-                                        onHide={onModalHide}
-                                        show={showDetails}/>
+                    <EventDetailsModal events={detailsEvents}
+                                       date={detailsDate}
+                                       onHide={onModalHide}
+                                       show={showDetails}/>
                 </>}
         </Container>
     );
