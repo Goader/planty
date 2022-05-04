@@ -25,7 +25,7 @@ from .validators import (
 class PlantCreateSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=50)
     species = serializers.CharField(max_length=50)
-    image = Base64ImageField(required=False, default=None)
+    photo = Base64ImageField(required=False, default=None)
 
     used_instruction = serializers.UUIDField(required=False)
     watering = serializers.IntegerField(required=False, validators=[MinValueValidator(1)])

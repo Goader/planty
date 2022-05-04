@@ -15,6 +15,13 @@ const schema = Yup.object().shape({
     fertilizing: Yup.number()
 });
 
+const toBase64 = (file: any): Promise<any> => new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = error => reject(error);
+});
+
 function AddPlantFormView() {
     const {user, request} = useAuth();
     const navigate = useNavigate();
@@ -35,6 +42,7 @@ function AddPlantFormView() {
             })
             .finally(() => helpers.setSubmitting(false));
     };
+
     return (
         <Container>
             {user === null ? <Navigate to={'/login'}/>
@@ -62,7 +70,8 @@ function AddPlantFormView() {
                               touched,
                               isValid,
                               errors,
-                              isSubmitting
+                              isSubmitting,
+                              setFieldValue
                           }) => (
                             <Form onSubmit={handleSubmit} noValidate>
                                 <Form.Group className={'auth-group'}>
@@ -90,6 +99,25 @@ function AddPlantFormView() {
                                         isInvalid={touched.species && !!errors.species}
                                     />
                                     <Form.Control.Feedback type={'invalid'}>{errors.species}</Form.Control.Feedback>
+                                </Form.Group>
+                                <Form.Group className={'auth-group'}>
+                                    <Form.Label>Photo</Form.Label>
+                                    <Form.Control
+                                        name={'photo'}
+                                        type={'file'}
+                                        onChange={(event) => {
+                                            let target = event.currentTarget as HTMLInputElement;
+                                            if (target.files === null) {
+                                                setFieldValue('photo', null);
+                                            } else {
+                                                toBase64(target.files[0])
+                                                    .then(value => {
+                                                        setFieldValue('photo', value);
+                                                    });
+
+                                            }
+                                        }}
+                                    />
                                 </Form.Group>
                                 <Form.Group className={'auth-group'}>
                                     <Form.Label>Watering</Form.Label>

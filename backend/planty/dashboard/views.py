@@ -1,7 +1,9 @@
 from datetime import timedelta, date, datetime
 from uuid import uuid4
 from math import ceil
+import base64
 
+from django.core.files.base import ContentFile
 from django.contrib.auth.models import User
 from django.db.models import Model
 
@@ -32,7 +34,7 @@ class PlantsView(APIView):
             plant_json = {
                 'id': str(plant.id),
                 'name': plant.name,
-                'image': plant.photo_url,
+                'photo_url': plant.photo.url if plant.photo.name else None,
                 'species': plant.species,
 
                 'watering': plant.instruction.watering,
@@ -61,11 +63,6 @@ class PlantsView(APIView):
 
         data = serializer.validated_data
 
-        if data['image'] is not None:
-            # TODO save the image somewhere
-            pass
-        image_url = None
-
         if 'used_instruction' in data:
             try:
                 instruction = Instruction.objects.get(pk=data['used_instruction'])
@@ -90,7 +87,7 @@ class PlantsView(APIView):
             instruction=instruction,
             name=request.data['name'],
             species=request.data['species'],
-            photo_url=image_url,
+            photo=data['photo'],
             other_info=request.data.get('other_info', '')
         )
         new_plant.save()
