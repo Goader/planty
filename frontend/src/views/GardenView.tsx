@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import 'react-calendar/dist/Calendar.css';
 import {Button, Col, Container, Row, Spinner} from "react-bootstrap";
-import "./GardenView.css";
-import '../components/card/Card.css';
+import "./GardenView.scss";
+import '../components/card/PlantCard.scss';
 import PlantCard from "../components/card/PlantCard";
 import {Link, useNavigate} from "react-router-dom";
 import {useAuth} from "../components/AuthContext";
@@ -20,16 +20,14 @@ function GardenView() {
     useEffect(() => {
         request<Array<PlantResponse>>(createPlantsGetRequestConfig())
             .then(plants => plants.map(plant => mapResponseToPlant(plant)))
-            .then(plants => {
-                setPlants(plants);
-                setFetching(false);
-            })
+            .then(plants => setPlants(plants))
             .catch(err => handleUnauthorized(err, () => navigate('/login')))
             .catch(err => {
                 alert('Unexpected error');
                 console.log(err);
-            });
-    }, []);
+            })
+            .finally(() => setFetching(false));
+    }, [navigate, request]);
 
     return (
         <Container>

@@ -74,7 +74,7 @@ REST_FRAMEWORK = {
 
 # TODO change to the address of React (probably using .env and environment variables)
 CORS_ORIGIN_WHITELIST = (
-    # 'localhost:3000',
+    'http://localhost:3000',
 )
 
 JWT_AUTH = {
