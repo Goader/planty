@@ -45,7 +45,8 @@ INSTALLED_APPS = [
 
     # local django apps
     'users.apps.UsersConfig',
-    'dashboard.apps.DashboardConfig'
+    'dashboard.apps.DashboardConfig',
+    'settings.apps.SettingsConfig'
 ]
 
 MIDDLEWARE = [
