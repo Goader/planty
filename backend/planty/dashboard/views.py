@@ -301,6 +301,7 @@ class MyInstructionsView(APIView):
         for instruction in instructions.iterator():
             plant_json = {
                 'id': str(instruction.id),
+                'name' : instruction.name,
                 'species': instruction.species,
 
                 'watering': instruction.watering,

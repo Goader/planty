@@ -7,6 +7,7 @@ from django.db import models
 
 class Instruction(models.Model):
     id = models.UUIDField(primary_key=True)
+    name = models.CharField(max_length=50)
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     species = models.CharField(max_length=50)
