@@ -11,6 +11,8 @@ function getInterval(action: Action) {
             return "months";
         case "water":
             return "days";
+        default:
+            return null;
     }
 }
 
@@ -46,7 +48,8 @@ function EventDetailsList(props: EventDetailsListProps) {
     const events = {
         water: new Array<PlantEventDetails>(),
         insolation: new Array<PlantEventDetails>(),
-        fertilize: new Array<PlantEventDetails>()
+        fertilize: new Array<PlantEventDetails>(),
+        custom: new Array<PlantEventDetails>()
     };
     props.events.forEach(event => {
         events[event.action].push(event);

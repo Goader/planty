@@ -20,4 +20,4 @@ export type PlantEventDetails = PlantEvent & {
     plantDetails: Plant
 }
 
-export type Action = 'water' | 'insolation' | 'fertilize'
+export type Action = 'water' | 'insolation' | 'fertilize' | 'custom'
