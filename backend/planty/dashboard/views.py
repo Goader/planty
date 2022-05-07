@@ -290,3 +290,23 @@ class EventsView(APIView):
         plant.save()
 
         return Response(status=status.HTTP_200_OK)
+
+
+class MyInstructionsView(APIView):
+    def get(self, request: Request):
+        user: User = request.user
+        instructions = Instruction.objects.filter(user=user)
+
+        instructions_json = []
+        for instruction in instructions.iterator():
+            plant_json = {
+                'id': str(instruction.id),
+                'species': instruction.species,
+
+                'watering': instruction.watering,
+                'insolation': instruction.insolation,
+                'fertilizing': instruction.fertilizing,
+            }
+            instructions_json.append(plant_json)
+
+        return Response(instructions_json, status=status.HTTP_200_OK)
