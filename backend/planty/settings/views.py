@@ -9,7 +9,7 @@ from rest_framework.request import Request
 from rest_framework import status
 
 from .models import Settings
-from .serializers import SettingsCreateSerializer
+from .serializers import SettingsUpdateSerializer
 
 
 class SettingsView(APIView):
@@ -20,24 +20,19 @@ class SettingsView(APIView):
         except Settings.DoesNotExist:
             return Response("User settings not found.", status=status.HTTP_404_NOT_FOUND)
 
-        settings_json = {
-            "account_notifications": settings.account_notifications,
-            "watering_notifications": settings.watering_notifications,
-            "forum_notifications": settings.forum_notifications
-        }
-        return Response(settings_json, status=status.HTTP_200_OK)
+        return Response(settings.values(), status=status.HTTP_200_OK)
 
-    def post(self, request: Request):
+    def put(self, request: Request):
         user: User = request.user
-        serializer = SettingsCreateSerializer(data=request.data)
+
+        serializer = SettingsUpdateSerializer(data=request.data)
 
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        data = serializer.validated_data
+        new_settings = serializer.validated_data
+        settings = Settings.objects.get(user=user)
+        settings.__dict__.update(new_settings)
+        settings.save()
 
-        new_settings, created = Settings.objects.update_or_create(user=user, defaults=data)
-
-        new_settings.save()
-
-        return Response(status=status.HTTP_201_CREATED)
+        return Response(settings.values(), status=status.HTTP_201_CREATED)
