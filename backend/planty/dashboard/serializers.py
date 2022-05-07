@@ -36,12 +36,12 @@ class PlantCreateSerializer(serializers.Serializer):
 
     def validate(self, data: dict):
         if 'used_instruction' not in data and (
-                'watering' not in data \
-                    or 'insolation' not in data \
-                    or 'fertilizing' not in data
-            ):
-
-            raise serializers.ValidationError('you must either specify the used instruction or fill the fields for a new one')
+                'watering' not in data
+                or 'insolation' not in data
+                or 'fertilizing' not in data
+        ):
+            raise serializers.ValidationError(
+                'you must either specify the used instruction or fill the fields for a new one')
 
         return data
 

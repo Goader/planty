@@ -1,6 +1,6 @@
 import {Button, Card, Container, Form} from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './FormView.css';
+import './FormView.scss';
 import {Formik, FormikHelpers} from "formik";
 import * as Yup from "yup";
 import {useAuth} from "../components/AuthContext";

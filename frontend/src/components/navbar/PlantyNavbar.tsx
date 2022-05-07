@@ -1,6 +1,6 @@
 import React from "react";
 import {Button, Container, Navbar, Stack} from "react-bootstrap";
-import './PlantyNavbar.css';
+import './PlantyNavbar.scss';
 import cx from 'classnames';
 import {Link, useNavigate} from "react-router-dom";
 import {useAuth} from "../AuthContext";

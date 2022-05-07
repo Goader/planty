@@ -119,7 +119,7 @@ function AddPlantFormView() {
                                     <Form.Control.Feedback type={'invalid'}>{errors.insolation}</Form.Control.Feedback>
                                 </Form.Group>
                                 <Form.Group className={'auth-group'}>
-                                    <Form.Label>Watering</Form.Label>
+                                    <Form.Label>Fertilizing</Form.Label>
                                     <Form.Control
                                         name={'fertilizing'}
                                         type={'number'}

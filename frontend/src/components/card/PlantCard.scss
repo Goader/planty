@@ -16,6 +16,9 @@
 .plant-name {
     font-family: 'Rasa', sans-serif;
     font-size: 24px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .info-card .text-right {

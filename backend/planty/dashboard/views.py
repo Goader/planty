@@ -186,7 +186,7 @@ class PlantsView(APIView):
 class EventsView(APIView):
     def get(self, request: Request):
         user: User = request.user
-        serializer = TimeSpanSerializer(data=request.data)
+        serializer = TimeSpanSerializer(data=request.query_params)
 
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -237,7 +237,7 @@ class EventsView(APIView):
 
             for plant in Plant.objects.filter(user=user).iterator():
 
-                calculate_events(plant, 'water', 
+                calculate_events(plant, 'water',
                                  plant.last_watered, 
                                  plant.instruction.watering)
 
