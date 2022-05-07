@@ -5,10 +5,10 @@ import "./GardenView.scss";
 import '../components/card/PlantCard.scss';
 import PlantCard from "../components/card/PlantCard";
 import {Link, useNavigate} from "react-router-dom";
-import {useAuth} from "../components/AuthContext";
+import {useAuth} from "../api/auth/AuthContext";
 import {createPlantsGetRequestConfig, mapResponseToPlant} from "../api/plants";
 import {Plant, PlantResponse} from "../model/plants";
-import {handleUnauthorized} from "../api/auth";
+import {handleUnauthorized} from "../api/auth/util";
 
 
 function GardenView() {

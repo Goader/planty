@@ -3,7 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './FormView.scss';
 import {Formik, FormikHelpers} from "formik";
 import * as Yup from "yup";
-import {useAuth} from "../components/AuthContext";
+import {useAuth} from "../api/auth/AuthContext";
 import {Link, Navigate, useNavigate} from "react-router-dom";
 
 const schema = Yup.object().shape({
