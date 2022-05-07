@@ -6,12 +6,12 @@ import {PlantEvent, PlantEventDetails, PlantEventResponse} from "../model/calend
 import {Alert, Container, Spinner, Stack} from "react-bootstrap";
 import "./CalendarView.scss";
 import CalendarPlantInfo from "../components/CalendarPlantInfo";
-import {useAuth} from "../components/AuthContext";
-import {handleUnauthorized} from "../api/auth";
 import {useNavigate} from "react-router-dom";
 import {Plant, PlantResponse} from "../model/plants";
 import {createPlantsGetRequestConfig, mapResponseToPlant} from "../api/plants";
 import EventDetailsModal from "../components/EventDetailsModal";
+import {useAuth} from "../api/auth/AuthContext";
+import {handleUnauthorized} from "../api/auth/util";
 
 function CalendarView() {
     const [events, setEvents] = useState<Map<string, PlantEvent[]>>(new Map());

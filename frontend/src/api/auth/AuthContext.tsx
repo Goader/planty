@@ -1,7 +1,8 @@
 import React from "react";
-import {AuthData} from "../model/auth";
-import {fetchCurrentUser, getSavedRefreshToken, internalAuthProvider, removeTokens} from "../api/auth";
-import axios, {AxiosError, AxiosRequestConfig, AxiosRequestHeaders} from "axios";
+import {AuthData} from "../../model/auth";
+import axios, {AxiosError, AxiosRequestConfig} from "axios";
+import {internalAuthProvider} from "./auth";
+import {createAuthHeaders, getSavedRefreshToken, removeTokens, UnauthorizedError} from "./util";
 
 type AuthContextType = {
     user: AuthData | null,
@@ -13,25 +14,6 @@ type AuthContextType = {
 }
 
 const AuthContext = React.createContext<AuthContextType>(null!);
-
-async function requestRefresh(refreshToken: string): Promise<AuthData> {
-    const accessTokenResponse = await axios.post<{ access: string }>('http://localhost:3001/users/token/refresh/', {
-        refresh: refreshToken
-    });
-    let accessToken = accessTokenResponse.data.access;
-    let user = await fetchCurrentUser(accessToken);
-    return {
-        ...user,
-        access: accessToken,
-        refresh: refreshToken
-    };
-}
-
-function createAuthHeaders(accessToken: string): AxiosRequestHeaders {
-    return {
-        Authorization: `Bearer ${accessToken}`
-    };
-}
 
 export function AuthProvider({children}: { children: React.ReactNode }) {
     let [user, setUser] = React.useState<AuthData | null>(null);
@@ -56,27 +38,20 @@ export function AuthProvider({children}: { children: React.ReactNode }) {
     const request = async <T, >(config: AxiosRequestConfig): Promise<T> => {
         let currentUser = user;
         if (currentUser === null) {
-            const refreshToken = getSavedRefreshToken();
-            if (refreshToken != null) {
-                currentUser = await requestRefresh(refreshToken);
-                setUser(currentUser);
-            } else {
-                throw Error('unauthorized');
-            }
+            currentUser = await refresh();
         }
         const allConfig = {...config};
         if (!allConfig.headers) {
             allConfig.headers = {};
         }
-        Object.assign(allConfig.headers, createAuthHeaders(currentUser.access));
+        Object.assign(allConfig.headers, createAuthHeaders(currentUser.token.access));
         try {
             const response = await axios.request<T>(allConfig);
             return response.data;
         } catch (e: any) {
             if (e instanceof AxiosError && e.response?.status === 401) {
-                currentUser = await requestRefresh(currentUser.refresh);
-                setUser(currentUser);
-                Object.assign(allConfig.headers, createAuthHeaders(currentUser.access));
+                currentUser = await refresh();
+                Object.assign(allConfig.headers, createAuthHeaders(currentUser.token.access));
                 const response = await axios.request<T>(allConfig);
                 return response.data;
             } else {
@@ -87,17 +62,17 @@ export function AuthProvider({children}: { children: React.ReactNode }) {
 
     const refresh = async (): Promise<AuthData> => {
         let refreshToken: string | null;
-        if (user != null) {
-            refreshToken = user.refresh;
+        if (user !== null) {
+            refreshToken = user.token.refresh;
         } else {
             refreshToken = getSavedRefreshToken();
         }
-        if (refreshToken == null) {
-            throw new Error('unauthorized');
+        if (refreshToken === null) {
+            throw new UnauthorizedError();
         }
-        const currentUser = await requestRefresh(refreshToken);
+        const currentUser = await internalAuthProvider.refresh(refreshToken);
         setUser(currentUser);
-        localStorage.setItem('token', currentUser.access);
+        localStorage.setItem('token', currentUser.token.access);
         return currentUser;
     };
 

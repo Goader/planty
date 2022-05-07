@@ -3,9 +3,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './FormView.scss';
 import * as Yup from 'yup';
 import {Formik, FormikHelpers} from "formik";
-import {RegisterInputError} from "../api/auth";
-import {useAuth} from "../components/AuthContext";
+import {useAuth} from "../api/auth/AuthContext";
 import {Navigate, useNavigate} from "react-router-dom";
+import {RegisterInputError} from "../api/auth/util";
 
 const schema = Yup.object().shape({
     username: Yup.string().required('Name is required'),

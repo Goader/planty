@@ -1,10 +1,12 @@
 import {AxiosRequestConfig} from "axios";
 import {AddPlantRequestBody, Plant, PlantResponse} from "../model/plants";
 
+const plantsUrl = process.env.REACT_APP_API_URL + '/dashboard/plants/';
+
 export function createPlantsPostRequestConfig(data: AddPlantRequestBody): AxiosRequestConfig {
     return {
         method: 'post',
-        url: 'http://localhost:3001/dashboard/plants/',
+        url: plantsUrl,
         data: data
     };
 }
@@ -12,7 +14,7 @@ export function createPlantsPostRequestConfig(data: AddPlantRequestBody): AxiosR
 export function createPlantsGetRequestConfig(): AxiosRequestConfig {
     return {
         method: 'get',
-        url: 'http://localhost:3001/dashboard/plants/'
+        url: plantsUrl
     };
 }
 

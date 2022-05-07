@@ -1,8 +1,10 @@
 import {AxiosRequestConfig} from "axios";
 
+const eventsUrl = process.env.REACT_APP_API_URL + '/dashboard/events/';
+
 export function createCalendarFetchConfig(startDate: Date, endDate: Date): AxiosRequestConfig {
     return {
-        url: 'http://localhost:3001/dashboard/events/',
+        url: eventsUrl,
         method: 'get',
         params: {
             start_date: convertDate(startDate),
