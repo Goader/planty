@@ -27,8 +27,8 @@ function CalendarView() {
     const date = useMemo(() => new Date(), []);
     useEffect(() => {
         let y = date.getFullYear(), m = date.getMonth();
-        let firstDay = new Date(y, m, -7);
-        let lastDay = new Date(y, m + 1, 7);
+        let firstDay = new Date(Date.UTC(y, m, -7));
+        let lastDay = new Date(Date.UTC(y, m + 1, 7));
         let config = createCalendarFetchConfig(firstDay, lastDay);
         request<Array<PlantEventResponse>>(config)
             .then(fetchedEvents => {
