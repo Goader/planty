@@ -59,12 +59,12 @@ function EventDetailsList(props: EventDetailsListProps) {
                 {events.water.map(event => <EventListItem event={event} key={event.plant}/>)}
             </ListGroup>
         }
-        <h5>Insolate</h5>
-        {events.insolation.length === 0 ? <p>No plants to insolate</p> :
-            <ListGroup className={'mb-3'}>
-                {events.insolation.map(event => <EventListItem event={event} key={event.plant}/>)}
-            </ListGroup>
-        }
+        {/*<h5>Insolate</h5>*/}
+        {/*{events.insolation.length === 0 ? <p>No plants to insolate</p> :*/}
+        {/*    <ListGroup className={'mb-3'}>*/}
+        {/*        {events.insolation.map(event => <EventListItem event={event} key={event.plant}/>)}*/}
+        {/*    </ListGroup>*/}
+        {/*}*/}
         <h5>Fertilize</h5>
         {events.fertilize.length === 0 ? <p>No plants to fertilize</p> :
             <ListGroup>
