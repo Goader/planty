@@ -17,7 +17,8 @@ from .serializers import (
     PlantCreateSerializer,
     PlantUpdateSerializer,
     PlantDeleteSerializer,
-    TimeSpanSerializer
+    TimeSpanSerializer,
+    InstructionUpdateSerializer
 )
 
 
@@ -311,3 +312,35 @@ class MyInstructionsView(APIView):
             instructions_json.append(plant_json)
 
         return Response(instructions_json, status=status.HTTP_200_OK)
+
+    def put(self, request):
+        user: User = request.user
+        serializer = InstructionUpdateSerializer(data=request.data)
+
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        data = serializer.validated_data
+
+        try:
+            instruction: Instruction = Instruction.objects.get(pk=data['id'])
+        except Model.DoesNotExist:
+            return Response(data={
+                'id': ['Instruction with the given ID does not exist']
+            }, status=status.HTTP_404_NOT_FOUND)
+
+        if instruction.user != user:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
+        # updating the instruction
+
+        instruction.name = data.get('name', instruction.name)
+        instruction.species = data.get('species', instruction.species)
+
+        instruction.watering = data.get('species', instruction.watering)
+        instruction.insolation = data.get('species', instruction.insolation)
+        instruction.fertilizing = data.get('species', instruction.fertilizing)
+
+        instruction.save()
+
+        return Response(status=status.HTTP_200_OK)
