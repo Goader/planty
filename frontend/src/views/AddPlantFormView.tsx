@@ -29,7 +29,8 @@ function AddPlantFormView() {
         helpers.setSubmitting(true);
         request(createPlantsPostRequestConfig(values))
             .then(() => navigate('/'))
-            .catch(err => handleUnauthorized(err, () => navigate('/login')))
+            .catch(err => handleUnauthorized(err, () => {
+            }))
             .catch(err => {
                 if (err instanceof AxiosError && err.response?.status === 400) {
                     for (const field in err.response.data) {

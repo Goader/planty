@@ -20,7 +20,7 @@ function PlantyNavbar() {
                 <Navbar.Toggle/>
                 <Navbar.Collapse className="justify-content-end">
                     <Stack direction={'horizontal'} gap={3}>
-                        {user != null ? <>
+                        {user !== null ? <>
                                 <Navbar.Text>Logged in as {user.username}</Navbar.Text>
                                 <Button variant={'outline-primary'} onClick={handleLogout}>Logout</Button>
                             </>
