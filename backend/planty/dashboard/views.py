@@ -299,7 +299,7 @@ class MyInstructionsView(APIView):
         instructions = Instruction.objects.filter(user=user)
 
         instructions_json = []
-        for instruction in instructions.iterator():
+        for instruction in instructions:
             plant_json = {
                 'id': str(instruction.id),
                 'name' : instruction.name,
@@ -337,9 +337,9 @@ class MyInstructionsView(APIView):
         instruction.name = data.get('name', instruction.name)
         instruction.species = data.get('species', instruction.species)
 
-        instruction.watering = data.get('species', instruction.watering)
-        instruction.insolation = data.get('species', instruction.insolation)
-        instruction.fertilizing = data.get('species', instruction.fertilizing)
+        instruction.watering = data.get('watering', instruction.watering)
+        instruction.insolation = data.get('insolation', instruction.insolation)
+        instruction.fertilizing = data.get('fertilizing', instruction.fertilizing)
 
         instruction.save()
 
