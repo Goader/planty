@@ -36,6 +36,23 @@ class Plant(models.Model):
     class Meta:
         app_label = 'dashboard'
 
+    def values(self):
+
+        return {
+            'id': str(self.id),
+            'name': self.name,
+            'photo_url': self.photo.url if self.photo.name else None,
+            'species': self.species,
+            'other_info': self.other_info,
+
+            'watering': self.instruction.watering,
+            'insolation': self.instruction.insolation,
+            'fertilizing': self.instruction.fertilizing,
+
+            "last_watered": self.last_watered,
+            "last_fertilized": self.last_fertilized
+        }
+
 
 class EventsHistory(models.Model):
     id = models.UUIDField(primary_key=True)
