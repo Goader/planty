@@ -21,7 +21,8 @@ function GardenView() {
         request<Array<PlantResponse>>(createPlantsGetRequestConfig())
             .then(plants => plants.map(plant => mapResponseToPlant(plant)))
             .then(plants => setPlants(plants))
-            .catch(err => handleUnauthorized(err, () => navigate('/login')))
+            .catch(err => handleUnauthorized(err, () => {
+            }))
             .catch(err => {
                 alert('Unexpected error');
                 console.log(err);

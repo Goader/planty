@@ -62,7 +62,8 @@ function CalendarView() {
                 plants.forEach(plant => plantsMap.set(plant.id, plant));
                 setPlants(plantsMap);
             })
-            .catch(err => handleUnauthorized(err, () => navigate('/login')))
+            .catch(err => handleUnauthorized(err, () => {
+            }))
             .catch(err => {
                 setError(true);
                 console.log(err);
