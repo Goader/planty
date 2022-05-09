@@ -46,6 +46,9 @@ class EventsHistory(models.Model):
     action = models.CharField(max_length=50)
     date = models.DateField()
 
+    class Meta:
+        app_label = 'dashboard'
+
 
 class CustomEvent(models.Model):
     id = models.UUIDField(primary_key=True)
