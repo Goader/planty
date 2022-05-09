@@ -1,4 +1,4 @@
-from datetime import timedelta, date, datetime
+from datetime import timedelta, date, datetime, time
 from uuid import uuid4
 from math import ceil
 import base64
@@ -13,10 +13,10 @@ from rest_framework.views import APIView
 from rest_framework import status
 
 from .notifier import Notifier
-from .models import Plant, Instruction, CustomEvent
+from .models import Plant, Instruction, EventsHistory, CustomEvent
 from .serializers import (
+    EventHappenedSerializer,
     CustomEventCreateSerializer,
-    EventCreateSerializer,
     PlantCreateSerializer,
     PlantUpdateSerializer,
     PlantDeleteSerializer,
@@ -194,15 +194,31 @@ class EventsView(APIView):
         if start_date < today:
             history_start_date = start_date
             history_end_date = min(today, end_date)
-            # TODO add this
+
+            history = EventsHistory.objects.filter(
+                user=user,
+                date__gte=history_start_date,
+                date__lte=history_end_date
+            )
+
+            for event in history.iterator():
+                events.append({
+                    'date': event.date,
+                    'plant': str(event.plant.id),
+                    'action': event.action,
+                    'days_late': None,
+                    'interval': None,
+                    'happened': True,
+                    'message': ''
+                })
 
         # upcoming events
         if end_date >= today:
             upcoming_start_date = max(today, start_date)
             upcoming_end_date = end_date
 
-            def calculate_events(plant: Plant, action: str, last: date, interval: int):
-                interval = timedelta(days=interval)
+            def calculate_events(plant: Plant, action: str, last: date, days_interval: int):
+                interval = timedelta(days=days_interval)
                 planned_date: date = last + interval
                 real_date: date = max(planned_date, today)
 
@@ -216,13 +232,15 @@ class EventsView(APIView):
                 real_date += n * interval
 
                 while real_date < upcoming_end_date:
-                    priority = max(0, (today - planned_date).days) if first else 0
+                    days_late = max(0, (today - planned_date).days) if first else 0
 
                     events.append({
                         'date': real_date.strftime('%Y-%m-%d'),
                         'plant': str(plant.id),
                         'action': action,
-                        'priority': priority,
+                        'days_late': days_late,
+                        'priority': days_interval,
+                        'happened': False,
                         'custom_info': None
                     })
                     real_date += interval
@@ -262,7 +280,7 @@ class EventsView(APIView):
 
     def post(self, request: Request):
         user: User = request.user
-        serializer = EventCreateSerializer(data=request.data)
+        serializer = EventHappenedSerializer(data=request.data)
 
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -279,6 +297,15 @@ class EventsView(APIView):
 
         action = serializer.validated_data['action']
         event_date: datetime = serializer.validated_data['event_date']
+
+        # if there is no time in the date add the current (time is needed for notifier)
+        if event_date.time() == time():
+            time_now = datetime.now().time()
+            event_date = event_date.replace(
+                hour=time_now.hour,
+                minute=time_now.minute,
+                second=time_now.second
+            )
 
         # notifier = Notifier()
         # ok = notifier.notify(
@@ -301,6 +328,16 @@ class EventsView(APIView):
             plant.last_fertilized = event_date.date()
 
         plant.save()
+
+        history_event = EventsHistory.objects.create(
+            id=uuid4(),
+            user=user,
+            plant=plant,
+            action=action,
+            date=event_date.date()
+        )
+
+        history_event.save()
 
         return Response(status=status.HTTP_200_OK)
 

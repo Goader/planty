@@ -37,6 +37,16 @@ class Plant(models.Model):
         app_label = 'dashboard'
 
 
+class EventsHistory(models.Model):
+    id = models.UUIDField(primary_key=True)
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    plant = models.ForeignKey(Plant, on_delete=models.CASCADE)
+
+    action = models.CharField(max_length=50)
+    date = models.DateField()
+
+
 class CustomEvent(models.Model):
     id = models.UUIDField(primary_key=True)
 

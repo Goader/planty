@@ -76,12 +76,11 @@ class TimeSpanSerializer(serializers.Serializer):
         return data
 
 
-class EventCreateSerializer(serializers.Serializer):
-    event_date = serializers.DateTimeField(required=False, default=datetime.now)
+class EventHappenedSerializer(serializers.Serializer):
+    event_date = serializers.DateTimeField(required=False, input_formats=['iso-8601'], default=datetime.now)
     plant = serializers.UUIDField()
     # TODO add move when there is a possibility to add custom events
     action = serializers.ChoiceField(['water', 'fertilize'])
-    message = serializers.CharField(required=False, max_length=400, default='')
 
 
 class CustomEventCreateSerializer(serializers.Serializer):
