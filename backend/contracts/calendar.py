@@ -11,7 +11,8 @@ class Event:
     date: str
     plant: UUID
     action: str
-    priority: str
+    days_late: int
+    interval: int
     message: str
 
 # GET /calendar/events auth
