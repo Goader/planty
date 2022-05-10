@@ -1,8 +1,8 @@
 import React, {useEffect, useMemo, useState} from 'react';
 import Calendar, {CalendarTileProperties} from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
-import {createCalendarFetchConfig} from "../api/calendar";
-import {PlantEvent, PlantEventDetails, PlantEventResponse} from "../model/calendar";
+import {useEventService} from "../api/calendar";
+import {PlantEvent, PlantEventDetails} from "../model/calendar";
 import {Alert, Container, Spinner, Stack} from "react-bootstrap";
 import "./CalendarView.scss";
 import CalendarPlantInfo from "../components/CalendarPlantInfo";
@@ -23,36 +23,17 @@ function CalendarView() {
     const [showDetails, setShowDetails] = useState(false);
     const navigate = useNavigate();
     let {request} = useAuth();
+    const {getEvents} = useEventService();
 
     const date = useMemo(() => new Date(), []);
     useEffect(() => {
         let y = date.getFullYear(), m = date.getMonth();
         let firstDay = new Date(Date.UTC(y, m, -7));
         let lastDay = new Date(Date.UTC(y, m + 1, 7));
-        let config = createCalendarFetchConfig(firstDay, lastDay);
-        request<Array<PlantEventResponse>>(config)
-            .then(fetchedEvents => {
-                const eventMap = new Map<string, PlantEvent[]>();
-                fetchedEvents.forEach(event => {
-                    let [year, month, day] = event.date.split('-');
-                    let dateObj = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
-                    const convertedEvent: PlantEvent = {
-                        date: dateObj,
-                        plant: event.plant,
-                        action: event.action,
-                        priority: event.priority,
-                        message: event.message
-                    };
-                    let eventArray: Array<PlantEvent> | undefined = eventMap.get(convertedEvent.date.toDateString());
-                    if (eventArray === undefined) {
-                        eventArray = [];
-                        eventMap.set(convertedEvent.date.toDateString(), eventArray);
-                    }
-                    eventArray.push(convertedEvent);
-                });
+        getEvents(firstDay, lastDay)
+            .then(eventMap => {
                 setError(false);
                 setEvents(eventMap);
-                console.log(`CalendarView: Fetched ${fetchedEvents.length} events`);
                 return request<Array<PlantResponse>>(createPlantsGetRequestConfig()); // TODO: parallelize this
             })
             .then(plants => plants.map(plant => mapResponseToPlant(plant)))
