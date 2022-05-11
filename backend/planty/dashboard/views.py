@@ -313,76 +313,23 @@ class MyInstructionsView(APIView):
 
         return Response(instructions_json, status=status.HTTP_200_OK)
 
-    def put(self, request):
-        user: User = request.user
-        serializer = InstructionUpdateSerializer(data=request.data)
 
-        if not serializer.is_valid():
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-        data = serializer.validated_data
-
-        try:
-            instruction: Instruction = Instruction.objects.get(pk=data['id'])
-        except Model.DoesNotExist:
-            return Response(data={
-                'id': ['Instruction with the given ID does not exist']
-            }, status=status.HTTP_404_NOT_FOUND)
-
-        if instruction.user != user:
-            return Response(status=status.HTTP_403_FORBIDDEN)
-
-        # updating the instruction
-
-        instruction.name = data.get('name', instruction.name)
-        instruction.species = data.get('species', instruction.species)
-
-        instruction.watering = data.get('species', instruction.watering)
-        instruction.insolation = data.get('species', instruction.insolation)
-        instruction.fertilizing = data.get('species', instruction.fertilizing)
-
-        instruction.save()
-
-        return Response(status=status.HTTP_200_OK)
-
-
-class MyAndPopularInstructionsView(APIView):
+class SuggestedInstructionsView(APIView):
     def get(self, request: Request):
-        user: User = request.user
-        my_instructions = Instruction.objects.filter(user=user)
+        instructions = Instruction.objects.annotate(num_users=Count('user'))
+        desc_suggested_instruction = instructions.order_by('num_users').reverse()
 
-        my_instructions_json = []
-        for my_instruction in my_instructions.iterator():
-            my_instruction_json = {
-                'id': str(my_instruction.id),
-                'name' : my_instruction.name,
-                'species': my_instruction.species,
+        instructions_json = []
+        for instruction in desc_suggested_instruction:
+            instruction_json = {
+                'id': str(instruction.id),
+                'name': instruction.name,
+                'species': instruction.species,
 
-                'watering': my_instruction.watering,
-                'insolation': my_instruction.insolation,
-                'fertilizing': my_instruction.fertilizing,
+                'watering': instruction.watering,
+                'insolation': instruction.insolation,
+                'fertilizing': instruction.fertilizing,
             }
-            my_instructions_json.append(my_instruction_json)
+            instructions_json.append(instruction_json)
 
-        popular_instructions = Instruction.objects.annotate(num_users=Count('user'))
-        desc_popular_instruction = popular_instructions.order_by('num_users').reverse()
-
-        popular_instructions_json = []
-        for popular_instruction in desc_popular_instruction.iterator():
-            popular_instruction_json = {
-                'id': str(popular_instruction.id),
-                'name': popular_instruction.name,
-                'species': popular_instruction.species,
-
-                'watering': popular_instruction.watering,
-                'insolation': popular_instruction.insolation,
-                'fertilizing': popular_instruction.fertilizing,
-            }
-            popular_instructions_json.append(popular_instruction_json)
-
-        my_and_popular_instructions_json = {
-            'my_instructions': my_instruction_json,
-            'popular_instructions': popular_instructions_json
-        }
-
-        return Response(my_and_popular_instructions_json, status=status.HTTP_200_OK)
+        return Response(instructions_json, status=status.HTTP_200_OK)

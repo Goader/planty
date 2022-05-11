@@ -1,10 +1,11 @@
 from django.urls import path
 
-from .views import PlantsView, EventsView, MyInstructionsView, MyAndPopularInstructionsView
+from .views import PlantsView, EventsView, MyInstructionsView, SuggestedInstructionsView
 
 urlpatterns = [
     path('plants/', PlantsView.as_view(), name='PlantsView'),
     path('events/', EventsView.as_view(), name='EventsView'),
-    path('my_instructions/', MyInstructionsView.as_view(), name='MyInstructionsView'),
-    path('my_and_popular_instructions/', MyAndPopularInstructionsView.as_view(), name='MyAndPopularInstructionsView')
+    path('dashboard/instructions/', MyInstructionsView.as_view(), name='MyInstructionsView'),
+    path('dashboard/instructions/seggested', SuggestedInstructionsView.as_view(), name='SuggestedInstructionsView'),
+    path('dashboard/instructions/select', SuggestedInstructionsView.as_view(), name='SuggestedInstructionsView')
 ]
