@@ -1,5 +1,7 @@
 import {AxiosRequestConfig} from "axios";
 import {AddPlantRequestBody, Plant, PlantResponse} from "../model/plants";
+import {useCallback} from "react";
+import {useAuth} from "./auth/AuthContext";
 
 const plantsUrl = process.env.REACT_APP_API_URL + '/dashboard/plants/';
 
@@ -28,4 +30,14 @@ export function mapResponseToPlant(response: PlantResponse): Plant {
         fertilizing: response.fertilizing,
         otherInfo: response.other_info
     };
+}
+
+export function usePlantService() {
+    const {request} = useAuth();
+    const getPlants = useCallback(() => {
+        return request<Array<PlantResponse>>(createPlantsGetRequestConfig())
+            .then(response => response.map(plant => mapResponseToPlant(plant)))
+    }, []);
+
+    return {getPlants};
 }
