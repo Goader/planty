@@ -1,10 +1,10 @@
-import {PlantEvent} from "../model/calendar";
+import {PlantEventDetails} from "../model/calendar";
 import {Badge} from "react-bootstrap";
 import {Variant} from "react-bootstrap/types";
 
 type CalendarPlantInfoProps = {
     name: string,
-    events: Array<PlantEvent>
+    events: Array<PlantEventDetails>
 }
 
 export default function CalendarPlantInfo(props: CalendarPlantInfoProps) {

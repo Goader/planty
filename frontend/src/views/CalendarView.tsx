@@ -2,7 +2,7 @@ import React, {useEffect, useMemo, useState} from 'react';
 import Calendar, {CalendarTileProperties} from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import {createEventDetails, useEventService} from "../api/calendar";
-import {PlantEvent, PlantEventDetails} from "../model/calendar";
+import {PlantEventDetails} from "../model/calendar";
 import {Alert, Container, Spinner, Stack} from "react-bootstrap";
 import "./CalendarView.scss";
 import CalendarPlantInfo from "../components/CalendarPlantInfo";
@@ -60,33 +60,29 @@ function CalendarView() {
             })
             .finally(() => setFetching(false));
 
-    }, [date, navigate, request]);
+    }, [date, getEvents, getPlants, navigate, request]);
 
     const getTileContent = (props: CalendarTileProperties): JSX.Element => {
         let eventList = eventMap.get(props.date.toDateString());
         if (eventList === undefined) {
             eventList = [];
         }
-        const plantMap = new Map<string, Array<PlantEventDetails>>();
+        const eventsByPlant = new Map<string, PlantEventDetails[]>();
         for (let event of eventList) {
-            let plantEvents: Array<PlantEventDetails> | undefined = plantMap.get(event.plant.id);
+            let plantEvents: Array<PlantEventDetails> | undefined = eventsByPlant.get(event.plant.id);
             if (plantEvents === undefined || plantEvents === null) {
                 plantEvents = new Array<PlantEventDetails>();
-                plantMap.set(event.plant.id, plantEvents);
+                eventsByPlant.set(event.plant.id, plantEvents);
             }
             plantEvents.push(event);
         }
-        const entryList = new Array<{ plant: Plant, plantEvents: PlantEvent[] }>();
-        plantMap.forEach((plantEvents, plantId) => {
-            const plant = plants.get(plantId);
-            if (plant === undefined) {
-                console.error('No plant found with id ' + plantId);
-            } else {
-                entryList.push({
-                    plant: plant,
-                    plantEvents: plantEvents
-                });
-            }
+        const entryList = new Array<{ plant: Plant, plantEvents: PlantEventDetails[] }>();
+        eventsByPlant.forEach((plantEvents) => {
+            const plant = plantEvents[0].plant;
+            entryList.push({
+                plant: plant,
+                plantEvents: plantEvents
+            });
         });
         const componentList = entryList.slice(0, 3).map((entry, index) => <div key={index}>
             <CalendarPlantInfo name={entry.plant.name} events={entry.plantEvents}/>

@@ -36,8 +36,8 @@ export function usePlantService() {
     const {request} = useAuth();
     const getPlants = useCallback(() => {
         return request<Array<PlantResponse>>(createPlantsGetRequestConfig())
-            .then(response => response.map(plant => mapResponseToPlant(plant)))
-    }, []);
+            .then(response => response.map(plant => mapResponseToPlant(plant)));
+    }, [request]);
 
     return {getPlants};
 }

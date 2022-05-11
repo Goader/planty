@@ -50,8 +50,8 @@ export function useEventService() {
                 });
                 console.log(`Fetched ${response.length} events`);
                 return events;
-            })
-    }, []);
+            });
+    }, [request]);
 
-    return {getEvents}
+    return {getEvents};
 }
