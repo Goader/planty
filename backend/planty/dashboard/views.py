@@ -294,12 +294,12 @@ class EventsView(APIView):
 
 
 class MyInstructionsView(APIView):
-    def get(self, request: Request):
+    def get(self, request: Request): # TODO not yet merged
         user: User = request.user
-        instructions = Instruction.objects.filter(user=user)
+        my_instructions = Instruction.objects.filter(user=user)
 
-        instructions_json = []
-        for instruction in instructions.iterator():
+        my_instructions_json = []
+        for instruction in my_instructions:
             instruction_json = {
                 'id': str(instruction.id),
                 'name' : instruction.name,
@@ -309,9 +309,39 @@ class MyInstructionsView(APIView):
                 'insolation': instruction.insolation,
                 'fertilizing': instruction.fertilizing,
             }
-            instructions_json.append(instruction_json)
+            my_instructions_json.append(instruction_json)
+
+        suggested = Instruction.objects.annotate(num_users=Count('user'))
+        desc_suggested_instruction = suggested.order_by('num_users').reverse()
+
+        desc_suggested_instructions_json = []
+        for instruction in desc_suggested_instruction:
+            instruction_json = {
+                'id': str(instruction.id),
+                'name': instruction.name,
+                'species': instruction.species,
+
+                'watering': instruction.watering,
+                'insolation': instruction.insolation,
+                'fertilizing': instruction.fertilizing,
+            }
+            desc_suggested_instruction.append(instruction_json)
+
+        instructions_json = {
+            my: my_instructions_json,
+            suggested: desc_suggested_instructions_json
+        }
 
         return Response(instructions_json, status=status.HTTP_200_OK)
+
+    def post(self): # TODO dodanie nowej instrukcji
+        pass
+
+    def put(self): # TODO modyfikacja własnej instrukcji
+        pass
+
+    def delete(self): # TODO usunięcie własnej instrukcji
+        pass
 
 
 class SuggestedInstructionsView(APIView):
@@ -333,3 +363,13 @@ class SuggestedInstructionsView(APIView):
             instructions_json.append(instruction_json)
 
         return Response(instructions_json, status=status.HTTP_200_OK)
+
+
+class SelectInstruction(APIView):
+    def put(self): # TODO instruction_id -> user.instruction.plant ??
+        pass
+
+
+class ShareInstruction(APIView):
+    def put(self):# TODO dodanie pola shared na True plus kopia elementu z nowym instruction_id
+        pass
