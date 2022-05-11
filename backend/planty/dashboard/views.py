@@ -293,8 +293,8 @@ class EventsView(APIView):
         return Response(status=status.HTTP_200_OK)
 
 
-class MyInstructionsView(APIView):
-    def get(self, request: Request): # TODO not yet merged
+class InstructionsView(APIView):
+    def get(self, request: Request):
         user: User = request.user
         my_instructions = Instruction.objects.filter(user=user)
 
