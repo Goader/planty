@@ -70,4 +70,38 @@ You can use this [guide](https://classic.yarnpkg.com/lang/en/docs/creating-a-pro
 * `yarn run [script]` - running a script specified in the `package.json`
 * feel free to add new useful commands!
 
+## :fleur_de_lis: Code Style
 
+### Python
+
+* using spaces (4 spaces for an indent)
+* using typing annotations (both arguments and return values)
+* using snake case
+* **_following PEP-8_**
+* using private attributes with the `_` prefix and properties to access them or modify
+* using immutable classes everywhere it can be done
+* avoiding big constructions (ex. skipping variables creating by passing results straight to the next function if it becomes hard to read), if it does not affect the efficiency noticeably
+* commenting how different chunks of code work if they are not that obvious (ex. some algorithms)
+* aligning splitted function calls, declarations and so on..
+
+
+## :trident: Definition of Done
+
+Every point has different levels of completion. To count it satisfied you must satisfy **_at least_** level. **To satisfy level X you must satisfy each level below X too!**
+
+* **_code works!_**
+  * **_perfectly_**: you have written automatic tests which can be easily run and they pass
+  * **_at least_**: you have thoroughly tested the code by hand, tried out different edge cases and the program works as expected
+  * **_won't even be reviewed_**: program with your code does not fail the tests written before (unless it is a major change and previous tests need to be update, in that case you must update the tests), all the tests must pass!
+* **_code reviewed!_**
+  * **_perfectly_**: 2 or more people have reviewed your code
+  * **_at least_**: one person has reviewed your code, all the comments have been taken into consideration, all the issues have been resolved
+  * **_do not even try_**: it is forbidden to merge pull requests without a review, it is also forbidden to commit straight to _dev_, except of updates of readme or any other file, which does not affect the program execution
+* **_satisfies acceptance criteria!_**
+  * **_perfectly_**: your code 100% satisfy acceptance criterias
+  * **_at least_**: your code does not satisfy some minor acceptance criterias, but they have been discussed internally and with a client
+  * **_a bad idea_**: your changes cannot affect the acceptance criterias which have been already satisfied, but they are not satisfied anymore
+* **_merged!_**
+  * **_perfectly_**: you have rebased your branch onto the branch you are about to merge in, pull request is ready to be merged in one click
+  * **_at least (still better go for "perfectly")_**: you have created a pull request, all the conflicts with the target branch have been resolved, the branch has been merged, the pull request is closed
+  * **_you should not_**: your branch cannot have any ongoing unresolved conflicts with the target branch
