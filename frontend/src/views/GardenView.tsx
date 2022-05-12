@@ -29,13 +29,29 @@ function GardenView() {
             .finally(() => setFetching(false));
     }, [getPlants]);
 
+    const {sendDeleteRequest} = useDeleteResponse();
+
+    const handleRemove = (removeId: any) => {
+        sendDeleteRequest(removeId).then(() => {
+            const leftPlants = plants.filter(plant => {
+                return plant.id != removeId;
+            });
+            setPlants(leftPlants);
+        }).catch(error => {
+            console.log(error);
+        });
+
+    };
+
     return (
         <Container>
             {fetching ? <Spinner animation={'grow'} variant={'success'}/> : <>
                 <Row>
-                    {plants.map(plant => (<Col xs={12} sm={6} xxl={4} className={'mb-3'} key={plant.id}>
-                        <PlantCard plant={plant}/>
-                    </Col>))}
+                    {plants.map(plant => (
+                        <Col xs={12} sm={6} xxl={4} className={'mb-3'} key={plant.id}>
+                            <PlantCard plant={plant} onRemove={handleRemove}/>
+                        </Col>
+                    ))}
                 </Row>
                 <div>
                     <Link to={'/plants/add'}><Button variant={'primary'}>Add plant</Button></Link>

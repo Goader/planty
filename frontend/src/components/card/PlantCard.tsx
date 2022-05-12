@@ -3,7 +3,7 @@ import './PlantCard.scss';
 import {Button, Card, Col, Container, Row} from "react-bootstrap";
 import {Plant} from "../../model/plants";
 
-function PlantCard({plant}: { plant: Plant }) {
+function PlantCard({plant, onRemove}: { plant: Plant, onRemove: any }) {
     const imageUrl = "https://picsum.photos/250";
     return (
         <Card className={'py-4 plant-card'}>
@@ -14,7 +14,14 @@ function PlantCard({plant}: { plant: Plant }) {
                     </Col>
                     <Col xs={12} md={6} className={'d-flex flex-column justify-content-between'}>
                         <div>
-                            <Card.Title className={'plant-name'}>{plant.name}</Card.Title>
+                            <div>
+                                <Card.Title className={'plant-name'}>{plant.name}</Card.Title>
+                                <Button onClick={() => {
+                                    onRemove(plant.id);
+                                }}>
+                                    <i className="fa fa-trash-o my_icon_style" style={{color: '#616161'}}></i>
+                                </Button>
+                            </div>
                             <Card.Subtitle className={'plant-species'}>{plant.species}</Card.Subtitle>
                         </div>
                         <div>
