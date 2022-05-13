@@ -50,7 +50,7 @@ class PlantUpdateSerializer(serializers.Serializer):
     id = serializers.UUIDField()
     name = serializers.CharField(required=False, max_length=50)
     species = serializers.CharField(required=False, max_length=50)
-    image = Base64ImageField(required=False)
+    photo = Base64ImageField(required=False, default=None)
 
     used_instruction = serializers.UUIDField(required=False)
     watering = serializers.IntegerField(required=False, validators=[MinValueValidator(1)])

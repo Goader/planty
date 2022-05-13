@@ -113,11 +113,6 @@ class PlantsView(APIView):
         if plant.user != user:
             return Response(status=status.HTTP_403_FORBIDDEN)
 
-        if 'image' in data:
-            # TODO save the image somewhere and the url write to data['image']
-            pass
-
-
         if 'used_instruction' in data:
             try:
                 data['used_instruction'] = Instruction.objects.get(pk=data['used_instruction'])
@@ -149,7 +144,7 @@ class PlantsView(APIView):
         plant.instruction = data.get('used_instruction', plant.instruction)
         plant.name = data.get('name', plant.name)
         plant.species = data.get('species', plant.species)
-        plant.photo_url = data.get('image', plant.photo_url)
+        plant.photo = data.get('photo', plant.photo)
         plant.other_info = data.get('other_info', plant.other_info)
 
         plant.save()
