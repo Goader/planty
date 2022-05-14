@@ -1,6 +1,6 @@
 export type AccountSettingsData = {
     account_notifications: boolean,
-    water_notifications: boolean,
+    watering_notifications: boolean,
     forum_notifications: boolean
 }
 

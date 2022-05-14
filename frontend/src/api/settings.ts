@@ -12,10 +12,23 @@ export function useSettingsService() {
             url: settingsUrl
         }).then(response => ({
             accountNotifications: response.account_notifications,
-            waterNotifications: response.water_notifications,
+            waterNotifications: response.watering_notifications,
             forumNotifications: response.forum_notifications,
-        } as AccountSettings))
+        } as AccountSettings));
     }, [request]);
 
-    return {getSettings};
+    const saveSettings = useCallback((settings: AccountSettings) => {
+        return request<AccountSettingsData>({
+            method: 'put',
+            url: settingsUrl,
+            data: ({
+                account_notifications: settings.accountNotifications,
+                watering_notifications: settings.waterNotifications,
+                forum_notifications: settings.forumNotifications
+            } as AccountSettingsData)
+        }).then(() => {
+        });
+    }, [request]);
+
+    return {getSettings, saveSettings};
 }
