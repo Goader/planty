@@ -1,8 +1,8 @@
 import React, {useCallback, useMemo, useState} from "react";
 import {AuthData} from "../../model/auth";
-import axios, {AxiosError, AxiosRequestConfig} from "axios";
+import {AxiosRequestConfig} from "axios";
 import {internalAuthProvider} from "./auth";
-import {createAuthHeaders, getSavedRefreshToken, removeTokens, UnauthorizedError} from "./util";
+import {getSavedRefreshToken, removeTokens, UnauthorizedError} from "./util";
 
 type AuthContextType = {
     user: AuthData | null,
@@ -23,7 +23,6 @@ export function AuthProvider({children}: { children: React.ReactNode }) {
     const login = useCallback(async (username: string, password: string) => {
         let user = await internalAuthProvider.login(username, password);
         setUser(user);
-        console.log('set refresh login');
         setPendingRefresh(false);
         return user;
     }, []);
@@ -36,7 +35,6 @@ export function AuthProvider({children}: { children: React.ReactNode }) {
     const register = useCallback(async (username: string, password: string) => {
         let user = await internalAuthProvider.register(username, password);
         setUser(user);
-        console.log('set refresh register');
         setPendingRefresh(false);
         return user;
     }, []);
@@ -46,22 +44,14 @@ export function AuthProvider({children}: { children: React.ReactNode }) {
             setPendingRefresh(true);
             throw new UnauthorizedError();
         }
-        const allConfig = {...config};
-        if (!allConfig.headers) {
-            allConfig.headers = {};
-        }
-        Object.assign(allConfig.headers, createAuthHeaders(user.token.access));
+
         try {
-            const response = await axios.request<T>(allConfig);
-            return response.data;
+            return await internalAuthProvider.request<T>(config, user.token.access);
         } catch (e: any) {
-            if (e instanceof AxiosError && e.response?.status === 401) {
+            if (e instanceof UnauthorizedError) {
                 setPendingRefresh(true);
-                console.log('set refresh request');
-                throw new UnauthorizedError();
-            } else {
-                throw e;
             }
+            throw e;
         }
     }, [user]);
 

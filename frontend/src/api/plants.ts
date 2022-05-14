@@ -1,26 +1,10 @@
-import {AxiosRequestConfig} from "axios";
-import {AddPlantRequestBody, Plant, PlantResponse} from "../model/plants";
+import {AddPlantData, Plant, PlantResponse} from "../model/plants";
 import {useCallback} from "react";
 import {useAuth} from "./auth/AuthContext";
 
 const plantsUrl = process.env.REACT_APP_API_URL + '/dashboard/plants/';
 
-export function createPlantsPostRequestConfig(data: AddPlantRequestBody): AxiosRequestConfig {
-    return {
-        method: 'post',
-        url: plantsUrl,
-        data: data
-    };
-}
-
-export function createPlantsGetRequestConfig(): AxiosRequestConfig {
-    return {
-        method: 'get',
-        url: plantsUrl
-    };
-}
-
-export function mapResponseToPlant(response: PlantResponse): Plant {
+function convertResponse(response: PlantResponse): Plant {
     return {
         id: response.id,
         name: response.name,
@@ -36,9 +20,19 @@ export function mapResponseToPlant(response: PlantResponse): Plant {
 export function usePlantService() {
     const {request} = useAuth();
     const getPlants = useCallback(() => {
-        return request<Array<PlantResponse>>(createPlantsGetRequestConfig())
-            .then(response => response.map(plant => mapResponseToPlant(plant)));
+        return request<Array<PlantResponse>>({
+            method: 'get',
+            url: plantsUrl
+        }).then(response => response.map(plant => convertResponse(plant)));
     }, [request]);
 
-    return {getPlants};
+    const savePlant = useCallback((plant: AddPlantData) => {
+        return request({
+            method: 'post',
+            url: plantsUrl,
+            data: plant
+        });
+    }, [request]);
+
+    return {getPlants, savePlant};
 }
