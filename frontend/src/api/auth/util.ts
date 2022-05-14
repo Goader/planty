@@ -20,13 +20,34 @@ export function createAuthHeaders(accessToken: string): AxiosRequestHeaders {
     };
 }
 
-export class RegisterInputError extends Error {
-    public errors: any;
+export class InvalidDataError extends Error {
+    public data: any;
 
-    constructor(msg: string, errors: object) {
+    constructor(msg: string, data: object) {
         super(msg);
-        this.errors = errors;
-        Object.setPrototypeOf(this, RegisterInputError.prototype);
+        this.data = data;
+        Object.setPrototypeOf(this, InvalidDataError.prototype);
+    }
+}
+
+export class PermissionError extends Error {
+    constructor(message?: string) {
+        super(message);
+        this.name = this.constructor.name;
+    }
+}
+
+export class NotFoundError extends Error {
+    constructor(message?: string) {
+        super(message);
+        this.name = this.constructor.name;
+    }
+}
+
+export class NetworkError extends Error {
+    constructor(message?: string) {
+        super(message);
+        this.name = this.constructor.name;
     }
 }
 
@@ -37,15 +58,43 @@ export class UnauthorizedError extends Error {
     }
 }
 
-export function isErrorUnauthorized(err: any): boolean {
-    return err.message === 'unauthorized' || (err instanceof AxiosError && err.response?.status === 401) || (err instanceof UnauthorizedError);
+export class ServerError extends Error {
+    constructor(message?: string) {
+        super(message);
+        this.name = this.constructor.name;
+    }
 }
 
+export class UnknownError extends Error {
+    constructor(message?: string) {
+        super(message);
+        this.name = this.constructor.name;
+    }
+}
 
-export function handleUnauthorized(err: any, callback: () => void) {
-    if (isErrorUnauthorized(err)) {
-        callback();
+export function processHttpError(err: any): any {
+    if (err instanceof AxiosError && err.code === 'ERR_NETWORK') {
+        return new NetworkError();
+    }
+    if (err.response) {
+        switch (err.response.status) {
+            case 400:
+                return new InvalidDataError('Invalid data', err.response.data);
+            case 401:
+                return new UnauthorizedError();
+            case 403:
+                return new PermissionError();
+            case 404:
+                return new NotFoundError();
+            case 500:
+            case 503:
+                return new ServerError();
+            default:
+                return err;
+        }
+    } else if (err.request) {
+        return new NetworkError();
     } else {
-        throw err;
+        return err;
     }
 }

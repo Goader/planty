@@ -8,7 +8,7 @@ import RegisterView from "./views/RegisterView";
 import MainView from "./views/MainView";
 import AddPlantFormView from "./views/AddPlantFormView";
 import {useAuth} from "./api/auth/AuthContext";
-import {handleUnauthorized} from "./api/auth/util";
+import {NetworkError, UnauthorizedError} from "./api/auth/util";
 
 function App() {
     let {user, refresh, pendingRefresh} = useAuth();
@@ -19,9 +19,15 @@ function App() {
         if (pendingRefresh) {
             console.log('refresh');
             refresh()
-                .then(() => {
+                .catch(err => {
+                    if (err instanceof UnauthorizedError) {
+                        navigate('/login');
+                    } else if (err instanceof NetworkError) {
+                        alert('Network error. Check your internet connection.');
+                    } else {
+                        throw err;
+                    }
                 })
-                .catch(err => handleUnauthorized(err, () => navigate('/login')))
                 .finally(() => setInitialized(true));
         }
     }, [navigate, refresh, pendingRefresh]);

@@ -19,7 +19,7 @@ export default function LoginView() {
         login(values.username, values.password)
             .then(() => navigate('/', {replace: true}))
             .catch(err => {
-                console.log('error during login', err);
+                console.log('Login error', err);
                 helpers.setFieldError('username', 'Invalid credentials');
             })
             .finally(() => helpers.setSubmitting(false));

@@ -1,9 +1,9 @@
-export type AddPlantRequestBody = {
+export type AddPlantData = {
     name: string,
     species: string,
-    watering?: number,
-    insolation?: string,
-    fertilizing?: number
+    watering: number,
+    insolation: string,
+    fertilizing: number
 }
 
 export type Plant = {

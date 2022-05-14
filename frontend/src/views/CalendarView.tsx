@@ -6,12 +6,10 @@ import {PlantEventDetails} from "../model/calendar";
 import {Alert, Container, Spinner, Stack} from "react-bootstrap";
 import "./CalendarView.scss";
 import CalendarPlantInfo from "../components/CalendarPlantInfo";
-import {useNavigate} from "react-router-dom";
 import {Plant} from "../model/plants";
 import {usePlantService} from "../api/plants";
 import EventDetailsModal from "../components/EventDetailsModal";
-import {useAuth} from "../api/auth/AuthContext";
-import {handleUnauthorized} from "../api/auth/util";
+import {UnauthorizedError} from "../api/auth/util";
 
 function CalendarView() {
     const [eventMap, setEventMap] = useState<Map<string, PlantEventDetails[]>>(new Map());
@@ -20,8 +18,6 @@ function CalendarView() {
     const [detailsDate, setDetailsDate] = useState(new Date());
     const [detailsEvents, setDetailsEvents] = useState<Array<PlantEventDetails>>([]);
     const [showDetails, setShowDetails] = useState(false);
-    const navigate = useNavigate();
-    let {request} = useAuth();
     const {getEvents} = useEventService();
     const {getPlants} = usePlantService();
 
@@ -50,17 +46,19 @@ function CalendarView() {
                     }
                 });
                 setError(false);
-                setEventMap(fetchedEventMap); // TODO: parallelize this
+                setEventMap(fetchedEventMap);
             })
-            .catch(err => handleUnauthorized(err, () => {
-            }))
             .catch(err => {
-                setError(true);
-                console.log(err);
+                if (err instanceof UnauthorizedError) {
+                    console.log('CalendarView: Unauthorized');
+                } else {
+                    alert('Unexpected error');
+                    console.error('Unexpected error', err);
+                }
             })
             .finally(() => setFetching(false));
 
-    }, [date, getEvents, getPlants, navigate, request]);
+    }, [date, getEvents, getPlants]);
 
     const getTileContent = (props: CalendarTileProperties): JSX.Element => {
         let eventList = eventMap.get(props.date.toDateString());
