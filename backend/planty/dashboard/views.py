@@ -334,35 +334,35 @@ class InstructionsView(APIView):
 
         return Response(instructions_json, status=status.HTTP_200_OK)
 
-    def post(self): # TODO dodanie nowej instrukcji
-        pass
+    def post(self, request: Request):
+        user: User = request.user
+        serializer = InstructionCreateSerializer(data=request.data)
+
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        data = serializer.validated_data
+
+        instruction: Instruction = Instruction.objects.create(
+            id=uuid4(),
+            name=name,
+
+            user=user,
+            species=data['species'],
+
+            watering=data['watering'],
+            insolation=data['insolation'],
+            fertilizing=data['fertilizing']
+        )
+        instruction.save()
+
+        return Response(status=status.HTTP_201_CREATED)
 
     def put(self): # TODO modyfikacja własnej instrukcji
         pass
 
     def delete(self): # TODO usunięcie własnej instrukcji
         pass
-
-
-class SuggestedInstructionsView(APIView):
-    def get(self, request: Request):
-        instructions = Instruction.objects.annotate(num_users=Count('user'))
-        desc_suggested_instruction = instructions.order_by('num_users').reverse()
-
-        instructions_json = []
-        for instruction in desc_suggested_instruction:
-            instruction_json = {
-                'id': str(instruction.id),
-                'name': instruction.name,
-                'species': instruction.species,
-
-                'watering': instruction.watering,
-                'insolation': instruction.insolation,
-                'fertilizing': instruction.fertilizing,
-            }
-            instructions_json.append(instruction_json)
-
-        return Response(instructions_json, status=status.HTTP_200_OK)
 
 
 class SelectInstruction(APIView):

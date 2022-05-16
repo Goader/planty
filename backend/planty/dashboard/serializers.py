@@ -83,6 +83,17 @@ class EventCreateSerializer(serializers.Serializer):
     action = serializers.ChoiceField(['water', 'fertilize'])
     message = serializers.CharField(required=False, max_length=400, default='')
 
+
+class InstructionCreateSerializer(serializers.Serializer):
+    name = serializers.CharField(required=False, max_length=50)
+
+    species = serializers.CharField(required=False, max_length=50)
+
+    watering = serializers.IntegerField(required=False, validators=[MinValueValidator(1)])
+    insolation = serializers.CharField(required=False, max_length=50)
+    fertilizing = serializers.IntegerField(required=False, validators=[MinValueValidator(1)])
+
+
 class InstructionUpdateSerializer(serializers.Serializer):
     id = serializers.UUIDField()
     name = serializers.CharField(required=False, max_length=50)
