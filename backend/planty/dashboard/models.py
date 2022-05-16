@@ -16,6 +16,8 @@ class Instruction(models.Model):
     insolation = models.CharField(max_length=50)
     fertilizing = models.PositiveIntegerField(validators=[MinValueValidator(1)])
 
+    public = models.CharField(default='False')
+    num_selected = models.PositiveIntegerField(default=0)
     class Meta:
         app_label = 'dashboard'
 
