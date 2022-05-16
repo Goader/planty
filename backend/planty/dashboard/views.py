@@ -359,9 +359,45 @@ class InstructionsView(APIView):
         return Response(status=status.HTTP_201_CREATED)
 
     def put(self): # TODO modyfikacja własnej instrukcji
-        pass
+        user: User = request.user
+        serializer = InstructionUpdateSerializer(data=request.data)
 
-    def delete(self): # TODO usunięcie własnej instrukcji
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        data = serializer.validated_data
+
+        try:
+            instruction: Instruction = Instruction.objects.get(pk=data['id'])
+        except Model.DoesNotExist:
+            return Response(data={
+                'id': ['Plant with the given ID does not exist']
+            }, status=status.HTTP_404_NOT_FOUND)
+
+        if instruction.user != user:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
+
+        if hasattr(instruction, 'public'):
+            if instruction.public == 'True':
+                return Response(data={
+                    'id:': ['Instruction with this ID is public. Cannot modify public instructions.']
+                }, status=status.HTTP_404_NOT_FOUND)
+
+        # updating the instruction
+
+        instruction.name = data.get('name', instruction.name)
+        instruction.species = data.get('species', instruction.species)
+
+        instruction.watering = data.get('watering', instruction.watering)
+        instruction.insolation = data.get('insolation', instruction.insolation)
+        instruction.fertilizing = data.get('fertilizing', instruction.fertilizing)
+
+        plant.save()
+
+        return Response(status=status.HTTP_200_OK)
+
+    def delete(self):
         user: User = request.user
         serializer = InstructionDeleteSerializer(data=request.data)
 
