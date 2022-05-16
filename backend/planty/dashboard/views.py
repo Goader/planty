@@ -362,7 +362,27 @@ class InstructionsView(APIView):
         pass
 
     def delete(self): # TODO usunięcie własnej instrukcji
-        pass
+        user: User = request.user
+        serializer = InstructionDeleteSerializer(data=request.data)
+
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        data = serializer.validated_data
+
+        try:
+            instruction: Instruction = Instruction.objects.get(pk=data['id'])
+        except Model.DoesNotExist:
+            return Response(data={
+                'id': ['Instruction with the given ID does not exist']
+            }, status=status.HTTP_204_NOT_FOUND)
+
+        if instruction.user == user:
+            plant.delete()
+        else:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
+        return Response(status=status.HTTP_200_OK)
 
 
 class SelectInstruction(APIView):
