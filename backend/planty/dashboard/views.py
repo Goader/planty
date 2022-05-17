@@ -311,9 +311,16 @@ class InstructionsView(APIView):
             }
             my_instructions_json.append(instruction_json)
 
+
+        if request.method == 'GET' and 'limit_popular' in request.GET:
+            N = request.GET['limit_popular']
+        else:
+            N = 10
+
         suggested = Instruction.objects.filter(public='True')
-        desc_suggested_instruction = suggested.order_by('num_selected').reverse()
-        # could be changed to select only best N suggested instruction in backend endpoint
+        # returns best N suggested instruction
+        desc_suggested_instruction = suggested.order_by('num_selected').reverse()[:N]
+
 
         desc_suggested_instructions_json = []
         for instruction in desc_suggested_instruction:
