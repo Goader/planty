@@ -18,7 +18,11 @@ from .serializers import (
     PlantUpdateSerializer,
     PlantDeleteSerializer,
     TimeSpanSerializer,
-    InstructionUpdateSerializer
+    InstructionCreateSerializer,
+    InstructionUpdateSerializer,
+    InstructionDeleteSerializer,
+    InstructionSelectSerializer,
+    InstructionShareSerializer
 )
 
 
