@@ -474,7 +474,7 @@ class SelectInstruction(APIView):
             insolation=data['insolation'],
             fertilizing=data['fertilizing'],
 
-            public=True
+            public=False
         )
 
         shared_instruction.save()
@@ -505,7 +505,7 @@ class ShareInstruction(APIView):
         if instruction.public:
             return Response(data={
                 'id:': ['Instruction with this ID is public. Cannot share public instructions.']
-            }, status=status.HTTP_404_NOT_FOUND)
+            }, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
         # creating public instruction
 
