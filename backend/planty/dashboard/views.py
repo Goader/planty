@@ -300,7 +300,7 @@ class EventsView(APIView):
 class InstructionsView(APIView):
     def get(self, request: Request):
         user: User = request.user
-        my_instructions = Instruction.objects.filter(user=user, public='False')
+        my_instructions = Instruction.objects.filter(user=user, public=False)
 
         my_instructions_json = []
         for instruction in my_instructions:
@@ -321,7 +321,7 @@ class InstructionsView(APIView):
         else:
             N = 10
 
-        suggested = Instruction.objects.filter(public='True')
+        suggested = Instruction.objects.filter(public=True)
         # returns best N suggested instruction
         desc_suggested_instruction = suggested.order_by('num_selected').reverse()[:N]
 
@@ -391,10 +391,10 @@ class InstructionsView(APIView):
         if instruction.user != user:
             return Response(status=status.HTTP_403_FORBIDDEN)
 
-        if instruction.public == 'True':
+        if instruction.public:
             return Response(data={
                 'id:': ['Instruction with this ID is public. Cannot modify public instructions.']
-            }, status=status.HTTP_404_NOT_FOUND)
+            }, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
         instruction_json = {
             'id': str(instruction.id),
@@ -454,7 +454,7 @@ class SelectInstruction(APIView):
         if instruction.user != user:
             return Response(status=status.HTTP_403_FORBIDDEN)
 
-        if instruction.public == 'False':
+        if not instruction.public:
             return Response(data={
                 'id:': ['Instruction with this ID is not public. Cannot select non public instructions.']
             }, status=status.HTTP_404_NOT_FOUND)
@@ -474,7 +474,7 @@ class SelectInstruction(APIView):
             insolation=data['insolation'],
             fertilizing=data['fertilizing'],
 
-            public='True'
+            public=True
         )
 
         shared_instruction.save()
@@ -502,7 +502,7 @@ class ShareInstruction(APIView):
         if instruction.user != user:
             return Response(status=status.HTTP_403_FORBIDDEN)
 
-        if instruction.public == 'True':
+        if instruction.public:
             return Response(data={
                 'id:': ['Instruction with this ID is public. Cannot share public instructions.']
             }, status=status.HTTP_404_NOT_FOUND)
@@ -520,7 +520,7 @@ class ShareInstruction(APIView):
             insolation=data['insolation'],
             fertilizing=data['fertilizing'],
 
-            public = 'True'
+            public = True
         )
 
         shared_instruction.save()
