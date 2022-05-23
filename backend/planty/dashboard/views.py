@@ -315,38 +315,7 @@ class InstructionsView(APIView):
             }
             my_instructions_json.append(instruction_json)
 
-
-        if request.method == 'GET' and 'limit_popular' in request.GET:
-            N = request.GET['limit_popular']
-        else:
-            N = 10
-
-        suggested = Instruction.objects.filter(public=True)
-        # returns best N suggested instruction
-        desc_suggested_instruction = suggested.order_by('num_selected').reverse()[:N]
-
-
-        desc_suggested_instructions_json = []
-        for instruction in desc_suggested_instruction:
-            instruction_json = {
-                'id': str(instruction.id),
-                'name': instruction.name,
-                'species': instruction.species,
-
-                'watering': instruction.watering,
-                'insolation': instruction.insolation,
-                'fertilizing': instruction.fertilizing,
-
-                'num_selected': instruction.num_selected
-            }
-            desc_suggested_instruction.append(instruction_json)
-
-        instructions_json = {
-            my: my_instructions_json,
-            suggested: desc_suggested_instructions_json
-        }
-
-        return Response(instructions_json, status=status.HTTP_200_OK)
+        return Response(my_instructions_json, status=status.HTTP_200_OK)
 
     def post(self, request: Request):
         user: User = request.user
@@ -432,6 +401,32 @@ class InstructionsView(APIView):
             return Response(status=status.HTTP_403_FORBIDDEN)
 
         return Response(status=status.HTTP_200_OK)
+
+
+class PopularInstructionsView(APIView):
+    def get(self, request: Request, limit=10):
+        user: User = request.user
+
+        suggested = Instruction.objects.filter(public=True)
+        desc_suggested_instruction = suggested.order_by('num_selected').reverse()[:limit]
+
+
+        desc_suggested_instructions_json = []
+        for instruction in desc_suggested_instruction:
+            instruction_json = {
+                'id': str(instruction.id),
+                'name': instruction.name,
+                'species': instruction.species,
+
+                'watering': instruction.watering,
+                'insolation': instruction.insolation,
+                'fertilizing': instruction.fertilizing,
+
+                'num_selected': instruction.num_selected
+            }
+            desc_suggested_instructions_json.append(instruction_json)
+
+        return Response(desc_suggested_instructions_json, status=status.HTTP_200_OK)
 
 
 class SelectInstruction(APIView):
