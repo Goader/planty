@@ -7,6 +7,7 @@ import LoginView from "./views/LoginView";
 import RegisterView from "./views/RegisterView";
 import MainView from "./views/MainView";
 import AddPlantFormView from "./views/AddPlantFormView";
+import PlantDetailsView from "./views/PlantDetailsView";
 
 function App() {
     return (
@@ -17,6 +18,9 @@ function App() {
                 <Route path="/login" element={<LoginView/>}/>
                 <Route path="/register" element={<RegisterView/>}/>
                 <Route path="/plants/add" element={<AddPlantFormView/>}/>
+                <Route path="/plants/plant_details">
+                    <Route path=":plantId" element={PlantDetailsView}/>
+                </Route>
             </Routes>
             {/*<Footer/>*/}
         </div>

@@ -2,15 +2,23 @@ import React from "react";
 import './PlantCard.scss';
 import {Button, Card, Col, Container, Row} from "react-bootstrap";
 import {Plant} from "../../model/plants";
+import {useNavigate} from "react-router-dom";
 
 function PlantCard({plant}: { plant: Plant }) {
     const imageUrl = "https://picsum.photos/250";
+
+    const navigate = useNavigate();
+
+    const handleImgClick = () => {
+        navigate('plants/plant_details/' + plant.id, {});
+    };
+
     return (
         <Card className={'py-4 plant-card'}>
             <Container>
                 <Row>
                     <Col xs={12} md={6}>
-                        <Card.Img src={imageUrl}/>
+                        <Card.Img onClick={handleImgClick} src={imageUrl}/>
                     </Col>
                     <Col xs={12} md={6} className={'d-flex flex-column justify-content-between'}>
                         <div>

@@ -16,6 +16,13 @@ export function createPlantsGetRequestConfig(): AxiosRequestConfig {
     };
 }
 
+export function createSinglePlantsGetRequest(plantId: string): AxiosRequestConfig {
+    return {
+        method: 'get',
+        url: 'http://localhost:3001/dashboard/plants/' + plantId
+    };
+}
+
 export function mapResponseToPlant(response: PlantResponse): Plant {
     return {
         id: response.id,
