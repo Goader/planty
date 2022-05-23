@@ -377,27 +377,24 @@ class InstructionsView(APIView):
 
         return Response(f'Success, instruction {pk} modified.', status=status.HTTP_200_OK)
 
-    def delete(self, request: Request):
+    def delete(self, request: Request, pk=pk):
         user: User = request.user
-        serializer = InstructionDeleteSerializer(data=request.data)
+        serializer = InstructionDeleteSerializer(pk=pk)
 
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        data = serializer.validated_data
-
         try:
-            instruction: Instruction = Instruction.objects.get(pk=data['id'])
+            instruction: Instruction = Instruction.objects.get(pk=pk)
         except Model.DoesNotExist:
             return Response(data={
                 'id': ['Instruction with the given ID does not exist']
             }, status=status.HTTP_204_NOT_FOUND)
 
-        if instruction.user == user:
-            plant.delete()
-        else:
+        if instruction.user != user:
             return Response(status=status.HTTP_403_FORBIDDEN)
 
+        plant.delete()
         return Response(status=status.HTTP_200_OK)
 
 
