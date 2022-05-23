@@ -35,3 +35,17 @@ class Plant(models.Model):
 
     class Meta:
         app_label = 'dashboard'
+
+
+class CustomEvent(models.Model):
+    id = models.UUIDField(primary_key=True)
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    plant = models.ForeignKey(Plant, on_delete=models.CASCADE)
+
+    date = models.DateField()
+    name = models.CharField(max_length=50)
+    description = models.CharField(max_length=400, default='')
+
+    class Meta:
+        app_label = 'dashboard'

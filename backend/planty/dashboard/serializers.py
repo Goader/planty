@@ -82,3 +82,17 @@ class EventCreateSerializer(serializers.Serializer):
     # TODO add move when there is a possibility to add custom events
     action = serializers.ChoiceField(['water', 'fertilize'])
     message = serializers.CharField(required=False, max_length=400, default='')
+
+
+class CustomEventCreateSerializer(serializers.Serializer):
+    plant = serializers.UUIDField()
+
+    event_date = serializers.DateField()
+    name = serializers.CharField(max_length=50)
+    description = serializers.CharField(required=False, max_length=400, default='')
+
+    def validate(self, data: dict):
+        if data['event_date'] < date.today():
+            raise serializers.ValidationError('event_date cannot be in the past')
+
+        return data

@@ -11,8 +11,9 @@ from rest_framework.views import APIView
 from rest_framework import status
 
 from .notifier import Notifier
-from .models import Plant, Instruction
+from .models import Plant, Instruction, CustomEvent
 from .serializers import (
+    CustomEventCreateSerializer,
     EventCreateSerializer,
     PlantCreateSerializer,
     PlantUpdateSerializer,
@@ -230,7 +231,7 @@ class EventsView(APIView):
                         'plant': str(plant.id),
                         'action': action,
                         'priority': priority,
-                        'message': ''
+                        'custom_info': None
                     })
                     real_date += interval
                     first = False
@@ -244,6 +245,26 @@ class EventsView(APIView):
                 calculate_events(plant, 'fertilize',
                                  plant.last_fertilized,
                                  plant.instruction.fertilizing)
+
+            # custom events
+            custom_events = CustomEvent.objects.filter(
+                user=user,
+                date__gte=upcoming_start_date,
+                date__lte=upcoming_end_date
+            )
+
+            # FIXME update priority according to the PR with events history
+            for event in custom_events.iterator():
+                events.append({
+                    'date': event.date,
+                    'plant': str(event.plant.id),
+                    'action': 'custom',
+                    'priority': None,
+                    'custom_info': {
+                        'name': event.name,
+                        'description': event.description
+                    }
+                })
 
         return Response(events, status=status.HTTP_200_OK)
 
@@ -288,5 +309,41 @@ class EventsView(APIView):
             plant.last_fertilized = event_date.date()
 
         plant.save()
+
+        return Response(status=status.HTTP_200_OK)
+
+
+class CustomEventsView(APIView):
+    def post(self, request: Request):
+        user: User = request.user
+        serializer = CustomEventCreateSerializer(data=request.data)
+
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            plant: Plant = Plant.objects.get(id=serializer.validated_data['plant'])
+        except Model.DoesNotExist:
+            return Response({
+                'plant': ['plant does not exist']
+            }, status=status.HTTP_404_NOT_FOUND)
+
+        if plant.user != user:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
+        event_date: date = serializer.validated_data['event_date']
+        name: str = serializer.validated_data['name']
+        description: str = serializer.validated_data['description']
+
+        event: CustomEvent = CustomEvent.objects.create(
+            id=uuid4(),
+            user=user,
+            plant=plant,
+            date=event_date,
+            name=name,
+            description=description
+        )
+
+        event.save()
 
         return Response(status=status.HTTP_200_OK)
