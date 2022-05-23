@@ -10,7 +10,7 @@ function PlantCard({plant}: { plant: Plant }) {
             <Container>
                 <Row>
                     <Col xs={12} md={6}>
-                        <Card.Img src={imageUrl}/>
+                        <Card.Img src={plant.photoUrl}/>
                     </Col>
                     <Col xs={12} md={6} className={'d-flex flex-column justify-content-between'}>
                         <div>
