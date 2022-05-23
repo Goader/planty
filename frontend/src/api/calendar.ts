@@ -14,8 +14,9 @@ export function createEventDetails(event: PlantEvent, plant: Plant): PlantEventD
         date: event.date,
         action: event.action,
         priority: event.priority,
-        message: event.message,
-        plant: plant
+        daysLate: event.daysLate,
+        plant: plant,
+        customInfo: event.customInfo
     };
 }
 
@@ -39,7 +40,8 @@ export function useEventService() {
                     plant: event.plant,
                     action: event.action,
                     priority: event.priority,
-                    message: event.message
+                    daysLate: event.days_late === null ? 0 : event.days_late,
+                    customInfo: event.custom_info
                 } as PlantEvent;
             });
             console.log(`Fetched ${response.length} events`);

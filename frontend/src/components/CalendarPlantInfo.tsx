@@ -8,9 +8,9 @@ type CalendarPlantInfoProps = {
 }
 
 export default function CalendarPlantInfo(props: CalendarPlantInfoProps) {
-    let maxPriority = Math.max(...props.events.map(event => event.priority));
+    let maxDelay = Math.max(...props.events.map(event => event.daysLate));
     let variant: Variant;
-    switch (maxPriority) {
+    switch (maxDelay) {
         case 0:
             variant = 'success';
             break;
