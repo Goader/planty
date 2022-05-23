@@ -15,6 +15,13 @@ const schema: SchemaOf<AddPlantData> = Yup.object().shape({
     fertilizing: Yup.number()
 }).required();
 
+const toBase64 = (file: any): Promise<any> => new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = error => reject(error);
+});
+
 function AddPlantFormView() {
     const navigate = useNavigate();
     const {savePlant} = usePlantService();
@@ -33,6 +40,7 @@ function AddPlantFormView() {
             })
             .finally(() => helpers.setSubmitting(false));
     };
+
     return (
         <Container>
             <Card className={'form-card p-5 mx-auto'}>
@@ -59,34 +67,54 @@ function AddPlantFormView() {
                           touched,
                           isValid,
                           errors,
-                          isSubmitting
-                      }) => (
-                        <Form onSubmit={handleSubmit} noValidate>
-                            <Form.Group className={'auth-group'}>
-                                <Form.Label>Name</Form.Label>
-                                <Form.Control
-                                    name={'name'}
-                                    type={'text'}
-                                    placeholder={'Name'}
-                                    value={values.name}
-                                    onChange={handleChange}
-                                    onBlur={handleBlur}
-                                    isInvalid={touched.name && !!errors.name}
-                                />
-                                <Form.Control.Feedback type={'invalid'}>{errors.name}</Form.Control.Feedback>
-                            </Form.Group>
-                            <Form.Group className={'auth-group'}>
-                                <Form.Label>Species</Form.Label>
-                                <Form.Control
-                                    name={'species'}
-                                    type={'text'}
-                                    placeholder={'Species'}
-                                    value={values.species}
-                                    onChange={handleChange}
-                                    onBlur={handleBlur}
-                                    isInvalid={touched.species && !!errors.species}
-                                />
-                                <Form.Control.Feedback type={'invalid'}>{errors.species}</Form.Control.Feedback>
+                          isSubmitting,
+                              setFieldValue
+                          }) => (
+                            <Form onSubmit={handleSubmit} noValidate>
+                                <Form.Group className={'auth-group'}>
+                                    <Form.Label>Name</Form.Label>
+                                    <Form.Control
+                                        name={'name'}
+                                        type={'text'}
+                                        placeholder={'Name'}
+                                        value={values.name}
+                                        onChange={handleChange}
+                                        onBlur={handleBlur}
+                                        isInvalid={touched.name && !!errors.name}
+                                    />
+                                    <Form.Control.Feedback type={'invalid'}>{errors.name}</Form.Control.Feedback>
+                                </Form.Group>
+                                <Form.Group className={'auth-group'}>
+                                    <Form.Label>Species</Form.Label>
+                                    <Form.Control
+                                        name={'species'}
+                                        type={'text'}
+                                        placeholder={'Species'}
+                                        value={values.species}
+                                        onChange={handleChange}
+                                        onBlur={handleBlur}
+                                        isInvalid={touched.species && !!errors.species}
+                                    />
+                                    <Form.Control.Feedback type={'invalid'}>{errors.species}</Form.Control.Feedback>
+                                </Form.Group>
+                                <Form.Group className={'auth-group'}>
+                                    <Form.Label>Photo</Form.Label>
+                                    <Form.Control
+                                        name={'photo'}
+                                        type={'file'}
+                                        onChange={(event) => {
+                                            let target = event.currentTarget as HTMLInputElement;
+                                            if (target.files === null) {
+                                                setFieldValue('photo', null);
+                                            } else {
+                                                toBase64(target.files[0])
+                                                    .then(value => {
+                                                        setFieldValue('photo', value);
+                                                    });
+
+                                            }
+                                        }}
+                                    />
                             </Form.Group>
                             <Form.Group className={'auth-group'}>
                                 <Form.Label>Watering</Form.Label>

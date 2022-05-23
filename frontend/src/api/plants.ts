@@ -12,7 +12,8 @@ function convertResponse(response: PlantResponse): Plant {
         watering: response.watering,
         insolation: response.insolation,
         fertilizing: response.fertilizing,
-        otherInfo: response.other_info
+        otherInfo: response.other_info,
+        photoUrl: 'http://localhost:3001' + response.photo_url
     };
 }
 

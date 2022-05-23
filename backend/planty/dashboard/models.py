@@ -27,7 +27,7 @@ class Plant(models.Model):
 
     name = models.CharField(max_length=50)
     species = models.CharField(max_length=50)
-    photo_url = models.URLField(blank=True, null=True)
+    photo = models.ImageField(upload_to='plants', default=None)
     other_info = models.CharField(max_length=400, blank=True, default="")
 
     last_watered = models.DateField(default=date.today)
