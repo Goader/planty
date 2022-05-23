@@ -3,7 +3,7 @@ import {Button, Container, Navbar, Stack} from "react-bootstrap";
 import './PlantyNavbar.scss';
 import cx from 'classnames';
 import {Link, useNavigate} from "react-router-dom";
-import {useAuth} from "../AuthContext";
+import {useAuth} from "../../api/auth/AuthContext";
 
 function PlantyNavbar() {
     const {user, logout} = useAuth();
@@ -20,7 +20,7 @@ function PlantyNavbar() {
                 <Navbar.Toggle/>
                 <Navbar.Collapse className="justify-content-end">
                     <Stack direction={'horizontal'} gap={3}>
-                        {user != null ? <>
+                        {user !== null ? <>
                                 <Navbar.Text>Logged in as {user.username}</Navbar.Text>
                                 <Button variant={'outline-primary'} onClick={handleLogout}>Logout</Button>
                             </>

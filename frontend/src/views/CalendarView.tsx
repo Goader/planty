@@ -1,101 +1,86 @@
 import React, {useEffect, useMemo, useState} from 'react';
 import Calendar, {CalendarTileProperties} from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
-import {createCalendarFetchConfig} from "../api/calendar";
-import {PlantEvent, PlantEventDetails, PlantEventResponse} from "../model/calendar";
+import {createEventDetails, useEventService} from "../api/calendar";
+import {PlantEventDetails} from "../model/calendar";
 import {Alert, Container, Spinner, Stack} from "react-bootstrap";
 import "./CalendarView.scss";
 import CalendarPlantInfo from "../components/CalendarPlantInfo";
-import {useAuth} from "../components/AuthContext";
-import {handleUnauthorized} from "../api/auth";
-import {useNavigate} from "react-router-dom";
-import {Plant, PlantResponse} from "../model/plants";
-import {createPlantsGetRequestConfig, mapResponseToPlant} from "../api/plants";
+import {Plant} from "../model/plants";
+import {usePlantService} from "../api/plants";
 import EventDetailsModal from "../components/EventDetailsModal";
+import {UnauthorizedError} from "../api/auth/util";
 
 function CalendarView() {
-    const [events, setEvents] = useState<Map<string, PlantEvent[]>>(new Map());
-    const [plants, setPlants] = useState<Map<string, Plant>>(new Map());
+    const [eventMap, setEventMap] = useState<Map<string, PlantEventDetails[]>>(new Map());
     const [error, setError] = useState<boolean>(false);
     const [fetching, setFetching] = useState<boolean>(true);
     const [detailsDate, setDetailsDate] = useState(new Date());
     const [detailsEvents, setDetailsEvents] = useState<Array<PlantEventDetails>>([]);
     const [showDetails, setShowDetails] = useState(false);
-    const navigate = useNavigate();
-    let {request} = useAuth();
+    const {getEvents} = useEventService();
+    const {getPlants} = usePlantService();
 
     const date = useMemo(() => new Date(), []);
     useEffect(() => {
         let y = date.getFullYear(), m = date.getMonth();
         let firstDay = new Date(Date.UTC(y, m, -7));
         let lastDay = new Date(Date.UTC(y, m + 1, 7));
-        let config = createCalendarFetchConfig(firstDay, lastDay);
-        request<Array<PlantEventResponse>>(config)
-            .then(fetchedEvents => {
-                const eventMap = new Map<string, PlantEvent[]>();
-                fetchedEvents.forEach(event => {
-                    let [year, month, day] = event.date.split('-');
-                    let dateObj = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
-                    const convertedEvent: PlantEvent = {
-                        date: dateObj,
-                        plant: event.plant,
-                        action: event.action,
-                        priority: event.priority,
-                        message: event.message
-                    };
-                    let eventArray: Array<PlantEvent> | undefined = eventMap.get(convertedEvent.date.toDateString());
-                    if (eventArray === undefined) {
-                        eventArray = [];
-                        eventMap.set(convertedEvent.date.toDateString(), eventArray);
-                    }
-                    eventArray.push(convertedEvent);
-                });
-                setError(false);
-                setEvents(eventMap);
-                console.log(`CalendarView: Fetched ${fetchedEvents.length} events`);
-                return request<Array<PlantResponse>>(createPlantsGetRequestConfig()); // TODO: parallelize this
-            })
-            .then(plants => plants.map(plant => mapResponseToPlant(plant)))
-            .then(plants => {
-                console.log(`CalendarView: Fetched ${plants.length} plants`);
+        Promise.all([getEvents(firstDay, lastDay), getPlants()])
+            .then(result => {
+                const [events, plants] = result;
                 const plantsMap = new Map<string, Plant>();
                 plants.forEach(plant => plantsMap.set(plant.id, plant));
-                setPlants(plantsMap);
+                const fetchedEventMap = new Map<string, PlantEventDetails[]>();
+                events.forEach(event => {
+                    let eventArray: Array<PlantEventDetails> | undefined = fetchedEventMap.get(event.date.toDateString());
+                    if (eventArray === undefined) {
+                        eventArray = [];
+                        fetchedEventMap.set(event.date.toDateString(), eventArray);
+                    }
+                    const plant = plantsMap.get(event.plant);
+                    if (plant === undefined) {
+                        console.error('No plant found for event', event);
+                    } else {
+                        eventArray.push(createEventDetails(event, plant));
+                    }
+                });
+                setError(false);
+                setEventMap(fetchedEventMap);
             })
-            .catch(err => handleUnauthorized(err, () => navigate('/login')))
             .catch(err => {
-                setError(true);
-                console.log(err);
+                if (err instanceof UnauthorizedError) {
+                    console.log('CalendarView: Unauthorized');
+                } else {
+                    alert('Unexpected error');
+                    console.error('Unexpected error', err);
+                }
             })
             .finally(() => setFetching(false));
 
-    }, [date, navigate, request]);
+    }, [date, getEvents, getPlants]);
 
     const getTileContent = (props: CalendarTileProperties): JSX.Element => {
-        let eventList = events.get(props.date.toDateString());
+        let eventList = eventMap.get(props.date.toDateString());
         if (eventList === undefined) {
             eventList = [];
         }
-        const plantMap = new Map<string, Array<PlantEvent>>();
+        const eventsByPlant = new Map<string, PlantEventDetails[]>();
         for (let event of eventList) {
-            let plantEvents: Array<PlantEvent> | undefined = plantMap.get(event.plant);
+            let plantEvents: Array<PlantEventDetails> | undefined = eventsByPlant.get(event.plant.id);
             if (plantEvents === undefined || plantEvents === null) {
-                plantEvents = new Array<PlantEvent>();
-                plantMap.set(event.plant, plantEvents);
+                plantEvents = new Array<PlantEventDetails>();
+                eventsByPlant.set(event.plant.id, plantEvents);
             }
             plantEvents.push(event);
         }
-        const entryList = new Array<{ plant: Plant, plantEvents: PlantEvent[] }>();
-        plantMap.forEach((plantEvents, plantId) => {
-            const plant = plants.get(plantId);
-            if (plant === undefined) {
-                console.error('No plant found with id ' + plantId);
-            } else {
-                entryList.push({
-                    plant: plant,
-                    plantEvents: plantEvents
-                });
-            }
+        const entryList = new Array<{ plant: Plant, plantEvents: PlantEventDetails[] }>();
+        eventsByPlant.forEach((plantEvents) => {
+            const plant = plantEvents[0].plant;
+            entryList.push({
+                plant: plant,
+                plantEvents: plantEvents
+            });
         });
         const componentList = entryList.slice(0, 3).map((entry, index) => <div key={index}>
             <CalendarPlantInfo name={entry.plant.name} events={entry.plantEvents}/>
@@ -126,24 +111,12 @@ function CalendarView() {
     };
 
     const handleDayClick = (date: Date) => {
-        let eventList = events.get(date.toDateString());
+        let eventList = eventMap.get(date.toDateString());
         if (eventList === undefined) {
             eventList = [];
         }
-        const eventDetails = eventList.reduce<PlantEventDetails[]>((result, event) => {
-            const plant = plants.get(event.plant);
-            if (plant === undefined) {
-                console.error('No plant found with id ' + event.plant);
-            } else {
-                result.push({
-                    ...event,
-                    plantDetails: plant
-                });
-            }
-            return result;
-        }, []);
         setDetailsDate(date);
-        setDetailsEvents(eventDetails);
+        setDetailsEvents(eventList);
         setShowDetails(true);
     };
 
