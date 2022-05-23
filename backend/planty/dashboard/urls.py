@@ -1,6 +1,7 @@
 from django.urls import path
 
-from .views import PlantsView, EventsView, InstructionsView, SelectInstructionView, ShareInstruction
+from .views import PlantsView, EventsView, InstructionsView, PopularInstructionsView, \
+    SelectInstructionView, ShareInstruction
 
 urlpatterns = [
     path('plants/', PlantsView.as_view(), name='PlantsView'),
