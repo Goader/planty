@@ -17,7 +17,6 @@ function App() {
 
     useEffect(() => {
         if (pendingRefresh) {
-            console.log('refresh');
             refresh()
                 .catch(err => {
                     if (err instanceof UnauthorizedError) {

@@ -68,7 +68,6 @@ export function AuthProvider({children}: { children: React.ReactNode }) {
         }
         const currentUser = await internalAuthProvider.refresh(refreshToken);
         setUser(currentUser);
-        console.log('set user refresh');
         localStorage.setItem('token', currentUser.token.access);
         return currentUser;
     }, [user]);
