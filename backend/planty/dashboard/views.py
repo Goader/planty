@@ -341,17 +341,17 @@ class InstructionsView(APIView):
 
         return Response(status=status.HTTP_201_CREATED)
 
-    def put(self, request: Request):
+    def put(self, request: Request, pk=pk):
         user: User = request.user
         serializer = InstructionSelectSerializer(data=request.data)
 
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        data = serializer.validated_data
+        data = request.data
 
         try:
-            instruction: Instruction = Instruction.objects.get(pk=data['id'])
+            instruction: Instruction = Instruction.objects.get(pk=pk)
         except Model.DoesNotExist:
             return Response(data={
                 'id': ['Plant with the given ID does not exist']
@@ -365,19 +365,17 @@ class InstructionsView(APIView):
                 'id:': ['Instruction with this ID is public. Cannot modify public instructions.']
             }, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
-        instruction_json = {
-            'id': str(instruction.id),
-            'name': instruction.name,
-            'species': instruction.species,
 
-            'watering': instruction.watering,
-            'insolation': instruction.insolation,
-            'fertilizing': instruction.fertilizing,
+        instruction.name = data.get('name', instruction.name),
+        instruction.species = data.get('species', instruction.species),
 
-            'public' : instruction.public
-        }
+        instruction.fertilizing = data.get('fertilizing', instruction.fertilizing),
+        instruction.insolation = data.get('insolation', instruction.insolation),
+        instruction.watering = data.get('watering', instruction.watering),
 
-        return Response(instruction_json, status=status.HTTP_200_OK)
+        instruction.save()
+
+        return Response(f'Success, instruction {pk} modified.', status=status.HTTP_200_OK)
 
     def delete(self, request: Request):
         user: User = request.user
