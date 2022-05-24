@@ -341,7 +341,7 @@ class InstructionsView(APIView):
 
         return Response(status=status.HTTP_201_CREATED)
 
-    def put(self, request: Request, **kwargs):
+    def put(self, request: Request):
         user: User = request.user
         serializer = InstructionSelectSerializer(data=self.kwargs['uuid'])
 
