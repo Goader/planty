@@ -399,12 +399,14 @@ class InstructionsView(APIView):
 
 
 class PopularInstructionsView(APIView):
-    def get(self, request: Request, limit=10):
-        user: User = request.user
+    def get(self, request: Request):
+        if request.method == 'GET' and 'limit' in request.GET:
+            N = request.GET['limit']
+        else:
+            N = 10
 
         suggested = Instruction.objects.filter(public=True)
-        desc_suggested_instruction = suggested.order_by('num_selected').reverse()[:limit]
-
+        desc_suggested_instruction = suggested.order_by('num_selected').reverse()[:N]
 
         desc_suggested_instructions_json = []
         for instruction in desc_suggested_instruction:
