@@ -3,6 +3,7 @@ import CalendarView from "./CalendarView";
 import GardenView from "./GardenView";
 import React, {useCallback, useState} from "react";
 import {Link, Route, Routes, useLocation} from "react-router-dom";
+import InstructionsView from "./InstructionsView";
 
 const tabs = {
     "calendar": {
@@ -14,6 +15,11 @@ const tabs = {
         title: "Garden",
         path: '/plants',
         content: <GardenView/>
+    },
+    "instructions": {
+        title: "Instructions",
+        path: '/instructions',
+        content: <InstructionsView/>
     }
 };
 
