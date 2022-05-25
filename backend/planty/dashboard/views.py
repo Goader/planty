@@ -426,7 +426,7 @@ class PopularInstructionsView(APIView):
         return Response(desc_suggested_instructions_json, status=status.HTTP_200_OK)
 
 
-class SelectInstruction(APIView):
+class SelectInstructionView(APIView):
     def get(self, request: Request):
         user: User = request.user
         serializer = InstructionSelectSerializer(data=request.data)
@@ -474,7 +474,7 @@ class SelectInstruction(APIView):
         return Response(status=status.HTTP_201_CREATED)
 
 
-class ShareInstruction(APIView):
+class ShareInstructionView(APIView):
     def put(self, request: Request):
         user: User = request.user
         serializer = InstructionShareSerializer(data=request.data)
