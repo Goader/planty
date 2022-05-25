@@ -475,7 +475,7 @@ class SelectInstructionView(APIView):
 
 
 class ShareInstructionView(APIView):
-    def put(self, request: Request):
+    def post(self, request: Request):
         user: User = request.user
         serializer = InstructionShareSerializer(data=request.data)
 
