@@ -1,6 +1,6 @@
-import {useAuth} from "../components/AuthContext";
 import {useCallback} from "react";
 import {AccountSettings, AccountSettingsData} from "../model/settings";
+import {useAuth} from "./auth/AuthContext";
 
 const settingsUrl = 'http://localhost:3001/settings/';
 
