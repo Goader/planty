@@ -9,9 +9,9 @@ class ScheduleNotificationRequest(BaseModel):
     contents: List[str]
     
     scheduled_datetime: str = Field(regex=r'\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}')
-    category: str = Field(regex=r'watering')
+    category: str = Field(regex=r'water|insolation|fertilize|custom')
     
-    user_uuid: UUID
+    user_uuid: int
     plant_uuid: UUID
 
 

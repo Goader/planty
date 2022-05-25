@@ -52,11 +52,17 @@ async def schedule(response: Response, body: ScheduleNotificationRequest = Body(
         scheduled = datetime.strptime(scheduled, '%Y-%m-%d %H:%M:%S')
         scheduled = scheduled.replace(tzinfo=utc)
 
-        if category == 'watering':
-            strategy = os.getenv('WATERING_NOTIFICATION_STRATEGY')
+        if category == 'water':
+            strategy = os.getenv('WATER_NOTIFICATION_STRATEGY', '0')
+        elif category == 'insolation':
+            strategy = os.getenv('INSOLATION_NOTIFICATION_STRATEGY', '0')
+        elif category == 'fertilize':
+            strategy = os.getenv('FERTILIZE_NOTIFICATION_STRATEGY', '0')
+        elif category == 'custom':
+            strategy = os.getenv('CUSTOM_NOTIFICATION_STRATEGY', '0')
         else:
             response.status_code = status.HTTP_404_NOT_FOUND
-            return {"message": 'unkown category'}
+            return {"message": 'unknown category'}
 
         tags = [user_uuid, plant_uuid]
 

@@ -1,6 +1,5 @@
 from datetime import datetime
 from typing import List
-import os
 import requests
 
 from django.contrib.auth.models import User
@@ -14,7 +13,7 @@ class Notifier:
         self._notifier_endpoint = settings.NOTIFIER_ENDPOINT
 
     def notify(
-            self, 
+            self,
             user: User,
             plant: Plant,
             subject: str,
@@ -26,7 +25,7 @@ class Notifier:
             'target': user.email,
             'subject': subject,
             'contents': contents,
-            'scheduled_datetime': scheduled_datetime.strftime("%Y-%m-%d %H-%M-%S"),
+            'scheduled_datetime': scheduled_datetime.strftime("%Y-%m-%d %H:%M:%S"),
             'category': action,
             'user_uuid': str(user.id),
             'plant_uuid': str(plant.id)
