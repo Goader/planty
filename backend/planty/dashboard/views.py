@@ -1,9 +1,7 @@
 from datetime import timedelta, date, datetime, time
 from uuid import uuid4
 from math import ceil
-import base64
 
-from django.core.files.base import ContentFile
 from django.contrib.auth.models import User
 from django.db.models import Model
 
@@ -202,14 +200,32 @@ class EventsView(APIView):
             )
 
             for event in history.iterator():
+                if event.action == 'custom':
+                    event_id = event.id
+
+                    try:
+                        custom_event: CustomEvent = CustomEvent.objects.get(id=event_id)
+                    except CustomEvent.DoesNotExist:
+                        pass
+
+                    custom_info = {
+                        'name': custom_event.name,
+                        'description': custom_event.description
+                    }
+                else:
+                    event_id = None
+                    custom_info = None
+
                 events.append({
+                    'id': event_id,
                     'date': event.date,
                     'plant': str(event.plant.id),
                     'action': event.action,
                     'days_late': None,
                     'interval': None,
                     'happened': True,
-                    'message': ''
+                    # TODO alter custom info
+                    'custom_info': custom_info
                 })
 
         # upcoming events
@@ -235,11 +251,12 @@ class EventsView(APIView):
                     days_late = max(0, (today - planned_date).days) if first else 0
 
                     events.append({
+                        'id': None,
                         'date': real_date.strftime('%Y-%m-%d'),
                         'plant': str(plant.id),
                         'action': action,
                         'days_late': days_late,
-                        'priority': days_interval,
+                        'interval': days_interval,
                         'happened': False,
                         'custom_info': None
                     })
@@ -259,17 +276,19 @@ class EventsView(APIView):
             # custom events
             custom_events = CustomEvent.objects.filter(
                 user=user,
-                date__gte=upcoming_start_date,
-                date__lte=upcoming_end_date
+                date__lte=upcoming_end_date,
+                happened=False
             )
 
-            # FIXME update priority according to the PR with events history
             for event in custom_events.iterator():
                 events.append({
-                    'date': event.date,
+                    'id': event.id,
+                    'date': max(today, event.date),
                     'plant': str(event.plant.id),
                     'action': 'custom',
-                    'priority': None,
+                    'days_late': max(0, (event.date - today).days),
+                    'interval': None,
+                    'happened': False,
                     'custom_info': {
                         'name': event.name,
                         'description': event.description
@@ -322,20 +341,39 @@ class EventsView(APIView):
 
         #     })
 
-        if action == 'water':
-            plant.last_watered = event_date.date()
-        elif action == 'fertilize':
-            plant.last_fertilized = event_date.date()
+        if action != 'custom':
+            if action == 'water':
+                plant.last_watered = event_date.date()
+            elif action == 'fertilize':
+                plant.last_fertilized = event_date.date()
 
-        plant.save()
+            plant.save()
 
-        history_event = EventsHistory.objects.create(
-            id=uuid4(),
-            user=user,
-            plant=plant,
-            action=action,
-            date=event_date.date()
-        )
+            history_event = EventsHistory.objects.create(
+                id=uuid4(),
+                user=user,
+                plant=plant,
+                action=action,
+                date=event_date.date()
+            )
+
+        else:
+            event_id = serializer.validated_data['id']
+
+            try:
+                _: CustomEvent = CustomEvent.objects.get(id=event_id)
+            except CustomEvent.DoesNotExist:
+                return Response({
+                    'id': ['event does not exist']
+                }, status=status.HTTP_404_NOT_FOUND)
+
+            history_event = EventsHistory.objects.create(
+                id=event_id,
+                user=user,
+                plant=plant,
+                action=action,
+                date=event_date.date()
+            )
 
         history_event.save()
 
