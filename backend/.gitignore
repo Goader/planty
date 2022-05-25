@@ -133,3 +133,4 @@ dmypy.json
 
 !notifications/.env
 **/keyfile
+planty/media

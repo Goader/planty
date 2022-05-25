@@ -4,30 +4,30 @@ import {Button, Col, Container, Row, Spinner} from "react-bootstrap";
 import "./GardenView.scss";
 import '../components/card/PlantCard.scss';
 import PlantCard from "../components/card/PlantCard";
-import {Link, useNavigate} from "react-router-dom";
-import {useAuth} from "../components/AuthContext";
-import {createPlantsGetRequestConfig, mapResponseToPlant} from "../api/plants";
-import {Plant, PlantResponse} from "../model/plants";
-import {handleUnauthorized} from "../api/auth";
+import {Link} from "react-router-dom";
+import {Plant} from "../model/plants";
+import {UnauthorizedError} from "../api/auth/util";
+import {usePlantService} from "../api/plants";
 
 
 function GardenView() {
-    const {request} = useAuth();
     const [fetching, setFetching] = useState(true);
     const [plants, setPlants] = useState<Array<Plant>>([]);
-    const navigate = useNavigate();
+    const {getPlants} = usePlantService();
 
     useEffect(() => {
-        request<Array<PlantResponse>>(createPlantsGetRequestConfig())
-            .then(plants => plants.map(plant => mapResponseToPlant(plant)))
+        getPlants()
             .then(plants => setPlants(plants))
-            .catch(err => handleUnauthorized(err, () => navigate('/login')))
             .catch(err => {
-                alert('Unexpected error');
-                console.log(err);
+                if (err instanceof UnauthorizedError) {
+                    console.log('GardenView: Unauthorized');
+                } else {
+                    alert('Unexpected error');
+                    console.error('Unexpected error', err);
+                }
             })
             .finally(() => setFetching(false));
-    }, [navigate, request]);
+    }, [getPlants]);
 
     return (
         <Container>

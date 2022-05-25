@@ -25,7 +25,7 @@ from .validators import (
 class PlantCreateSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=50)
     species = serializers.CharField(max_length=50)
-    image = Base64ImageField(required=False, default=None)
+    photo = Base64ImageField(required=False, default=None)
 
     used_instruction = serializers.UUIDField(required=False)
     watering = serializers.IntegerField(required=False, validators=[MinValueValidator(1)])
@@ -50,7 +50,7 @@ class PlantUpdateSerializer(serializers.Serializer):
     id = serializers.UUIDField()
     name = serializers.CharField(required=False, max_length=50)
     species = serializers.CharField(required=False, max_length=50)
-    image = Base64ImageField(required=False)
+    photo = Base64ImageField(required=False, default=None)
 
     used_instruction = serializers.UUIDField(required=False)
     watering = serializers.IntegerField(required=False, validators=[MinValueValidator(1)])
@@ -76,9 +76,22 @@ class TimeSpanSerializer(serializers.Serializer):
         return data
 
 
-class EventCreateSerializer(serializers.Serializer):
-    event_date = serializers.DateTimeField(required=False, default=datetime.now)
+class EventHappenedSerializer(serializers.Serializer):
+    event_date = serializers.DateTimeField(required=False, input_formats=['iso-8601'], default=datetime.now)
     plant = serializers.UUIDField()
     # TODO add move when there is a possibility to add custom events
     action = serializers.ChoiceField(['water', 'fertilize'])
-    message = serializers.CharField(required=False, max_length=400, default='')
+
+
+class CustomEventCreateSerializer(serializers.Serializer):
+    plant = serializers.UUIDField()
+
+    event_date = serializers.DateField()
+    name = serializers.CharField(max_length=50)
+    description = serializers.CharField(required=False, max_length=400, default='')
+
+    def validate(self, data: dict):
+        if data['event_date'] < date.today():
+            raise serializers.ValidationError('event_date cannot be in the past')
+
+        return data

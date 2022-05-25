@@ -1,23 +1,33 @@
 import {Plant} from "./plants";
 
-export type PlantEvent = {
+type BasePlantEvent = {
     date: Date
-    plant: string
     action: Action
-    priority: number
-    message: string
+    daysLate: number
+    priority: number | null
+    customInfo: CustomEventInfo | null
+}
+
+export type PlantEvent = BasePlantEvent & {
+    plant: string
+}
+
+export type PlantEventDetails = BasePlantEvent & {
+    plant: Plant
+}
+
+export type CustomEventInfo = {
+    name: string
+    description: string
 }
 
 export type PlantEventResponse = {
     date: string
     plant: string
     action: Action
-    priority: number
-    message: string
-}
-
-export type PlantEventDetails = PlantEvent & {
-    plantDetails: Plant
+    days_late: number | null
+    priority: number | null
+    custom_info: CustomEventInfo | null
 }
 
 export type Action = 'water' | 'insolation' | 'fertilize' | 'custom'
