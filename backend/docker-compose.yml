@@ -32,23 +32,21 @@ services:
     networks:
       - planty_mail_net
 
-  mongo:
-    image: mongo
-    container_name: mongodb
-    restart: unless-stopped
+  postgresql:
+    image: postgres
+    container_name: documenthub_postgresql
+    ports:
+      -  5432:5432
     environment:
-      MONGO_INITDB_DATABASE: ${MONGO_DATABASE}
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
     volumes:
-      - planty_mongo_volume_data:/data/db
-    # uncomment this if you want the service to be available outside of docker network
-    # ports:
-    #   - 27017:27017
+      - planty_volume_postgres_data:/var/lib/postgresql/data/
 
 
 volumes:
-  planty_mongo_volume_data:
+  planty_volume_postgres_data:
 
 networks:
   planty_mail_net:
