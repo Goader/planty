@@ -21,6 +21,23 @@
     white-space: nowrap;
 }
 
+.delete-icon {
+    // background-color: #367B00;
+    position: absolute;
+    width: auto;
+    right: -0px;
+}
+
+.delete-icon:hover {
+    filter: invert(100%) sepia() saturate(10000%) hue-rotate(290deg) saturate(1000)
+    // position: absolute;
+    // width: auto;
+    // right: -0px;
+    // background-color: red;
+    // -webkit-mask: url('../../DeleteIcon.svg') no-repeat center;
+    // mask: url('../../DeleteIcon.svg') no-repeat center;
+}
+
 .info-card .text-right {
     text-align: right;
 }

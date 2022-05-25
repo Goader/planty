@@ -6,6 +6,7 @@ import * as Yup from "yup";
 import {SchemaOf} from "yup";
 import {usePlantService} from "../api/plants";
 import {AddPlantData} from "../model/plants";
+import {Link} from "react-router-dom";
 
 const schema: SchemaOf<AddPlantData> = Yup.object().shape({
     name: Yup.string().defined().required('Name is required'),
@@ -129,7 +130,7 @@ function AddPlantFormView() {
                                     type={'invalid'}>{errors.watering}</Form.Control.Feedback>
                             </Form.Group>
                             <Form.Group className={'auth-group'}>
-                                <Form.Label>Isolation</Form.Label>
+                                <Form.Label>Insolation</Form.Label>
                                 <Form.Control
                                     name={'insolation'}
                                     type={'text'}
@@ -157,9 +158,13 @@ function AddPlantFormView() {
                             </Form.Group>
                             <Button type={'submit'} className={'mt-3'}
                                     disabled={!isValid || isSubmitting}>Add</Button>
+
                         </Form>
                     )}
                 </Formik>
+
+                <p>Not ready for a new plant? <Link to={'/plants'}>Back to garden</Link></p>
+                
             </Card>
         </Container>
     );

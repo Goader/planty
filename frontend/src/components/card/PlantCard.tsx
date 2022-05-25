@@ -2,12 +2,20 @@ import React from "react";
 import './PlantCard.scss';
 import {Button, Card, Col, Container, Row} from "react-bootstrap";
 import {Plant} from "../../model/plants";
+import DeleteIcon from "../../DeleteIcon.svg";
+
 
 function PlantCard({plant}: { plant: Plant }) {
     const imageUrl = "https://picsum.photos/250";
+    
     return (
         <Card className={'py-4 plant-card'}>
             <Container>
+                <Row xs={12} md={6}>
+                    <div className={'delete-icon'}>
+                        <img src={DeleteIcon} alt="trash"/>
+                    </div>
+                </Row>
                 <Row>
                     <Col xs={12} md={6}>
                         <Card.Img src={plant.photoUrl}/>
