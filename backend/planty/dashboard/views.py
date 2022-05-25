@@ -354,7 +354,7 @@ class CustomEventsView(APIView):
 
         try:
             plant: Plant = Plant.objects.get(id=serializer.validated_data['plant'])
-        except Model.DoesNotExist:
+        except Plant.DoesNotExist:
             return Response({
                 'plant': ['plant does not exist']
             }, status=status.HTTP_404_NOT_FOUND)
@@ -376,5 +376,21 @@ class CustomEventsView(APIView):
         )
 
         event.save()
+
+        notifier = Notifier()
+        ok = notifier.notify(
+            user=user,
+            plant=plant,
+            subject=settings.NOTIFIER_SUBJECTS['custom'],
+            contents=[
+                message.format(plant_name=plant.name)
+                for message in settings.NOTIFIER_CONTENTS['custom']
+            ],
+            scheduled_datetime=event_date,
+            action='custom'
+        )
+
+        if not ok:
+            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         return Response(status=status.HTTP_200_OK)

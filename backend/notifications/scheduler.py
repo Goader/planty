@@ -31,7 +31,7 @@ class Scheduler:
 
         # scheduling
         rules = notification_strategy.split(';')
-        assert len(messages) == len(rules), 'the amount of notification messages is not equal to the count of rules'
+        # assert len(messages) == len(rules), 'the amount of notification messages is not equal to the count of rules'
 
         # scheduling the corresponding message
         for rule, message in zip(rules, messages):
