@@ -3,8 +3,8 @@ import logging
 import pytz
 import os
 
-from fastapi import FastAPI
-from fastapi import Body
+from fastapi import FastAPI, Response
+from fastapi import Body, status
 
 from dotenv import load_dotenv
 
@@ -32,8 +32,8 @@ scheduler = Scheduler(notifier)
 scheduler.run()
 
 
-@app.post('/schedule', response_model=ScheduleNotificationResponse)
-async def schedule(body: ScheduleNotificationRequest = Body(...)):
+@app.post('/schedule', response_model=ScheduleNotificationResponse, status_code=200)
+async def schedule(response: Response, body: ScheduleNotificationRequest = Body(...)):
     target = body.target
     subject = body.subject
     contents = body.contents
@@ -55,6 +55,7 @@ async def schedule(body: ScheduleNotificationRequest = Body(...)):
         if category == 'watering':
             strategy = os.getenv('WATERING_NOTIFICATION_STRATEGY')
         else:
+            response.status_code = status.HTTP_404_NOT_FOUND
             return {"message": 'unkown category'}
 
         tags = [user_uuid, plant_uuid]
@@ -64,6 +65,7 @@ async def schedule(body: ScheduleNotificationRequest = Body(...)):
         
     except Exception as ex:
         logger.exception(f'{type(ex).__name__}: {ex}')
+        response.status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
         return {"message": f'{type(ex).__name__}: {ex}'}
 
     return {"message": "done"}
