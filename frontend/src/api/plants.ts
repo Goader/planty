@@ -1,6 +1,6 @@
-import {AddPlantData, Plant, PlantResponse} from "../model/plants";
 import {useCallback} from "react";
 import {useAuth} from "./auth/AuthContext";
+import {AddPlantData, Plant, PlantResponse} from "../model/plants";
 
 const plantsUrl = process.env.REACT_APP_API_URL + '/dashboard/plants/';
 
@@ -34,5 +34,17 @@ export function usePlantService() {
         });
     }, [request]);
 
-    return {getPlants, savePlant};
+    const deletePlant = useCallback((id) => {
+        return request({
+            method: 'delete',
+            url: plantsUrl,
+            data: {
+                id: id
+            }
+        }).then(response => {
+            console.log(response);
+        });
+    }, [request]);
+
+    return {getPlants, savePlant, deletePlant};
 }

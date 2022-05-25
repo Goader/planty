@@ -13,14 +13,14 @@ import {usePlantService} from "../api/plants";
 function GardenView() {
     const [fetching, setFetching] = useState(true);
     const [plants, setPlants] = useState<Array<Plant>>([]);
-    const {getPlants} = usePlantService();
+    const {getPlants, deletePlant} = usePlantService();
 
     useEffect(() => {
         getPlants()
             .then(plants => setPlants(plants))
             .catch(err => {
                 if (err instanceof UnauthorizedError) {
-                    console.log('GardenView: Unauthorized');
+                    console.error('GardenView: Unauthorized');
                 } else {
                     alert('Unexpected error');
                     console.error('Unexpected error', err);
@@ -29,18 +29,20 @@ function GardenView() {
             .finally(() => setFetching(false));
     }, [getPlants]);
 
-    const {sendDeleteRequest} = useDeleteResponse();
-
     const handleRemove = (removeId: any) => {
-        sendDeleteRequest(removeId).then(() => {
+        deletePlant(removeId).then(() => {
             const leftPlants = plants.filter(plant => {
-                return plant.id != removeId;
+                return plant.id !== removeId;
             });
             setPlants(leftPlants);
-        }).catch(error => {
-            console.log(error);
+        }).catch(err => {
+            if (err instanceof UnauthorizedError) {
+                console.log('GardenView: Unauthorized');
+            } else {
+                alert('Unexpected error');
+                console.error('Unexpected error', err);
+            }
         });
-
     };
 
     return (
