@@ -103,13 +103,3 @@ class InstructionUpdateSerializer(serializers.Serializer):
     watering = serializers.IntegerField(required=False, validators=[MinValueValidator(1)])
     insolation = serializers.CharField(required=False, max_length=50)
     fertilizing = serializers.IntegerField(required=False, validators=[MinValueValidator(1)])
-
-
-class InstructionDeleteSerializer(serializers.Serializer):
-    id = serializers.UUIDField()
-
-class InstructionSelectSerializer(serializers.Serializer):
-    id = serializers.UUIDField()
-
-class InstructionShareSerializer(serializers.Serializer):
-    id = serializers.UUIDField()

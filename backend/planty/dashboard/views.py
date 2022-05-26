@@ -369,8 +369,6 @@ class InstructionsView(APIView):
     def put(self, request: Request):
         user: User = request.user
 
-        data = request.data
-
         try:
             instruction: Instruction = Instruction.objects.get(id=self.kwargs['id'])
         except Model.DoesNotExist:
@@ -494,15 +492,9 @@ class SelectInstructionView(APIView):
 class ShareInstructionView(APIView):
     def post(self, request: Request):
         user: User = request.user
-        serializer = InstructionShareSerializer(data=request.data)
-
-        if not serializer.is_valid():
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-        data = serializer.validated_data
 
         try:
-            instruction: Instruction = Instruction.objects.get(pk=data['id'])
+            instruction: Instruction = Instruction.objects.get(id=self.kwargs['id'])
         except Model.DoesNotExist:
             return Response(data={
                 'id': ['Plant with the given ID does not exist']
