@@ -1,6 +1,8 @@
 from datetime import timedelta, date, datetime, time
 from uuid import uuid4
 from math import ceil
+from django.conf import settings
+import base64
 
 from django.contrib.auth.models import User
 from django.db.models import Model
@@ -65,7 +67,7 @@ class PlantsView(APIView):
         if 'used_instruction' in data:
             try:
                 instruction = Instruction.objects.get(pk=data['used_instruction'])
-            except Model.DoesNotExist:
+            except Instruction.DoesNotExist:
                 return Response(data={
                     'used_instruction': ['Instruction with the given ID does not exist']
                 }, status=status.HTTP_404_NOT_FOUND)
@@ -104,7 +106,7 @@ class PlantsView(APIView):
 
         try:
             plant: Plant = Plant.objects.get(pk=data['id'])
-        except Model.DoesNotExist:
+        except Plant.DoesNotExist:
             return Response(data={
                 'id': ['Plant with the given ID does not exist']
             }, status=status.HTTP_404_NOT_FOUND)
@@ -115,7 +117,7 @@ class PlantsView(APIView):
         if 'used_instruction' in data:
             try:
                 data['used_instruction'] = Instruction.objects.get(pk=data['used_instruction'])
-            except Model.DoesNotExist:
+            except Instruction.DoesNotExist:
                 return Response(data={
                     'used_instruction': ['There is not Instruction with this ID']
                 }, status=status.HTTP_404_NOT_FOUND)
@@ -161,7 +163,7 @@ class PlantsView(APIView):
 
         try:
             plant: Plant = Plant.objects.get(pk=data['id'])
-        except Model.DoesNotExist:
+        except Plant.DoesNotExist:
             return Response(data={
                 'id': ['Plant with the given ID does not exist']
             }, status=status.HTTP_204_NOT_FOUND)
@@ -307,7 +309,7 @@ class EventsView(APIView):
 
         try:
             plant: Plant = Plant.objects.get(id=serializer.validated_data['plant'])
-        except Model.DoesNotExist:
+        except Plant.DoesNotExist:
             return Response({
                 'plant': ['plant does not exist']
             }, status=status.HTTP_404_NOT_FOUND)
@@ -327,20 +329,21 @@ class EventsView(APIView):
                 second=time_now.second
             )
 
-        # notifier = Notifier()
-        # ok = notifier.notify(
-        #     user=user,
-        #     plant=plant,
-        #     subject='?',
-        #     contents=['?', '?', '?', '?', '?', '?'],
-        #     scheduled_datetime=event_date,
-        #     action=action
-        # )
+        notifier = Notifier()
+        ok = notifier.notify(
+            user=user,
+            plant=plant,
+            subject=settings.NOTIFIER_SUBJECTS[action],
+            contents=[
+                message.format(plant_name=plant.name)
+                for message in settings.NOTIFIER_CONTENTS[action]
+            ],
+            scheduled_datetime=event_date,
+            action=action
+        )
 
-        # if not ok:
-        #     return Response(data={
-
-        #     })
+        if not ok:
+            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         if action != 'custom':
             if action == 'water':
@@ -394,7 +397,7 @@ class CustomEventsView(APIView):
 
         try:
             plant: Plant = Plant.objects.get(id=serializer.validated_data['plant'])
-        except Model.DoesNotExist:
+        except Plant.DoesNotExist:
             return Response({
                 'plant': ['plant does not exist']
             }, status=status.HTTP_404_NOT_FOUND)
@@ -416,5 +419,21 @@ class CustomEventsView(APIView):
         )
 
         event.save()
+
+        notifier = Notifier()
+        ok = notifier.notify(
+            user=user,
+            plant=plant,
+            subject=settings.NOTIFIER_SUBJECTS['custom'],
+            contents=[
+                message.format(plant_name=plant.name)
+                for message in settings.NOTIFIER_CONTENTS['custom']
+            ],
+            scheduled_datetime=event_date,
+            action='custom'
+        )
+
+        if not ok:
+            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         return Response(status=status.HTTP_200_OK)
