@@ -20,9 +20,6 @@ from .serializers import (
     TimeSpanSerializer,
     InstructionCreateSerializer,
     InstructionUpdateSerializer,
-    InstructionDeleteSerializer,
-    InstructionSelectSerializer,
-    InstructionShareSerializer
 )
 
 
@@ -301,7 +298,7 @@ class InstructionsView(APIView):
     def get(self, request: Request):
         user: User = request.user
 
-        if 'id' in self.kwargs: # returns instruction with given id
+        if 'id' in self.kwargs: # return instruction with given id
             try:
                 instruction: Instruction = Instruction.objects.get(id=self.kwargs['id'])
             except Model.DoesNotExist:
@@ -324,7 +321,7 @@ class InstructionsView(APIView):
 
             return Response(instruction_json, status=status.HTTP_200_OK)
 
-        else: # returns all user instructions
+        else: # return all user instructions
             my_instructions = Instruction.objects.filter(user=user, public=False)
 
             my_instructions_json = []
@@ -439,54 +436,6 @@ class PopularInstructionsView(APIView):
             desc_suggested_instructions_json.append(instruction_json)
 
         return Response(desc_suggested_instructions_json, status=status.HTTP_200_OK)
-
-
-class SelectInstructionView(APIView):
-    def get(self, request: Request):
-        user: User = request.user
-        serializer = InstructionSelectSerializer(data=request.data)
-
-        if not serializer.is_valid():
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-        data = serializer.validated_data
-
-        try:
-            instruction: Instruction = Instruction.objects.get(pk=data['id'])
-        except Model.DoesNotExist:
-            return Response(data={
-                'id': ['Plant with the given ID does not exist']
-            }, status=status.HTTP_404_NOT_FOUND)
-
-        if instruction.user != user:
-            return Response(status=status.HTTP_403_FORBIDDEN)
-
-        if not instruction.public:
-            return Response(data={
-                'id:': ['Instruction with this ID is not public. Cannot select non public instructions.']
-            }, status=status.HTTP_404_NOT_FOUND)
-
-        instruction.num_selected += 1
-
-        # creating public instruction
-
-        shared_instruction: Instruction = Instruction.objects.create(
-            id=uuid4(),
-            name=instruction.name,
-
-            user=user,
-            species=data['species'],
-
-            watering=data['watering'],
-            insolation=data['insolation'],
-            fertilizing=data['fertilizing'],
-
-            public=False
-        )
-
-        shared_instruction.save()
-
-        return Response(status=status.HTTP_201_CREATED)
 
 
 class ShareInstructionView(APIView):
