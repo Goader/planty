@@ -1,6 +1,8 @@
 import {Button, Col, Container, Row, Spinner} from "react-bootstrap";
 import React, {useEffect, useState} from "react";
 import {Instruction} from "../model/instructions";
+import InstructionCard from "../components/card/InstructionCard";
+import AddInstructionModal from "../components/AddInstructionModal";
 
 const placeholderInstructions: Instruction[] = [
     {
@@ -24,6 +26,7 @@ const placeholderInstructions: Instruction[] = [
 export default function InstructionsView() {
     const [fetching, setFetching] = useState(true);
     const [instructions, setInstructions] = useState<Instruction[]>(placeholderInstructions);
+    const [modalVisible, setModalVisible] = useState(false);
 
     useEffect(() => {
         setFetching(false);
@@ -34,15 +37,15 @@ export default function InstructionsView() {
             {fetching ? <Spinner animation={'grow'} variant={'success'}/> : <>
                 <Row>
                     {instructions.map(instruction => (
-                        <Col xs={12} sm={6} xxl={4} className={'mb-3'} key={instruction.id}>
-                            {instruction.name}
-                            {/*<InstructionCard instruction={instruction}/>*/}
+                        <Col xs={12} sm={6} md={4} xl={3} className={'mb-3'} key={instruction.id}>
+                            <InstructionCard instruction={instruction}/>
                         </Col>))}
                 </Row>
                 <div>
-                    <Button variant={'primary'}>Add instruction</Button>
+                    <Button variant={'primary'} onClick={() => setModalVisible(true)}>Add instruction</Button>
                 </div>
             </>}
+            <AddInstructionModal onHide={() => setModalVisible(false)} show={modalVisible}/>
         </Container>
     );
 }
