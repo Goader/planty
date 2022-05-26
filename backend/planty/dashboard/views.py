@@ -205,13 +205,15 @@ class EventsView(APIView):
 
                     try:
                         custom_event: CustomEvent = CustomEvent.objects.get(id=event_id)
+                        custom_info = {
+                            'name': custom_event.name,
+                            'description': custom_event.description
+                        }
                     except CustomEvent.DoesNotExist:
-                        pass
+                        # TODO or should we simply skip this?
+                        event_id = None
+                        custom_info = None
 
-                    custom_info = {
-                        'name': custom_event.name,
-                        'description': custom_event.description
-                    }
                 else:
                     event_id = None
                     custom_info = None
@@ -224,7 +226,6 @@ class EventsView(APIView):
                     'days_late': None,
                     'interval': None,
                     'happened': True,
-                    # TODO alter custom info
                     'custom_info': custom_info
                 })
 
