@@ -131,4 +131,6 @@ dmypy.json
 # other things
 .brand/
 
+!notifications/.env
+**/keyfile
 planty/media
