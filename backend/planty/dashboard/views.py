@@ -328,7 +328,7 @@ class InstructionsView(APIView):
 
         instruction: Instruction = Instruction.objects.create(
             id=uuid4(),
-            name=name,
+            name=data['name'],
 
             user=user,
             species=data['species'],
