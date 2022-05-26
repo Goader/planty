@@ -361,11 +361,14 @@ class EventsView(APIView):
             event_id = serializer.validated_data['id']
 
             try:
-                _: CustomEvent = CustomEvent.objects.get(id=event_id)
+                custom_event: CustomEvent = CustomEvent.objects.get(id=event_id)
             except CustomEvent.DoesNotExist:
                 return Response({
                     'id': ['event does not exist']
                 }, status=status.HTTP_404_NOT_FOUND)
+
+            custom_event.happened = True
+            custom_event.save()
 
             history_event = EventsHistory.objects.create(
                 id=event_id,
