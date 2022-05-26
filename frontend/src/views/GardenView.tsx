@@ -16,12 +16,11 @@ function GardenView() {
     const [plants, setPlants] = useState<Array<Plant>>([]);
     const {getPlants, deletePlant} = usePlantService();
 
-    const [showDetails, setShowDetails] = useState(false);
+    const [showModal, setShowModal] = useState(false);
     const [chosenId, setChosenId] = useState("");
 
     const onModalHide = () => {
-        setShowDetails(false);
-        setChosenId("");
+        setShowModal(false);
     };
 
     useEffect(() => {
@@ -39,7 +38,7 @@ function GardenView() {
     }, [getPlants]);
 
     const handleConfirmedRemove = (removeId: any) => {
-        setShowDetails(false);
+        setShowModal(false);
         deletePlant(removeId).then(() => {
             const leftPlants = plants.filter(plant => {
                 return plant.id !== removeId;
@@ -56,7 +55,7 @@ function GardenView() {
     };
 
     const handleRemove = (plantId: string) => {
-        setShowDetails(true);
+        setShowModal(true);
         setChosenId(plantId);
     };
 
@@ -74,9 +73,8 @@ function GardenView() {
                     <Link to={'/plants/add'}><Button variant={'primary'}>Add plant</Button></Link>
                 </div>
                 <RemovePlantModal onHide={onModalHide}
-                                  show={showDetails}
-                                  plantId={chosenId}
-                                  onDelete={handleConfirmedRemove}
+                                  show={showModal}
+                                  onDelete={() => handleConfirmedRemove(chosenId)}
                 />
             </>
             }

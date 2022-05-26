@@ -1,8 +1,7 @@
 import {Button, Modal} from "react-bootstrap";
 
 export type EventsDetailsProps = {
-    onDelete: (plantId: string) => void,
-    plantId: string,
+    onDelete: () => void,
     onHide: () => void,
     show: boolean
 }
@@ -24,7 +23,7 @@ function RemovePlantModal(props: EventsDetailsProps) {
             >Cancel</Button>
             <Button onClick={
                 () => {
-                    props.onDelete(props.plantId);
+                    props.onDelete();
                 }
             }>Delete</Button>
         </Modal.Body>
