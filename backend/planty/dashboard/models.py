@@ -58,6 +58,7 @@ class CustomEvent(models.Model):
 
     date = models.DateField()
     name = models.CharField(max_length=50)
+    happened = models.BooleanField(default=False)
     description = models.CharField(max_length=400, default='')
 
     class Meta:

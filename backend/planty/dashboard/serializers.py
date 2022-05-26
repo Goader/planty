@@ -77,10 +77,17 @@ class TimeSpanSerializer(serializers.Serializer):
 
 
 class EventHappenedSerializer(serializers.Serializer):
+    id = serializers.UUIDField(required=False)
     event_date = serializers.DateTimeField(required=False, input_formats=['iso-8601'], default=datetime.now)
     plant = serializers.UUIDField()
     # TODO add move when there is a possibility to add custom events
-    action = serializers.ChoiceField(['water', 'fertilize'])
+    action = serializers.ChoiceField(['water', 'fertilize', 'custom'])
+
+    def validate(self, data: dict):
+        if data['action'] == 'custom' and 'id' not in data:
+            raise serializers.ValidationError('id must be present for custom events')
+
+        return data
 
 
 class CustomEventCreateSerializer(serializers.Serializer):
