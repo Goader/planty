@@ -8,12 +8,21 @@ import {Link} from "react-router-dom";
 import {Plant} from "../model/plants";
 import {UnauthorizedError} from "../api/auth/util";
 import {usePlantService} from "../api/plants";
+import RemovePlantModal from "../components/RemovePlantModal";
 
 
 function GardenView() {
     const [fetching, setFetching] = useState(true);
     const [plants, setPlants] = useState<Array<Plant>>([]);
     const {getPlants, deletePlant} = usePlantService();
+
+    const [showDetails, setShowDetails] = useState(false);
+    const [chosenId, setChosenId] = useState("");
+
+    const onModalHide = () => {
+        setShowDetails(false);
+        setChosenId("");
+    };
 
     useEffect(() => {
         getPlants()
@@ -29,7 +38,8 @@ function GardenView() {
             .finally(() => setFetching(false));
     }, [getPlants]);
 
-    const handleRemove = (removeId: any) => {
+    const handleConfirmedRemove = (removeId: any) => {
+        setShowDetails(false);
         deletePlant(removeId).then(() => {
             const leftPlants = plants.filter(plant => {
                 return plant.id !== removeId;
@@ -45,6 +55,11 @@ function GardenView() {
         });
     };
 
+    const handleRemove = (plantId: string) => {
+        setShowDetails(true);
+        setChosenId(plantId);
+    };
+
     return (
         <Container>
             {fetching ? <Spinner animation={'grow'} variant={'success'}/> : <>
@@ -58,7 +73,13 @@ function GardenView() {
                 <div>
                     <Link to={'/plants/add'}><Button variant={'primary'}>Add plant</Button></Link>
                 </div>
-            </>}
+                <RemovePlantModal onHide={onModalHide}
+                                  show={showDetails}
+                                  plantId={chosenId}
+                                  onDelete={handleConfirmedRemove}
+                />
+            </>
+            }
         </Container>
     );
 }
