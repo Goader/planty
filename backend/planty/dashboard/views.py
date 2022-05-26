@@ -286,7 +286,7 @@ class EventsView(APIView):
                     'date': max(today, event.date),
                     'plant': str(event.plant.id),
                     'action': 'custom',
-                    'days_late': max(0, (event.date - today).days),
+                    'days_late': max(0, (today - event.date).days),
                     'interval': None,
                     'happened': False,
                     'custom_info': {
