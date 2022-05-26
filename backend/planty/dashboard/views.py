@@ -375,10 +375,6 @@ class InstructionsView(APIView):
 
     def delete(self, request: Request):
         user: User = request.user
-        serializer = InstructionDeleteSerializer(data=self.kwargs['id'])
-
-        if not serializer.is_valid():
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             instruction: Instruction = Instruction.objects.get(id=self.kwargs['id'])
