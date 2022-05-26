@@ -343,15 +343,11 @@ class InstructionsView(APIView):
 
     def put(self, request: Request):
         user: User = request.user
-        serializer = InstructionSelectSerializer(data=self.kwargs['uuid'])
-
-        if not serializer.is_valid():
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         data = request.data
 
         try:
-            instruction: Instruction = Instruction.objects.get(id=kwargs['uuid'])
+            instruction: Instruction = Instruction.objects.get(id=self.kwargs['id'])
         except Model.DoesNotExist:
             return Response(data={
                 'id': ['Plant with the given ID does not exist']
@@ -379,13 +375,13 @@ class InstructionsView(APIView):
 
     def delete(self, request: Request):
         user: User = request.user
-        serializer = InstructionDeleteSerializer(data=self.kwargs['uuid'])
+        serializer = InstructionDeleteSerializer(data=self.kwargs['id'])
 
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            instruction: Instruction = Instruction.objects.get(id=self.kwargs['uuid'])
+            instruction: Instruction = Instruction.objects.get(id=self.kwargs['id'])
         except Model.DoesNotExist:
             return Response(data={
                 'id': ['Instruction with the given ID does not exist']
