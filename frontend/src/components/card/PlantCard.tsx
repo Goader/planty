@@ -2,8 +2,9 @@ import React from "react";
 import './PlantCard.scss';
 import {Button, Card, Col, Container, Row} from "react-bootstrap";
 import {Plant} from "../../model/plants";
+import {BsFillTrashFill} from "react-icons/bs";
 
-function PlantCard({plant}: { plant: Plant }) {
+function PlantCard({plant, onRemove}: { plant: Plant, onRemove: any }) {
     const imageUrl = "https://picsum.photos/250";
     return (
         <Card className={'py-4 plant-card'}>
@@ -14,7 +15,16 @@ function PlantCard({plant}: { plant: Plant }) {
                     </Col>
                     <Col xs={12} md={6} className={'d-flex flex-column justify-content-between'}>
                         <div>
-                            <Card.Title className={'plant-name'}>{plant.name}</Card.Title>
+                            <div className={"d-flex"}>
+                                <Card.Title className={'plant-name flex-grow-1'}>
+                                    {plant.name}
+                                </Card.Title>
+                                <Button onClick={() => {
+                                    onRemove(plant.id);
+                                }}>
+                                    <BsFillTrashFill/>
+                                </Button>
+                            </div>
                             <Card.Subtitle className={'plant-species'}>{plant.species}</Card.Subtitle>
                         </div>
                         <div>
