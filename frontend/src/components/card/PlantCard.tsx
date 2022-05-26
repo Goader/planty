@@ -5,7 +5,6 @@ import {Plant} from "../../model/plants";
 import {BsFillTrashFill} from "react-icons/bs";
 
 function PlantCard({plant, onRemove}: { plant: Plant, onRemove: any }) {
-    const imageUrl = "https://picsum.photos/250";
     return (
         <Card className={'py-4 plant-card'}>
             <Container>
