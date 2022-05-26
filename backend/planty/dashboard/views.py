@@ -300,22 +300,47 @@ class EventsView(APIView):
 class InstructionsView(APIView):
     def get(self, request: Request):
         user: User = request.user
-        my_instructions = Instruction.objects.filter(user=user, public=False)
 
-        my_instructions_json = []
-        for instruction in my_instructions:
+        if 'id' in self.kwargs: # returns instruction with given id
+            try:
+                instruction: Instruction = Instruction.objects.get(id=self.kwargs['id'])
+            except Model.DoesNotExist:
+                return Response(data={
+                    'id': ['Plant with the given ID does not exist']
+                }, status=status.HTTP_404_NOT_FOUND)
+
+            if instruction.user != user:
+                return Response(status=status.HTTP_403_FORBIDDEN)
+
             instruction_json = {
                 'id': str(instruction.id),
-                'name' : instruction.name,
+                'name': instruction.name,
                 'species': instruction.species,
 
                 'watering': instruction.watering,
                 'insolation': instruction.insolation,
                 'fertilizing': instruction.fertilizing,
             }
-            my_instructions_json.append(instruction_json)
 
-        return Response(my_instructions_json, status=status.HTTP_200_OK)
+            return Response(instruction_json, status=status.HTTP_200_OK)
+
+        else: # returns all user instructions
+            my_instructions = Instruction.objects.filter(user=user, public=False)
+
+            my_instructions_json = []
+            for instruction in my_instructions:
+                instruction_json = {
+                    'id': str(instruction.id),
+                    'name' : instruction.name,
+                    'species': instruction.species,
+
+                    'watering': instruction.watering,
+                    'insolation': instruction.insolation,
+                    'fertilizing': instruction.fertilizing,
+                }
+                my_instructions_json.append(instruction_json)
+
+            return Response(my_instructions_json, status=status.HTTP_200_OK)
 
     def post(self, request: Request):
         user: User = request.user
