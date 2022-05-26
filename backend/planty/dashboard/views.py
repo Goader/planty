@@ -461,6 +461,8 @@ class PlantView(APIView):
             'date': max(planned_watering, today),
             'action': "water",
             'days_late': days_late,
+            'interval': plant.instruction.watering,
+            'happened': False,
             'custom_info': None
         })
         # next fertilizing event
@@ -471,15 +473,19 @@ class PlantView(APIView):
             'date': max(planned_fertilizing, today),
             'action': "fertilize",
             'days_late': days_late,
+            'interval': plant.instruction.fertilizing,
+            'happened': False,
             'custom_info': None
         })
 
-        custom_events = CustomEvent.objects.filter(plant=plant, )
+        custom_events = CustomEvent.objects.filter(plant=plant)
         custom_events = [{
             'id': event.id,
             "date": max(today, event.date),
             'days_late': max(0, (today - event.date).days),
             'action': 'custom',
+            'interval': None,
+            'happened': False,
             'custom_info': {
                 'name': event.name,
                 'description': event.description
