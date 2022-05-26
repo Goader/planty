@@ -498,11 +498,11 @@ class ShareInstructionView(APIView):
             name=instruction.name,
 
             user=user,
-            species=data['species'],
+            species=instruction.species,
 
-            watering=data['watering'],
-            insolation=data['insolation'],
-            fertilizing=data['fertilizing'],
+            watering=instruction.watering,
+            insolation=instruction.insolation,
+            fertilizing=instruction.fertilizing,
 
             public = True
         )
