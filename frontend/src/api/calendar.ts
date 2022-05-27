@@ -13,10 +13,11 @@ export function createEventDetails(event: PlantEvent, plant: Plant): PlantEventD
     return {
         date: event.date,
         action: event.action,
-        priority: event.priority,
+        interval: event.interval,
         daysLate: event.daysLate,
         plant: plant,
-        customInfo: event.customInfo
+        customInfo: event.customInfo,
+        happened: event.happened
     };
 }
 
@@ -39,9 +40,10 @@ export function useEventService() {
                     date: dateObj,
                     plant: event.plant,
                     action: event.action,
-                    priority: event.priority,
+                    interval: event.interval,
                     daysLate: event.days_late === null ? 0 : event.days_late,
-                    customInfo: event.custom_info
+                    customInfo: event.custom_info,
+                    happened: event.happened
                 } as PlantEvent;
             });
             console.log(`Fetched ${response.length} events`);

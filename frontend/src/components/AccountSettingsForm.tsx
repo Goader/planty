@@ -21,7 +21,7 @@ function AccountSettingsForm() {
         getSettings().then((settings) => {
             setInitialValues(settings);
         });
-    }, []);
+    }, [getSettings]);
 
     return (
         <Container>

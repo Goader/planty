@@ -16,8 +16,8 @@ function getInterval(action: Action) {
     }
 }
 
-function getItemVariant(eventPriority: number): Variant | undefined {
-    switch (eventPriority) {
+function getItemVariant(delay: number): Variant | undefined {
+    switch (delay) {
         case 0:
             return undefined;
         case 1:
@@ -36,8 +36,7 @@ function EventListItem(props: EventListItemProps) {
     return <ListGroup.Item className={'d-flex justify-content-between'}
                            variant={getItemVariant(event.daysLate)}>
         <p className={'m-0'}>{event.plant.name} {event.customInfo !== null && event.customInfo.name}</p>
-        {event.daysLate > 0 &&
-            <p className={'m-0'}>{event.daysLate} {getInterval(event.action)} overdue</p>}
+        {event.daysLate > 0 && <p className={'m-0'}>{event.daysLate} {getInterval(event.action)} overdue</p>}
     </ListGroup.Item>;
 }
 
@@ -48,29 +47,39 @@ type EventDetailsListProps = {
 type EventSubListProps = EventDetailsListProps & {
     title: string
     alt: string
+    showIfEmpty?: boolean
 }
 
 function EventSubList(props: EventSubListProps) {
     return (<>
-        <h5>{props.title}</h5>
-        {props.events.length === 0 ? <p>{props.alt}</p> :
-            <ListGroup className={'mb-3'}>
-                {props.events.map(event => <EventListItem event={event} key={event.plant.id}/>)}
-            </ListGroup>
-        }
-    </>);
+        {(props.events.length > 0 || props.showIfEmpty) && <>
+            <h5>{props.title}</h5>
+            {props.events.length === 0 ? <p>{props.alt}</p> :
+                <ListGroup className={'mb-3'}>
+                    {props.events.map(event => <EventListItem event={event} key={event.plant.id}/>)}
+                </ListGroup>
+            }
+        </>}</>);
 }
 
 
 function EventDetailsList(props: EventDetailsListProps) {
+    if (props.events.length === 0) {
+        return <div>No events</div>;
+    }
     const events = {
         water: new Array<PlantEventDetails>(),
         insolation: new Array<PlantEventDetails>(),
         fertilize: new Array<PlantEventDetails>(),
-        custom: new Array<PlantEventDetails>()
+        custom: new Array<PlantEventDetails>(),
+        completed: new Array<PlantEventDetails>()
     };
     props.events.forEach(event => {
-        events[event.action].push(event);
+        if (event.happened) {
+            events.completed.push(event);
+        } else {
+            events[event.action].push(event);
+        }
     });
 
     return (<>
@@ -78,6 +87,7 @@ function EventDetailsList(props: EventDetailsListProps) {
         {/*<EventSubList events={events.insolation} title={'Insolate'} alt={'No plants to insolate'}/>*/}
         <EventSubList events={events.fertilize} title={'Fertilize'} alt={'No plants to fertilize'}/>
         <EventSubList events={events.custom} title={'Custom events'} alt={'No custom events'}/>
+        <EventSubList events={events.completed} title={'Completed events'} alt={'No completed events'}/>
     </>);
 }
 

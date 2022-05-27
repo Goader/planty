@@ -4,7 +4,8 @@ type BasePlantEvent = {
     date: Date
     action: Action
     daysLate: number
-    priority: number | null
+    interval: number | null
+    happened: boolean
     customInfo: CustomEventInfo | null
 }
 
@@ -26,7 +27,8 @@ export type PlantEventResponse = {
     plant: string
     action: Action
     days_late: number | null
-    priority: number | null
+    interval: number | null
+    happened: boolean
     custom_info: CustomEventInfo | null
 }
 

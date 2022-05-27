@@ -4,8 +4,7 @@ import {Button, Card, Col, Container, Row} from "react-bootstrap";
 import {Plant} from "../../model/plants";
 import {BsFillTrashFill} from "react-icons/bs";
 
-function PlantCard({plant, onRemove}: { plant: Plant, onRemove: any }) {
-    const imageUrl = "https://picsum.photos/250";
+function PlantCard({plant, onRemove}: { plant: Plant, onRemove: (id: string) => void }) {
     return (
         <Card className={'py-4 plant-card'}>
             <Container>

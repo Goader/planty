@@ -8,17 +8,21 @@ type CalendarPlantInfoProps = {
 }
 
 export default function CalendarPlantInfo(props: CalendarPlantInfoProps) {
-    let maxDelay = Math.max(...props.events.map(event => event.daysLate));
     let variant: Variant;
-    switch (maxDelay) {
-        case 0:
-            variant = 'success';
-            break;
-        case 1:
-            variant = 'warning';
-            break;
-        default:
-            variant = 'danger';
+    if (props.events.every(event => event.happened)) {
+        variant = 'secondary';
+    } else {
+        let maxDelay = Math.max(...props.events.map(event => event.daysLate));
+        switch (maxDelay) {
+            case 0:
+                variant = 'success';
+                break;
+            case 1:
+                variant = 'warning';
+                break;
+            default:
+                variant = 'danger';
+        }
     }
 
     return (<Badge bg={variant}>{props.name}</Badge>);
