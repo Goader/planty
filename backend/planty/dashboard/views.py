@@ -28,7 +28,7 @@ class PlantsView(APIView):
     def get(self, request: Request):
         user: User = request.user
         plants = Plant.objects.filter(user=user)
-        
+
         plants_json = []
         for plant in plants.iterator():
 
@@ -437,3 +437,63 @@ class CustomEventsView(APIView):
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         return Response(status=status.HTTP_200_OK)
+
+
+class PlantView(APIView):
+    def get(self, request: Request, id):
+        user: User = request.user
+
+        try:
+            plant: Plant = Plant.objects.get(pk=id)
+        except Plant.DoesNotExist:
+            return Response(data={'id': ['Plant with the given ID does not exist']}, status=status.HTTP_404_NOT_FOUND)
+
+        if plant.user != user:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
+        plant_json = plant.values()
+        plant_json["events"] = []
+
+        today = date.today()
+        # next watering event
+        planned_watering = plant.last_watered + timedelta(plant.instruction.watering)
+        days_late = max(0, (today - planned_watering).days)
+        plant_json["events"].append({
+            'id': None,
+            'date': max(planned_watering, today),
+            'action': "water",
+            'days_late': days_late,
+            'interval': plant.instruction.watering,
+            'happened': False,
+            'custom_info': None
+        })
+        # next fertilizing event
+        planned_fertilizing = plant.last_fertilized + timedelta(plant.instruction.fertilizing)
+        days_late = max(0, (today - planned_fertilizing).days)
+        plant_json["events"].append({
+            'id': None,
+            'date': max(planned_fertilizing, today),
+            'action': "fertilize",
+            'days_late': days_late,
+            'interval': plant.instruction.fertilizing,
+            'happened': False,
+            'custom_info': None
+        })
+
+        custom_events = CustomEvent.objects.filter(plant=plant)
+        custom_events = [{
+            'id': event.id,
+            "date": max(today, event.date),
+            'days_late': max(0, (today - event.date).days),
+            'action': 'custom',
+            'interval': None,
+            'happened': False,
+            'custom_info': {
+                'name': event.name,
+                'description': event.description
+            }
+        } for event in custom_events if not event.happened]
+        print(custom_events)
+        plant_json["events"].extend(custom_events)
+
+        return Response(plant_json, status=status.HTTP_200_OK)
