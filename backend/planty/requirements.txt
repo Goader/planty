@@ -12,3 +12,4 @@ pytz==2022.1
 tzdata==2022.1
 wincertstore==0.2
 Pillow==9.1.0
+requests==2.27.1

@@ -1,0 +1,109 @@
+version: "3.7"
+
+services:
+  mail:
+    build:
+      context: backend/mail
+      dockerfile: Dockerfile
+    container_name: planty_mail
+    hostname: planty-mail
+    # uncomment this if you want the service to be available outside of docker network
+    # ports:
+    #   - 12014:12014
+    restart: unless-stopped
+    environment:
+      GMAIL_USERNAME: ${GMAIL_USERNAME}
+      GMAIL_PASSWORD: ${GMAIL_PASSWORD}
+    networks:
+      - planty_mail_net
+
+  notifications:
+    build:
+      context: backend/notifications
+      dockerfile: Dockerfile
+    container_name: planty_notifications
+    hostname: planty-notifications
+    restart: unless-stopped
+    depends_on:
+      - mail
+    # uncomment this if you want the service to be available outside of docker network
+    # ports:
+    #   - 12012:12012
+    environment:
+      MAIL_SERVICE_HOST: planty-mail
+      MAIL_SERVICE_PORT: 12014
+      WATERING_NOTIFICATION_STRATEGY: -1;0;1;3;6,*3
+    networks:
+      - planty_mail_net
+
+  postgresql:
+    image: postgres
+    container_name: planty_postgresql
+    hostname: planty-postgresql
+    restart: unless-stopped
+    # ports:
+    #   -  5432:5432
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    volumes:
+      - planty_volume_postgres_data:/var/lib/postgresql/data/
+    networks:
+      - planty_db_net
+  
+  backend:
+    build:
+      context: backend/planty
+      dockerfile: Dockerfile
+    container_name: planty_backend
+    hostname: planty-backend
+    ports:
+      - 3001:3001
+    restart: unless-stopped
+    depends_on:
+      - mail
+      - notifications
+      - postgresql
+    environment:
+      - POSTGRES_HOST=${POSTGRES_HOST}
+      - POSTGRES_PORT=${POSTGRES_PORT}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - NOTIFIER_HOST=${NOTIFIER_HOST}
+      - NOTIFIER_PORT=${NOTIFIER_PORT}
+      - FRONTEND_HOST=${FRONTEND_HOST}
+      - FRONTEND_PORT=${FRONTEND_PORT}
+    networks:
+      - planty_mail_net
+      - planty_db_net
+      - planty_backend_net
+
+  # frontend:
+  #   build:
+  #     context: frontend
+  #     dockerfile: Dockerfile
+  #   container_name: planty_frontend
+  #   hostname: planty-frontend
+  #   restart: unless_stopped
+  #   depends_on:
+  #     - backend
+  #   environment:
+  #     - name=value
+  #   networks:
+  #     - planty_backend_net
+
+
+volumes:
+  planty_volume_postgres_data:
+
+networks:
+  planty_mail_net:
+    driver: bridge
+
+  planty_db_net:
+    driver: bridge
+  
+  planty_backend_net:
+    driver: bridge

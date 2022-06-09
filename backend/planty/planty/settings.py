@@ -74,8 +74,10 @@ REST_FRAMEWORK = {
 }
 
 # TODO change to the address of React (probably using .env and environment variables)
+FRONTEND_HOST = os.getenv('FRONTEND_HOST', 'localhost')
+FRONTEND_PORT = os.getenv('FRONTEND_PORT', '3000')
 CORS_ORIGIN_WHITELIST = (
-    'http://localhost:3000',
+    f'http://{FRONTEND_HOST}:{FRONTEND_PORT}',
 )
 
 JWT_AUTH = {
@@ -114,15 +116,20 @@ WSGI_APPLICATION = 'planty.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
+POSTGRES_USER = os.getenv('POSTGRES_USER', 'postgres')
+POSTGRES_PASSWORD = os.getenv('POSTGRES_PASSWORD', 'postgres')
+POSTGRES_DB = os.getenv('POSTGRES_DB', 'postgres')
+POSTGRES_HOST = os.getenv('POSTGRES_HOST', 'localhost')
+POSTGRES_PORT = os.getenv('POSTGRES_PORT', '5432')
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'postgres',
-        'USER': 'postgres',
-        'PASSWORD': 'postgres',
-        'HOST': 'localhost',
-        'PORT': '5432'
+        'NAME': POSTGRES_DB,
+        'USER': POSTGRES_USER,
+        'PASSWORD': POSTGRES_PASSWORD,
+        'HOST': POSTGRES_HOST,
+        'PORT': POSTGRES_PORT
     }
 }
 
@@ -166,7 +173,10 @@ STATIC_URL = 'static/'
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
-NOTIFIER_ENDPOINT = 'http://127.0.0.1:12012/schedule'
+NOTIFIER_HOST = os.getenv('NOTIFIER_HOST', 'localhost')
+NOTIFIER_PORT = os.getenv('NOTIFIER_PORT', '12012')
+
+NOTIFIER_ENDPOINT = f'http://{NOTIFIER_HOST}:{NOTIFIER_PORT}/schedule'
 NOTIFIER_SUBJECTS = {
     'water': 'Watering notification',
     'insolation': 'Insolation notification',
