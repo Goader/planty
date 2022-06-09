@@ -26,7 +26,11 @@ SECRET_KEY = 'django-insecure-x+#^39p!33-aaql66y7qbjz(@k-c36k0o50c@c)a14g)5^4(6x
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    '127.0.0.1',
+    'localhost',
+    'planty-backend'
+]
 
 
 # Application definition
@@ -78,6 +82,7 @@ FRONTEND_HOST = os.getenv('FRONTEND_HOST', 'localhost')
 FRONTEND_PORT = os.getenv('FRONTEND_PORT', '3000')
 CORS_ORIGIN_WHITELIST = (
     f'http://{FRONTEND_HOST}:{FRONTEND_PORT}',
+    'http://localhost'
 )
 
 JWT_AUTH = {

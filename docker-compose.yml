@@ -80,19 +80,21 @@ services:
       - planty_db_net
       - planty_backend_net
 
-  # frontend:
-  #   build:
-  #     context: frontend
-  #     dockerfile: Dockerfile
-  #   container_name: planty_frontend
-  #   hostname: planty-frontend
-  #   restart: unless_stopped
-  #   depends_on:
-  #     - backend
-  #   environment:
-  #     - name=value
-  #   networks:
-  #     - planty_backend_net
+  frontend:
+    build:
+      context: frontend
+      dockerfile: Dockerfile
+    container_name: planty_frontend
+    hostname: planty-frontend
+    restart: unless-stopped
+    ports:
+      - 80:80
+    depends_on:
+      - backend
+    environment:
+      - name=value
+    networks:
+      - planty_backend_net
 
 
 volumes:
