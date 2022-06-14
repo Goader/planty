@@ -16,6 +16,7 @@ class Instruction(models.Model):
     insolation = models.CharField(max_length=50)
     fertilizing = models.PositiveIntegerField(validators=[MinValueValidator(1)])
 
+    publicated = models.BooleanField(default=False)
     public = models.BooleanField(default=False)
     num_selected = models.PositiveIntegerField(default=0)
 
@@ -26,7 +27,6 @@ class Instruction(models.Model):
 class Plant(models.Model):
     id = models.UUIDField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    # TODO should we really not let delete the instruction, unless it is unused?
     instruction = models.ForeignKey(Instruction, on_delete=models.PROTECT)
 
     name = models.CharField(max_length=50)

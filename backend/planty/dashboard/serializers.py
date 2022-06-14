@@ -95,7 +95,6 @@ class InstructionCreateSerializer(serializers.Serializer):
 
 
 class InstructionUpdateSerializer(serializers.Serializer):
-    id = serializers.UUIDField()
     name = serializers.CharField(required=False, max_length=50)
 
     species = serializers.CharField(required=False, max_length=50)
