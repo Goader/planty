@@ -3,8 +3,15 @@ import './PlantCard.scss';
 import {Button, Card, Col, Container, Row} from "react-bootstrap";
 import {Plant} from "../../model/plants";
 import {BsFillTrashFill} from "react-icons/bs";
+import {useNavigate} from "react-router-dom";
 
 function PlantCard({plant, onRemove}: { plant: Plant, onRemove: (id: string) => void }) {
+
+    const navigate = useNavigate();
+    const handleNavigate = () => {
+        navigate("/dashboard/plants/"+plant.id);
+    };
+
     return (
         <Card className={'py-4 plant-card'}>
             <Container>
@@ -39,7 +46,7 @@ function PlantCard({plant, onRemove}: { plant: Plant, onRemove: (id: string) => 
                                     every {plant.fertilizing} days
                                 </div>
                             </div>
-                            <Button variant="primary" className={'button-card'}>Update instructions</Button>
+                            <Button variant="primary" className={'button-card'} onClick={handleNavigate}>Update instructions</Button>
                         </div>
                     </Col>
                 </Row>
