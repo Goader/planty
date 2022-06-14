@@ -155,6 +155,9 @@ class PlantsView(APIView):
 
         plant.save()
 
+        photo_filepath = os.path.join(settings.MEDIA_ROOT, plant.photo.name)
+        crop_photo(photo_filepath)
+
         return Response(status=status.HTTP_200_OK)
 
     def delete(self, request):

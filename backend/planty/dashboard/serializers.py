@@ -43,7 +43,6 @@ class PlantCreateSerializer(serializers.Serializer):
             raise serializers.ValidationError(
                 'you must either specify the used instruction or fill the fields for a new one')
 
-        print(data['photo'].content_type)
         if 'photo' in data and data['photo'].content_type not in ['image/jpeg', 'image/png']:
             raise serializers.ValidationError(
                 'photo must be either PNG or JPG/JPEG'
