@@ -2,16 +2,18 @@ from datetime import timedelta, date, datetime, time
 from uuid import uuid4
 from math import ceil
 from django.conf import settings
-import base64
+import os
 
 from django.contrib.auth.models import User
 from django.db.models import Model
+from django.conf import settings
 
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework.views import APIView
 from rest_framework import status
 
+from .utils import crop_photo
 from .notifier import Notifier
 from .models import Plant, Instruction, EventsHistory, CustomEvent
 from .serializers import (
@@ -92,6 +94,9 @@ class PlantsView(APIView):
             other_info=request.data.get('other_info', '')
         )
         new_plant.save()
+
+        photo_filepath = os.path.join(settings.MEDIA_ROOT, new_plant.photo.name)
+        crop_photo(photo_filepath)
 
         return Response(status=status.HTTP_201_CREATED)
 
