@@ -46,5 +46,12 @@ export function usePlantService() {
         });
     }, [request]);
 
-    return {getPlants, savePlant, deletePlant};
+    const getPlant = useCallback((plantId: string) => {
+        return request<PlantResponse>({
+            method: 'get',
+            url: plantsUrl + plantId
+        }).then(response => convertResponse(response));
+    }, [request]);
+
+    return {getPlant, getPlants, savePlant, deletePlant};
 }

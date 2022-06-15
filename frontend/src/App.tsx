@@ -10,6 +10,7 @@ import AddPlantFormView from "./views/AddPlantFormView";
 import {useAuth} from "./api/auth/AuthContext";
 import {NetworkError, UnauthorizedError} from "./api/auth/util";
 import AccountSettingsView from "./views/AccountSettingsView";
+import PlantDetailsView from "./views/PlantDetailsView";
 
 function App() {
     let {user, refresh, pendingRefresh} = useAuth();
@@ -41,6 +42,7 @@ function App() {
                         <Route path="/*" element={<MainView/>}/>
                         <Route path="/plants/add" element={<AddPlantFormView/>}/>
                         <Route path="/settings" element={<AccountSettingsView/>}/>
+                        <Route path="/plants/:plantId" element={<PlantDetailsView/>}/>
                     </Routes>
                 ) : (
                     <Routes>
