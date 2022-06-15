@@ -9,7 +9,7 @@ function PlantCard({plant, onRemove}: { plant: Plant, onRemove: (id: string) => 
 
     const navigate = useNavigate();
     const handleNavigate = () => {
-        navigate("/dashboard/plants/"+plant.id);
+        navigate("/plants/"+plant.id);
     };
 
     return (

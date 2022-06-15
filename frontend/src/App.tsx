@@ -42,7 +42,7 @@ function App() {
                         <Route path="/*" element={<MainView/>}/>
                         <Route path="/plants/add" element={<AddPlantFormView/>}/>
                         <Route path="/settings" element={<AccountSettingsView/>}/>
-                        <Route path="/dashboard/plants/:plantId" element={<PlantDetailsView/>}/>
+                        <Route path="/plants/:plantId" element={<PlantDetailsView/>}/>
                     </Routes>
                 ) : (
                     <Routes>
