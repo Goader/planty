@@ -1,8 +1,9 @@
 import {useCallback} from "react";
 import {useAuth} from "./auth/AuthContext";
 import {AddPlantData, Plant, PlantResponse} from "../model/plants";
+import {urls} from "./const";
 
-const plantsUrl = process.env.REACT_APP_API_URL + '/dashboard/plants/';
+const plantsUrl = urls.apiUrl + '/dashboard/plants/';
 
 function convertResponse(response: PlantResponse): Plant {
     return {
@@ -13,7 +14,7 @@ function convertResponse(response: PlantResponse): Plant {
         insolation: response.insolation,
         fertilizing: response.fertilizing,
         otherInfo: response.other_info,
-        photoUrl: 'http://localhost:3001' + response.photo_url
+        photoUrl: urls.apiUrl + response.photo_url
     };
 }
 

@@ -1,8 +1,9 @@
 import {useCallback} from "react";
 import {AccountSettings, AccountSettingsData} from "../model/settings";
 import {useAuth} from "./auth/AuthContext";
+import {urls} from "./const";
 
-const settingsUrl = 'http://localhost:3001/settings/';
+const settingsUrl = urls.apiUrl = '/settings/';
 
 export function useSettingsService() {
     const {request} = useAuth();

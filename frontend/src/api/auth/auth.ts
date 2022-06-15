@@ -1,8 +1,9 @@
 import {AuthData, TokenPair, UserData} from "../../model/auth";
 import axios, {AxiosRequestConfig} from "axios";
 import {createAuthHeaders, processHttpError} from "./util";
+import {urls} from "../const";
 
-const authUrl = process.env.REACT_APP_API_URL + '/users/';
+const authUrl = urls.apiUrl + '/users/';
 
 export const internalAuthProvider = {
     login: async (username: string, password: string): Promise<AuthData> => {

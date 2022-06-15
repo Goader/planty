@@ -2,8 +2,9 @@ import {useCallback} from "react";
 import {PlantEvent, PlantEventDetails, PlantEventResponse} from "../model/calendar";
 import {useAuth} from "./auth/AuthContext";
 import {Plant} from "../model/plants";
+import {urls} from "./const";
 
-const eventsUrl = process.env.REACT_APP_API_URL + '/dashboard/events/';
+const eventsUrl = urls.apiUrl + '/dashboard/events/';
 
 function convertDate(date: Date): string {
     return date.toJSON().split('T')[0];
