@@ -1,11 +1,11 @@
 from datetime import timedelta, date, datetime, time
-from uuid import uuid4
+from uuid import UUID, uuid4
 from math import ceil
 from django.conf import settings
 import os
 
 from django.contrib.auth.models import User
-from django.db.models import Model
+from django.db.models import Model, ProtectedError
 from django.conf import settings
 
 from rest_framework.response import Response
@@ -22,7 +22,9 @@ from .serializers import (
     PlantCreateSerializer,
     PlantUpdateSerializer,
     PlantDeleteSerializer,
-    TimeSpanSerializer
+    TimeSpanSerializer,
+    InstructionCreateSerializer,
+    InstructionUpdateSerializer,
 )
 
 
@@ -160,7 +162,7 @@ class PlantsView(APIView):
 
         return Response(status=status.HTTP_200_OK)
 
-    def delete(self, request):
+    def delete(self, request: Request):
         user: User = request.user
         serializer = PlantDeleteSerializer(data=request.data)
 
@@ -394,12 +396,12 @@ class EventsView(APIView):
 
         return Response(status=status.HTTP_200_OK)
 
-
+    
 class CustomEventsView(APIView):
     def post(self, request: Request):
         user: User = request.user
         serializer = CustomEventCreateSerializer(data=request.data)
-
+        
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -445,6 +447,216 @@ class CustomEventsView(APIView):
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         return Response(status=status.HTTP_200_OK)
+
+
+class InstructionsView(APIView):
+    def get(self, request: Request):
+        user: User = request.user
+
+        my_instructions = Instruction.objects.filter(user=user, public=False)
+
+        my_instructions_json = []
+        for instruction in my_instructions:
+            instruction_json = {
+                'id': str(instruction.id),
+                'name' : instruction.name,
+                'species': instruction.species,
+
+                'watering': instruction.watering,
+                'insolation': instruction.insolation,
+                'fertilizing': instruction.fertilizing,
+            }
+            my_instructions_json.append(instruction_json)
+
+        return Response(my_instructions_json, status=status.HTTP_200_OK)
+
+    def post(self, request: Request):
+        user: User = request.user
+        serializer = InstructionCreateSerializer(data=request.data)
+
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        data = serializer.validated_data
+
+        instruction: Instruction = Instruction.objects.create(
+            id=uuid4(),
+            name=data['name'],
+
+            user=user,
+            species=data['species'],
+
+            watering=data['watering'],
+            insolation=data['insolation'],
+            fertilizing=data['fertilizing']
+        )
+        instruction.save()
+
+        return Response(status=status.HTTP_201_CREATED)
+
+
+class InstructionView(APIView):
+    def get(self, request: Request, id: UUID):
+        user: User = request.user
+
+        try:
+            instruction: Instruction = Instruction.objects.get(id=id)
+        except Instruction.DoesNotExist:
+            return Response(data={
+                'id': ['Plant with the given ID does not exist']
+            }, status=status.HTTP_404_NOT_FOUND)
+
+        if instruction.user != user:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
+        instruction_json = {
+            'id': str(instruction.id),
+            'name': instruction.name,
+            'species': instruction.species,
+
+            'watering': instruction.watering,
+            'insolation': instruction.insolation,
+            'fertilizing': instruction.fertilizing,
+        }
+
+        return Response(instruction_json, status=status.HTTP_200_OK)
+
+    def put(self, request: Request, id: UUID):
+        user: User = request.user
+        serializer = InstructionUpdateSerializer(data=request.data)
+
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        data = serializer.validated_data
+
+        try:
+            instruction: Instruction = Instruction.objects.get(id=id)
+        except Instruction.DoesNotExist:
+            return Response(data={
+                'id': ['Plant with the given ID does not exist']
+            }, status=status.HTTP_404_NOT_FOUND)
+
+        if instruction.user != user:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
+        if instruction.public:
+            return Response(data={
+                'id:': ['Instruction with this ID is public. Cannot modify public instructions.']
+            }, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+        instruction.name = data.get('name', instruction.name)
+        instruction.species = data.get('species', instruction.species)
+
+        instruction.fertilizing = data.get('fertilizing', instruction.fertilizing)
+        instruction.insolation = data.get('insolation', instruction.insolation)
+        instruction.watering = data.get('watering', instruction.watering)
+
+        # if at least something has changed
+        if {'name', 'species', 'fertilizing', 'insolation', 'watering'} & set(data.keys()):
+            instruction.publicated = False
+
+        instruction.save()
+
+        return Response(status=status.HTTP_200_OK)
+
+    def delete(self, request: Request, id: UUID):
+        user: User = request.user
+
+        try:
+            instruction: Instruction = Instruction.objects.get(id=id)
+        except Instruction.DoesNotExist:
+            return Response(data={
+                'id': ['Instruction with the given ID does not exist']
+            }, status=status.HTTP_204_NOT_FOUND)
+
+        if instruction.user != user:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
+        try:
+            instruction.delete()
+        except ProtectedError:
+            return Response(data={
+                'id': ['Instruction with the given ID is used in your plant, assign another instruction first']
+            }, status=status.HTTP_409_CONFLICT)
+
+        return Response(status=status.HTTP_200_OK)
+
+
+class PopularInstructionsView(APIView):
+    def get(self, request: Request):
+        if 'species' not in request.GET:
+            return Response(data={
+                'species': ['species is a mandatory parameter']
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        species = request.GET['species']
+        N = request.GET.get('limit', 10)
+
+        suggested = Instruction.objects.filter(public=True, species=species)
+        desc_suggested_instruction = suggested.order_by('num_selected').reverse()[:N]
+
+        desc_suggested_instructions_json = []
+        for instruction in desc_suggested_instruction:
+            instruction_json = {
+                'id': str(instruction.id),
+                'name': instruction.name,
+                'species': instruction.species,
+
+                'watering': instruction.watering,
+                'insolation': instruction.insolation,
+                'fertilizing': instruction.fertilizing,
+
+                'num_selected': instruction.num_selected
+            }
+            desc_suggested_instructions_json.append(instruction_json)
+
+        return Response(desc_suggested_instructions_json, status=status.HTTP_200_OK)
+
+
+class ShareInstructionView(APIView):
+    def put(self, request: Request, id: UUID):
+        user: User = request.user
+
+        try:
+            instruction: Instruction = Instruction.objects.get(id=id)
+        except Model.DoesNotExist:
+            return Response(data={
+                'id': ['Plant with the given ID does not exist']
+            }, status=status.HTTP_404_NOT_FOUND)
+
+        if instruction.user != user:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
+        if instruction.public:
+            return Response(data={
+                'id:': ['Instruction with this ID is public. Cannot share public instructions.']
+            }, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+        if instruction.publicated:
+            return Response(status=status.HTTP_200_OK)
+
+        # creating public immutable Instruction object
+        shared_instruction: Instruction = Instruction.objects.create(
+            id=uuid4(),
+            name=instruction.name,
+
+            user=user,
+            species=instruction.species,
+
+            watering=instruction.watering,
+            insolation=instruction.insolation,
+            fertilizing=instruction.fertilizing,
+
+            public=True
+        )
+
+        shared_instruction.save()
+
+        instruction.publicated = True
+        instruction.save()
+
+        return Response(status=status.HTTP_201_CREATED)
 
 
 class PlantView(APIView):
