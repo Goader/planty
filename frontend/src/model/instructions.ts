@@ -1,10 +1,13 @@
-export type Instruction = {
-    id: string
+export type BaseInstruction = {
     name: string
     species: string
     watering: number
     insolation: string
     fertilizing: number
+}
+
+export type Instruction = BaseInstruction & {
+    id: string
 }
 
 export type PublicInstruction = Instruction & {

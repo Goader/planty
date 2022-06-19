@@ -24,7 +24,7 @@ from .serializers import (
     PlantDeleteSerializer,
     TimeSpanSerializer,
     InstructionCreateSerializer,
-    InstructionUpdateSerializer,
+    InstructionUpdateSerializer, InstructionSerializer,
 )
 
 
@@ -477,22 +477,18 @@ class InstructionsView(APIView):
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        data = serializer.validated_data
+        instruction_data = {
+            'id': uuid4(),
+            **serializer.validated_data
+        }
 
         instruction: Instruction = Instruction.objects.create(
-            id=uuid4(),
-            name=data['name'],
-
             user=user,
-            species=data['species'],
-
-            watering=data['watering'],
-            insolation=data['insolation'],
-            fertilizing=data['fertilizing']
+            **instruction_data
         )
         instruction.save()
 
-        return Response(status=status.HTTP_201_CREATED)
+        return Response(instruction_data, status=status.HTTP_201_CREATED)
 
 
 class InstructionView(APIView):
@@ -509,15 +505,7 @@ class InstructionView(APIView):
         if instruction.user != user:
             return Response(status=status.HTTP_403_FORBIDDEN)
 
-        instruction_json = {
-            'id': str(instruction.id),
-            'name': instruction.name,
-            'species': instruction.species,
-
-            'watering': instruction.watering,
-            'insolation': instruction.insolation,
-            'fertilizing': instruction.fertilizing,
-        }
+        instruction_json = InstructionSerializer(instruction)
 
         return Response(instruction_json, status=status.HTTP_200_OK)
 
@@ -552,13 +540,15 @@ class InstructionView(APIView):
         instruction.insolation = data.get('insolation', instruction.insolation)
         instruction.watering = data.get('watering', instruction.watering)
 
+        instruction_serializer = InstructionSerializer(instruction)
+
         # if at least something has changed
         if {'name', 'species', 'fertilizing', 'insolation', 'watering'} & set(data.keys()):
             instruction.publicated = False
 
         instruction.save()
 
-        return Response(status=status.HTTP_200_OK)
+        return Response(instruction_serializer.data, status=status.HTTP_200_OK)
 
     def delete(self, request: Request, id: UUID):
         user: User = request.user
@@ -568,7 +558,7 @@ class InstructionView(APIView):
         except Instruction.DoesNotExist:
             return Response(data={
                 'id': ['Instruction with the given ID does not exist']
-            }, status=status.HTTP_204_NOT_FOUND)
+            }, status=status.HTTP_404_NOT_FOUND)
 
         if instruction.user != user:
             return Response(status=status.HTTP_403_FORBIDDEN)
