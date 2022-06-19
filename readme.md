@@ -43,26 +43,48 @@ NOTE: if you update the library version, add a new library or remove the existin
 
 ### Frontend
 
-#### Install yarn
+#### Install node.js and npm
 
 * Windows
-  * Install `node`
-  * Download [MSI installer](https://classic.yarnpkg.com/latest.msi) and run it
+  * Download node.js installer from [official website](https://nodejs.org/en/download/)
+  * Run installer
 * MacOS
-  * Run `brew install yarn`
-* Linux (Ubuntu)
-  * Run this to update the repositories 
-      ```bash
-      curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
-      echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
-      ```
-  * Run `sudo apt update && sudo apt install yarn` to install `yarn`
+  * Run `brew install yarn` 
+* Linux (Ubuntu/Debian)
+  * Using node repository
+    ```bash
+    # Using Ubuntu
+    curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+    sudo apt-get install -y nodejs
 
-If you need `yarn` for any other platform, or any problem occurs, use this [website](https://classic.yarnpkg.com/lang/en/docs/install/#debian-stable) for help!
+    # Using Debian, as root
+    curl -fsSL https://deb.nodesource.com/setup_16.x | bash -
+    apt-get install -y nodejs
+    ```
+  * Using node version manager
+    * Install node version manager
+      ```bash
+      curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+      ```
+    * Install `node` version 16 (latest LTS) using `nvm`
+      ```bash
+      nvm install 16
+      ```
+Verify that `node` and `npm` commands work in your terminal
+```bash
+node -v
+npm -v
+```
+
+#### Install yarn
+Install yarn using `npm`
+```bash
+npm install -g yarn
+```
 
 #### Using yarn
 
-You can use this [guide](https://classic.yarnpkg.com/lang/en/docs/creating-a-project/) or look [here](https://classic.yarnpkg.com/en/docs/cli/) to find all the commands you need!
+You can use this [guide](https://yarnpkg.com/getting-started/usage) or look [here](https://yarnpkg.com/cli) to find all the commands you need!
 
 * `yarn add [package]` - adding a new package to `package.json` and `yarn.lock`
 * `yarn remove [package]` - removing a package from `package.json` and `yarn.lock`
@@ -70,4 +92,38 @@ You can use this [guide](https://classic.yarnpkg.com/lang/en/docs/creating-a-pro
 * `yarn run [script]` - running a script specified in the `package.json`
 * feel free to add new useful commands!
 
+## :fleur_de_lis: Code Style
 
+### Python
+
+* using spaces (4 spaces for an indent)
+* using typing annotations (both arguments and return values)
+* using snake case
+* **_following PEP-8_**
+* using private attributes with the `_` prefix and properties to access them or modify
+* using immutable classes everywhere it can be done
+* avoiding big constructions (ex. skipping variables creating by passing results straight to the next function if it becomes hard to read), if it does not affect the efficiency noticeably
+* commenting how different chunks of code work if they are not that obvious (ex. some algorithms)
+* aligning splitted function calls, declarations and so on..
+
+
+## :trident: Definition of Done
+
+Every point has different levels of completion. To count it satisfied you must satisfy **_at least_** level. **To satisfy level X you must satisfy each level below X too!**
+
+* **_code works!_**
+  * **_perfectly_**: you have written automatic tests which can be easily run and they pass
+  * **_at least_**: you have thoroughly tested the code by hand, tried out different edge cases and the program works as expected
+  * **_won't even be reviewed_**: program with your code does not fail the tests written before (unless it is a major change and previous tests need to be update, in that case you must update the tests), all the tests must pass!
+* **_code reviewed!_**
+  * **_perfectly_**: 2 or more people have reviewed your code
+  * **_at least_**: one person has reviewed your code, all the comments have been taken into consideration, all the issues have been resolved
+  * **_do not even try_**: it is forbidden to merge pull requests without a review, it is also forbidden to commit straight to _dev_, except of updates of readme or any other file, which does not affect the program execution
+* **_satisfies acceptance criteria!_**
+  * **_perfectly_**: your code 100% satisfy acceptance criterias
+  * **_at least_**: your code does not satisfy some minor acceptance criterias, but they have been discussed internally and with a client
+  * **_a bad idea_**: your changes cannot affect the acceptance criterias which have been already satisfied, but they are not satisfied anymore
+* **_merged!_**
+  * **_perfectly_**: you have rebased your branch onto the branch you are about to merge in, pull request is ready to be merged in one click
+  * **_at least (still better go for "perfectly")_**: you have created a pull request, all the conflicts with the target branch have been resolved, the branch has been merged, the pull request is closed
+  * **_you should not_**: your branch cannot have any ongoing unresolved conflicts with the target branch

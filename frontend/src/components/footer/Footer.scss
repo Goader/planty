@@ -1,0 +1,67 @@
+
+.mainFooter {
+    width: 100%;
+    height: 562px;
+    position: relative;
+}
+.set_bg {
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: top center;
+}
+.aboutUs{
+    /* display: none; */
+    width: 245px;
+    height: 216px;
+    position: absolute;
+    left: 67px;
+    bottom: 48px;
+
+    background: #367B00;
+    /* Primary-100 */
+
+    border: 3px solid #F6FFEF;
+    box-sizing: border-box;
+    border-radius: 45px;
+}
+.copyRight{
+    position: absolute;
+    width: 100%;
+    top: 462px;
+    /* Header2 */
+
+    font-family: 'Rasa', serif;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 36px;
+    line-height: 40px;
+    text-align: center;
+
+    color: #FFFFFF;
+}
+
+.aboutUsButton{
+    color: #FFFFFF;
+    font-family: 'Roboto', serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 24px;
+    /* or 150% */
+
+    text-align: center;
+    text-decoration-line: underline;
+
+    border-radius: 10px;
+    padding: 10px;
+    margin-top: 15px;
+    margin-left: 10px;
+    margin-right: 10px;
+
+
+}
+.aboutUsButton:hover{
+    background-color: #51BA00;
+    cursor: pointer;
+
+}
