@@ -1,20 +1,36 @@
 import React from "react";
-import './Card.css';
+import './PlantCard.scss';
 import {Button, Card, Col, Container, Row} from "react-bootstrap";
 import {Plant} from "../../model/plants";
+import {BsFillTrashFill} from "react-icons/bs";
+import {useNavigate} from "react-router-dom";
 
-function PlantCard({plant}: { plant: Plant }) {
-    const imageUrl = "https://picsum.photos/250";
+function PlantCard({plant, onRemove}: { plant: Plant, onRemove: (id: string) => void }) {
+
+    const navigate = useNavigate();
+    const handleNavigate = () => {
+        navigate("/plants/"+plant.id);
+    };
+
     return (
         <Card className={'py-4 plant-card'}>
             <Container>
                 <Row>
                     <Col xs={12} md={6}>
-                        <Card.Img src={imageUrl}/>
+                        <Card.Img src={plant.photoUrl}/>
                     </Col>
                     <Col xs={12} md={6} className={'d-flex flex-column justify-content-between'}>
                         <div>
-                            <Card.Title className={'plant-name'}>{plant.name}</Card.Title>
+                            <div className={"d-flex"}>
+                                <Card.Title className={'plant-name flex-grow-1'}>
+                                    {plant.name}
+                                </Card.Title>
+                                <Button onClick={() => {
+                                    onRemove(plant.id);
+                                }}>
+                                    <BsFillTrashFill/>
+                                </Button>
+                            </div>
                             <Card.Subtitle className={'plant-species'}>{plant.species}</Card.Subtitle>
                         </div>
                         <div>
@@ -30,7 +46,7 @@ function PlantCard({plant}: { plant: Plant }) {
                                     every {plant.fertilizing} days
                                 </div>
                             </div>
-                            <Button variant="primary" className={'button-card'}>Update instructions</Button>
+                            <Button variant="primary" className={'button-card'} onClick={handleNavigate}>Update instructions</Button>
                         </div>
                     </Col>
                 </Row>

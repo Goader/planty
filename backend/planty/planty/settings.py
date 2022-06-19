@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/4.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
-
+import os
 from pathlib import Path
 import datetime
 
@@ -45,7 +45,8 @@ INSTALLED_APPS = [
 
     # local django apps
     'users.apps.UsersConfig',
-    'dashboard.apps.DashboardConfig'
+    'dashboard.apps.DashboardConfig',
+    'settings.apps.SettingsConfig'
 ]
 
 MIDDLEWARE = [
@@ -74,7 +75,7 @@ REST_FRAMEWORK = {
 
 # TODO change to the address of React (probably using .env and environment variables)
 CORS_ORIGIN_WHITELIST = (
-    # 'localhost:3000',
+    'http://localhost:3000',
 )
 
 JWT_AUTH = {
@@ -166,9 +167,49 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 NOTIFIER_ENDPOINT = 'http://127.0.0.1:12012/schedule'
+NOTIFIER_SUBJECTS = {
+    'water': 'Watering notification',
+    'insolation': 'Insolation notification',
+    'fertilize': 'Fertilizing notification',
+    'custom': 'Custom event notification'
+}
+NOTIFIER_CONTENTS = {
+    'water': [
+        'Hey!\n\nYour plant - {plant_name} needs to be watered tomorrow! Don\'t forget about it!\n\nPlanty',
+        'Hello!\n\nMake sure to water {plant_name} today!\n\nPlanty',
+        'Hi!\n\nYou have forgotten to water {plant_name} yesterday! It\'s not a problem, you can do it today, just try to not forget about it again ;)\n\nPlanty',
+        'Hello!\n\nIt has been 3 days since you had to water {plant_name}. Be responsible! Do it as soon as you can, otherwise plant may suffer :(\n\nPlanty',
+        'Oh my god!\n\nSo many days since you have watered {plant_name}. It must have already died or something! Just tell me you have simply forgotten to click in the application, and you have watered it a few days ago!\nIf not, then DO IT NOW!\n\nPlanty'
+    ],
+    'insolation': [
+        '?',
+        '?',
+        '?',
+        '?',
+        '?'
+    ],
+    'fertilize': [
+        '?',
+        '?',
+        '?',
+        '?',
+        '?'
+    ],
+    'custom': [
+        '?',
+        '?',
+        '?',
+        '?',
+        '?'
+    ]
+}
+
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_URL = '/users/login/'
 LOGIN_REDIRECT_URL = '/dashboard/plants/'
 LOGOUT_REDIRECT_URL = '/'
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'

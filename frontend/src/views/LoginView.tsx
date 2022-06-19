@@ -1,9 +1,9 @@
 import {Button, Card, Container, Form} from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './FormView.css';
+import './FormView.scss';
 import {Formik, FormikHelpers} from "formik";
 import * as Yup from "yup";
-import {useAuth} from "../components/AuthContext";
+import {useAuth} from "../api/auth/AuthContext";
 import {Link, Navigate, useNavigate} from "react-router-dom";
 
 const schema = Yup.object().shape({
@@ -19,7 +19,7 @@ export default function LoginView() {
         login(values.username, values.password)
             .then(() => navigate('/', {replace: true}))
             .catch(err => {
-                console.log('error during login', err);
+                console.log('Login error', err);
                 helpers.setFieldError('username', 'Invalid credentials');
             })
             .finally(() => helpers.setSubmitting(false));

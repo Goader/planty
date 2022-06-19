@@ -25,7 +25,7 @@ from .validators import (
 class PlantCreateSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=50)
     species = serializers.CharField(max_length=50)
-    image = Base64ImageField(required=False, default=None)
+    photo = Base64ImageField(required=False, default=None)
 
     used_instruction = serializers.UUIDField(required=False)
     watering = serializers.IntegerField(required=False, validators=[MinValueValidator(1)])
@@ -36,12 +36,17 @@ class PlantCreateSerializer(serializers.Serializer):
 
     def validate(self, data: dict):
         if 'used_instruction' not in data and (
-                'watering' not in data \
-                    or 'insolation' not in data \
-                    or 'fertilizing' not in data
-            ):
+                'watering' not in data
+                or 'insolation' not in data
+                or 'fertilizing' not in data
+        ):
+            raise serializers.ValidationError(
+                'you must either specify the used instruction or fill the fields for a new one')
 
-            raise serializers.ValidationError('you must either specify the used instruction or fill the fields for a new one')
+        if 'photo' in data and data['photo'].content_type not in ['image/jpeg', 'image/png']:
+            raise serializers.ValidationError(
+                'photo must be either PNG or JPG/JPEG'
+            )
 
         return data
 
@@ -50,7 +55,7 @@ class PlantUpdateSerializer(serializers.Serializer):
     id = serializers.UUIDField()
     name = serializers.CharField(required=False, max_length=50)
     species = serializers.CharField(required=False, max_length=50)
-    image = Base64ImageField(required=False)
+    photo = Base64ImageField(required=False, default=None)
 
     used_instruction = serializers.UUIDField(required=False)
     watering = serializers.IntegerField(required=False, validators=[MinValueValidator(1)])
@@ -76,12 +81,32 @@ class TimeSpanSerializer(serializers.Serializer):
         return data
 
 
-class EventCreateSerializer(serializers.Serializer):
-    event_date = serializers.DateTimeField(required=False, default=datetime.now)
+class EventHappenedSerializer(serializers.Serializer):
+    id = serializers.UUIDField(required=False)
+    event_date = serializers.DateTimeField(required=False, input_formats=['iso-8601'], default=datetime.now)
     plant = serializers.UUIDField()
     # TODO add move when there is a possibility to add custom events
-    action = serializers.ChoiceField(['water', 'fertilize'])
-    message = serializers.CharField(required=False, max_length=400, default='')
+    action = serializers.ChoiceField(['water', 'fertilize', 'custom'])
+
+    def validate(self, data: dict):
+        if data['action'] == 'custom' and 'id' not in data:
+            raise serializers.ValidationError('id must be present for custom events')
+
+        return data
+
+
+class CustomEventCreateSerializer(serializers.Serializer):
+    plant = serializers.UUIDField()
+
+    event_date = serializers.DateField()
+    name = serializers.CharField(max_length=50)
+    description = serializers.CharField(required=False, max_length=400, default='')
+
+    def validate(self, data: dict):
+        if data['event_date'] < date.today():
+            raise serializers.ValidationError('event_date cannot be in the past')
+
+        return data
 
 
 class InstructionCreateSerializer(serializers.Serializer):

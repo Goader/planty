@@ -31,11 +31,56 @@ class Plant(models.Model):
 
     name = models.CharField(max_length=50)
     species = models.CharField(max_length=50)
-    photo_url = models.URLField(blank=True, null=True)
+    photo = models.ImageField(upload_to='plants', default=None)
     other_info = models.CharField(max_length=400, blank=True, default="")
 
     last_watered = models.DateField(default=date.today)
     last_fertilized = models.DateField(default=date.today)
+
+    class Meta:
+        app_label = 'dashboard'
+
+    def values(self):
+
+        return {
+            'id': str(self.id),
+            'name': self.name,
+            'photo_url': self.photo.url if self.photo.name else None,
+            'species': self.species,
+            'other_info': self.other_info,
+
+            'watering': self.instruction.watering,
+            'insolation': self.instruction.insolation,
+            'fertilizing': self.instruction.fertilizing,
+
+            "last_watered": self.last_watered,
+            "last_fertilized": self.last_fertilized
+        }
+
+
+class EventsHistory(models.Model):
+    id = models.UUIDField(primary_key=True)
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    plant = models.ForeignKey(Plant, on_delete=models.CASCADE)
+
+    action = models.CharField(max_length=50)
+    date = models.DateField()
+
+    class Meta:
+        app_label = 'dashboard'
+
+
+class CustomEvent(models.Model):
+    id = models.UUIDField(primary_key=True)
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    plant = models.ForeignKey(Plant, on_delete=models.CASCADE)
+
+    date = models.DateField()
+    name = models.CharField(max_length=50)
+    happened = models.BooleanField(default=False)
+    description = models.CharField(max_length=400, default='')
 
     class Meta:
         app_label = 'dashboard'

@@ -81,3 +81,4 @@ fabric.properties
 **/media/
 **/migrations/
 .env
+.vscode/
