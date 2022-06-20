@@ -23,6 +23,19 @@ class UserSerializerWithToken(serializers.ModelSerializer):
             'access': str(refresh.access_token),
         }
 
+    def validate(self, data):
+        if 'username' in data and not 4 <= len(data['username']) <= 50:
+            raise serializers.ValidationError({
+                'username': ['username can be only from 4 to 50 characters long']
+            })
+
+        if 'password' in data and not 8 <= len(data['password']) <= 80:
+            raise serializers.ValidationError({
+                'password': ['password can be only from 8 to 80 characters long']
+            })
+
+        return data
+
     def create(self, validated_data):
         password = validated_data.pop('password', None)
         instance = self.Meta.model(**validated_data)
