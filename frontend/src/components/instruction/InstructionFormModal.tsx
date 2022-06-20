@@ -11,7 +11,7 @@ export type InstructionModalProps = {
     title: string
 }
 
-export default function InstructionModal(props: InstructionModalProps) {
+export default function InstructionFormModal(props: InstructionModalProps) {
     return <Modal show={props.show} size={'lg'} onHide={() => props.onHide()} fullscreen={'sm-down'} centered>
         <Modal.Header closeButton>
             <Modal.Title>

@@ -45,7 +45,7 @@ function PlantDetailsView() {
 
                     <div className={'center-header'}>
                         <h5>Picture:</h5>
-                        <Card.Img src={plant.photoUrl}/>
+                        <Card.Img src={plant.photoUrl ? plant.photoUrl : '/default_plant.png'}/>
                     </div>
 
                     <div className={'center-header'}>

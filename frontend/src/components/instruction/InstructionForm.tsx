@@ -79,6 +79,7 @@ export default function InstructionForm(props: InstructionFormProps) {
                         onChange={handleChange}
                         onBlur={handleBlur}
                         isInvalid={touched.watering && !!errors.watering}
+                        min={1}
                     />
                     <Form.Control.Feedback
                         type={'invalid'}>{errors.watering}</Form.Control.Feedback>
@@ -107,6 +108,7 @@ export default function InstructionForm(props: InstructionFormProps) {
                         onChange={handleChange}
                         onBlur={handleBlur}
                         isInvalid={touched.fertilizing && !!errors.fertilizing}
+                        min={1}
                     />
                     <Form.Control.Feedback
                         type={'invalid'}>{errors.fertilizing}</Form.Control.Feedback>

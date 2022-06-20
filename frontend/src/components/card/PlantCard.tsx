@@ -11,13 +11,13 @@ function PlantCard({plant, onRemove}: { plant: Plant, onRemove: (id: string) => 
     const handleNavigate = () => {
         navigate("/plants/"+plant.id);
     };
-
+    console.log(plant);
     return (
         <Card className={'py-4 plant-card'}>
             <Container>
                 <Row>
                     <Col xs={12} md={6}>
-                        <Card.Img src={plant.photoUrl}/>
+                        <Card.Img src={plant.photoUrl ? plant.photoUrl : '/default_plant.png'}/>
                     </Col>
                     <Col xs={12} md={6} className={'d-flex flex-column justify-content-between'}>
                         <div>

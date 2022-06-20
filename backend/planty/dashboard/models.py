@@ -31,7 +31,7 @@ class Plant(models.Model):
 
     name = models.CharField(max_length=50)
     species = models.CharField(max_length=50)
-    photo = models.ImageField(upload_to='plants', default=None)
+    photo = models.ImageField(upload_to='plants', default=None, null=True)
     other_info = models.CharField(max_length=400, blank=True, default="")
 
     last_watered = models.DateField(default=date.today)

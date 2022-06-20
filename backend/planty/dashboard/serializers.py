@@ -25,9 +25,9 @@ from .validators import (
 class PlantCreateSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=50)
     species = serializers.CharField(max_length=50)
-    photo = Base64ImageField(required=False, default=None)
+    photo = Base64ImageField(required=False, allow_null=True)
 
-    used_instruction = serializers.UUIDField(required=False)
+    instruction = serializers.UUIDField(required=False)
     watering = serializers.IntegerField(required=False, validators=[MinValueValidator(1)])
     insolation = serializers.CharField(required=False, validators=[InsolationValidator()])
     fertilizing = serializers.IntegerField(required=False, validators=[MinValueValidator(1)])
@@ -35,7 +35,7 @@ class PlantCreateSerializer(serializers.Serializer):
     other_info = serializers.CharField(required=False, max_length=400, default='')
 
     def validate(self, data: dict):
-        if 'used_instruction' not in data and (
+        if 'instruction' not in data and (
                 'watering' not in data
                 or 'insolation' not in data
                 or 'fertilizing' not in data
@@ -43,7 +43,7 @@ class PlantCreateSerializer(serializers.Serializer):
             raise serializers.ValidationError(
                 'you must either specify the used instruction or fill the fields for a new one')
 
-        if 'photo' in data and data['photo'].content_type not in ['image/jpeg', 'image/png']:
+        if data.get('photo') and data['photo'].content_type not in ['image/jpeg', 'image/png']:
             raise serializers.ValidationError(
                 'photo must be either PNG or JPG/JPEG'
             )

@@ -2,7 +2,7 @@ import {BaseInstruction, Instruction} from "../../model/instructions";
 import {FormikHelpers} from "formik";
 import {useInstructionsService} from "../../api/instructions";
 import {InvalidDataError} from "../../api/auth/util";
-import InstructionModal from "./InstructionModal";
+import InstructionFormModal from "./InstructionFormModal";
 
 export type AddInstructionProps = {
     onHide: () => void,
@@ -13,9 +13,9 @@ export type AddInstructionProps = {
 const initialValues: BaseInstruction = {
     name: '',
     species: '',
-    watering: 0,
+    watering: 1,
     insolation: 'None',
-    fertilizing: 0
+    fertilizing: 1
 };
 
 export default function AddInstructionModal(props: AddInstructionProps) {
@@ -37,9 +37,9 @@ export default function AddInstructionModal(props: AddInstructionProps) {
             .finally(() => helpers.setSubmitting(false));
     };
 
-    return <InstructionModal onHide={props.onHide}
-                             onSubmit={submit}
-                             initialValues={initialValues}
-                             show={props.show}
-                             title={'Add instruction'}/>;
+    return <InstructionFormModal onHide={props.onHide}
+                                 onSubmit={submit}
+                                 initialValues={initialValues}
+                                 show={props.show}
+                                 title={'Add instruction'}/>;
 }

@@ -2,7 +2,7 @@ import {BaseInstruction, Instruction} from "../../model/instructions";
 import {useInstructionsService} from "../../api/instructions";
 import {FormikHelpers} from "formik";
 import {InvalidDataError} from "../../api/auth/util";
-import InstructionModal from "./InstructionModal";
+import InstructionFormModal from "./InstructionFormModal";
 
 export type EditInstructionProps = {
     onHide: () => void,
@@ -13,9 +13,9 @@ export type EditInstructionProps = {
 const defaultInitialValues: BaseInstruction = {
     name: '',
     species: '',
-    watering: 0,
+    watering: 1,
     insolation: 'None',
-    fertilizing: 0
+    fertilizing: 1
 };
 
 export default function EditInstructionModal(props: EditInstructionProps) {
@@ -42,9 +42,9 @@ export default function EditInstructionModal(props: EditInstructionProps) {
         }
     };
 
-    return <InstructionModal onHide={props.onHide}
-                             onSubmit={submit}
-                             initialValues={props.instruction !== null ? props.instruction : defaultInitialValues}
-                             show={props.instruction !== null}
-                             title={'Edit instruction'}/>;
+    return <InstructionFormModal onHide={props.onHide}
+                                 onSubmit={submit}
+                                 initialValues={props.instruction !== null ? props.instruction : defaultInitialValues}
+                                 show={props.instruction !== null}
+                                 title={'Edit instruction'}/>;
 }
