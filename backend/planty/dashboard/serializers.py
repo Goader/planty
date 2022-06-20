@@ -127,3 +127,12 @@ class InstructionUpdateSerializer(serializers.Serializer):
     watering = serializers.IntegerField(required=False, validators=[MinValueValidator(1)])
     insolation = serializers.CharField(required=False, max_length=50)
     fertilizing = serializers.IntegerField(required=False, validators=[MinValueValidator(1)])
+
+
+class InstructionSerializer(serializers.Serializer):
+    id = serializers.UUIDField()
+    name = serializers.CharField()
+    species = serializers.CharField()
+    watering = serializers.IntegerField()
+    insolation = serializers.CharField()
+    fertilizing = serializers.IntegerField()

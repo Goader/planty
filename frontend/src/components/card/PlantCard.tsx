@@ -46,7 +46,7 @@ function PlantCard({plant, onRemove}: { plant: Plant, onRemove: (id: string) => 
                                     every {plant.fertilizing} days
                                 </div>
                             </div>
-                            <Button variant="primary" className={'button-card'} onClick={handleNavigate}>Update instructions</Button>
+                            <Button variant="primary" className={'button-card'} onClick={handleNavigate}>Show details</Button>
                         </div>
                     </Col>
                 </Row>
