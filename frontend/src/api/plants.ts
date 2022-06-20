@@ -13,7 +13,7 @@ function convertResponse(response: PlantResponse): Plant {
         insolation: response.insolation,
         fertilizing: response.fertilizing,
         otherInfo: response.other_info,
-        photoUrl: 'http://localhost:3001' + response.photo_url
+        photoUrl: response.photo_url ? 'http://localhost:3001' + response.photo_url : null
     };
 }
 
@@ -27,11 +27,11 @@ export function usePlantService() {
     }, [request]);
 
     const savePlant = useCallback((plant: PlantFormData) => {
-        return request({
+        return request<PlantResponse>({
             method: 'post',
             url: plantsUrl,
             data: plant
-        });
+        }).then(response => convertResponse(response));
     }, [request]);
 
     const deletePlant = useCallback((id) => {
