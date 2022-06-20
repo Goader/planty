@@ -20,6 +20,8 @@ class MaxValueValidator:
 
 
 class InsolationValidator:
+    insolation_values = ["low", "medium", "high"]
+
     def __call__(self, value):
-        # TODO check if it is one of the possible values
-        pass
+        if value not in self.insolation_values:
+            raise serializers.ValidationError(f'the value must be one of {self.insolation_values}')
