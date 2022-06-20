@@ -11,7 +11,6 @@ function AccountSettingsForm() {
     const [initialValues, setInitialValues] = useState<AccountSettings | null>(null);
 
     const submitHandler = (values: any, helpers: FormikHelpers<any>): void => {
-        console.log("elo");
         saveSettings(values).then(() => {
             helpers.setSubmitting(false);
         });
