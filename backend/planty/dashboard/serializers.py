@@ -6,7 +6,7 @@ from drf_extra_fields.fields import Base64ImageField
 from .models import Instruction, Plant
 from .validators import (
     MinValueValidator,
-    InsolationValidator
+    InsolationValidator, MaxValueValidator
 )
 
 
@@ -28,7 +28,7 @@ class PlantCreateSerializer(serializers.Serializer):
     photo = Base64ImageField(required=False, default=None)
 
     used_instruction = serializers.UUIDField(required=False)
-    watering = serializers.IntegerField(required=False, validators=[MinValueValidator(1)])
+    watering = serializers.IntegerField(required=False, validators=[MinValueValidator(1), MaxValueValidator(1000)])
     insolation = serializers.CharField(required=False, validators=[InsolationValidator()])
     fertilizing = serializers.IntegerField(required=False, validators=[MinValueValidator(1)])
 
@@ -58,7 +58,7 @@ class PlantUpdateSerializer(serializers.Serializer):
     photo = Base64ImageField(required=False, default=None)
 
     used_instruction = serializers.UUIDField(required=False)
-    watering = serializers.IntegerField(required=False, validators=[MinValueValidator(1)])
+    watering = serializers.IntegerField(required=False, validators=[MinValueValidator(1), MaxValueValidator(1000)])
     # TODO change to ChoiceField for insolation
     insolation = serializers.CharField(required=False, validators=[InsolationValidator()])
     fertilizing = serializers.IntegerField(required=False, validators=[MinValueValidator(1)])
