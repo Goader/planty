@@ -4,7 +4,8 @@ import {Instruction} from "../../model/instructions";
 
 type InstructionCardProps = {
     instruction: Instruction,
-    onClickEdit: () => void
+    onButtonClick: () => void,
+    buttonText: string
 }
 
 export default function InstructionCard(props: InstructionCardProps) {
@@ -29,8 +30,8 @@ export default function InstructionCard(props: InstructionCardProps) {
                                 every {props.instruction.fertilizing} days
                             </div>
                         </div>
-                        <Button variant="primary" className={'button-card'} onClick={props.onClickEdit}>
-                            Update instructions
+                        <Button variant="primary" className={'button-card'} onClick={props.onButtonClick}>
+                            {props.buttonText}
                         </Button>
                     </div>
                 </div>

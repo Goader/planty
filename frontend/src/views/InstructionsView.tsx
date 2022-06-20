@@ -57,7 +57,8 @@ export default function InstructionsView() {
                     {instructions.map(instruction => (
                         <Col xs={12} sm={6} md={4} xl={3} className={'mb-3'} key={instruction.id}>
                             <InstructionCard instruction={instruction}
-                                             onClickEdit={() => setEditedInstruction(instruction)}/>
+                                             onButtonClick={() => setEditedInstruction(instruction)}
+                                             buttonText={'Edit'}/>
                         </Col>))}
                 </Row>
                 <div>

@@ -1,9 +1,7 @@
-export type AddPlantData = {
+export type PlantFormData = {
     name: string
     species: string
-    watering: number
-    insolation: string
-    fertilizing: number
+    instruction: string
     photo?: string
 }
 
