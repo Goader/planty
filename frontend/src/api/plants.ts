@@ -1,6 +1,6 @@
 import {useCallback} from "react";
 import {useAuth} from "./auth/AuthContext";
-import {AddPlantData, Plant, PlantResponse} from "../model/plants";
+import {Plant, PlantFormData, PlantResponse} from "../model/plants";
 
 const plantsUrl = process.env.REACT_APP_API_URL + '/dashboard/plants/';
 
@@ -26,7 +26,7 @@ export function usePlantService() {
         }).then(response => response.map(plant => convertResponse(plant)));
     }, [request]);
 
-    const savePlant = useCallback((plant: AddPlantData) => {
+    const savePlant = useCallback((plant: PlantFormData) => {
         return request({
             method: 'post',
             url: plantsUrl,
