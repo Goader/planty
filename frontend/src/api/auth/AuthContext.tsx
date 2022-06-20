@@ -8,7 +8,7 @@ type AuthContextType = {
     user: AuthData | null,
     login: (username: string, password: string) => Promise<AuthData>,
     logout: () => void,
-    register: (username: string, password: string) => Promise<AuthData>,
+    register: (username: string, email: string, password: string) => Promise<AuthData>,
     request: <T, >(config: AxiosRequestConfig) => Promise<T>,
     refresh: () => Promise<AuthData>,
     pendingRefresh: boolean
@@ -32,8 +32,8 @@ export function AuthProvider({children}: { children: React.ReactNode }) {
         setUser(null);
     }, []);
 
-    const register = useCallback(async (username: string, password: string) => {
-        let user = await internalAuthProvider.register(username, password);
+    const register = useCallback(async (username: string, email: string, password: string) => {
+        let user = await internalAuthProvider.register(username, email, password);
         setUser(user);
         setPendingRefresh(false);
         return user;

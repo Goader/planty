@@ -9,6 +9,7 @@ import {InvalidDataError} from "../api/auth/util";
 
 const schema = Yup.object().shape({
     username: Yup.string().required('Name is required'),
+    email: Yup.string().required('Email is required'),
     password: Yup.string().required('Password is required'),
     repeatPassword: Yup.string().required('You must confirm the password').oneOf([Yup.ref('password')], 'Passwords must match')
 });
@@ -18,7 +19,7 @@ export default function RegisterView() {
     const navigate = useNavigate();
     const submit = (values: any, helpers: FormikHelpers<any>): void => {
         helpers.setSubmitting(true);
-        register(values.username, values.password)
+        register(values.username, values.email, values.password)
             .then(() => navigate('/', {replace: true}))
             .catch(err => {
                 if (err instanceof InvalidDataError) {
@@ -43,6 +44,7 @@ export default function RegisterView() {
                         onSubmit={submit}
                         initialValues={{
                             username: '',
+                            email: '',
                             password: '',
                             repeatPassword: ''
                         }}
@@ -71,6 +73,19 @@ export default function RegisterView() {
                                         isInvalid={touched.username && !!errors.username}
                                     />
                                     <Form.Control.Feedback type={'invalid'}>{errors.username}</Form.Control.Feedback>
+                                </Form.Group>
+                                <Form.Group className={'auth-group'}>
+                                    <Form.Label>Email</Form.Label>
+                                    <Form.Control
+                                        name={'email'}
+                                        type={'text'}
+                                        placeholder={'Email'}
+                                        value={values.email}
+                                        onChange={handleChange}
+                                        onBlur={handleBlur}
+                                        isInvalid={touched.email && !!errors.email}
+                                    />
+                                    <Form.Control.Feedback type={'invalid'}>{errors.email}</Form.Control.Feedback>
                                 </Form.Group>
                                 <Form.Group className={'auth-group'}>
                                     <Form.Label>Password</Form.Label>

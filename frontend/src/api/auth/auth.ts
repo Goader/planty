@@ -27,10 +27,11 @@ export const internalAuthProvider = {
             throw processHttpError(e);
         }
     },
-    register: async (username: string, password: string): Promise<AuthData> => {
+    register: async (username: string, email: string, password: string): Promise<AuthData> => {
         try {
             const response = await axios.post<AuthData>(authUrl + 'signup/', {
                 username: username,
+                email: email,
                 password: password
             }, {
                 headers: {
