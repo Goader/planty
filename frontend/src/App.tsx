@@ -6,7 +6,6 @@ import {Route, Routes, useNavigate} from 'react-router-dom';
 import LoginView from "./views/LoginView";
 import RegisterView from "./views/RegisterView";
 import MainView from "./views/MainView";
-import AddPlantFormView from "./views/AddPlantFormView";
 import {useAuth} from "./api/auth/AuthContext";
 import {NetworkError, UnauthorizedError} from "./api/auth/util";
 import AccountSettingsView from "./views/AccountSettingsView";
@@ -40,7 +39,6 @@ function App() {
                 {user !== null ? (
                     <Routes>
                         <Route path="/*" element={<MainView/>}/>
-                        <Route path="/plants/add" element={<AddPlantFormView/>}/>
                         <Route path="/settings" element={<AccountSettingsView/>}/>
                         <Route path="/plants/:plantId" element={<PlantDetailsView/>}/>
                     </Routes>
