@@ -5,7 +5,7 @@ import {BaseInstruction, Instruction} from "../model/instructions";
 const instructionsUrl = process.env.REACT_APP_API_URL + '/dashboard/instructions/';
 const singleInstructionUrl = (id: string) => instructionsUrl + id + '/';
 
-// const popularInstructionsUrl = instructionsUrl + 'popular/';
+const popularInstructionsUrl = instructionsUrl + 'popular/';
 
 export function useInstructionsService() {
     const {request} = useAuth();
@@ -13,7 +13,17 @@ export function useInstructionsService() {
     const getInstructions = useCallback(() => {
         return request<Instruction[]>({
             method: 'get',
-            url: instructionsUrl
+            url: instructionsUrl,
+        });
+    }, [request]);
+
+    const getPopularInstructions = useCallback((species: string) => {
+        return request<Instruction[]>({
+            method: 'get',
+            url: popularInstructionsUrl,
+            params: {
+                species: species
+            }
         });
     }, [request]);
 
@@ -36,5 +46,5 @@ export function useInstructionsService() {
         });
     }, [request]);
 
-    return {getInstructions, saveInstruction, updateInstruction};
+    return {getInstructions, saveInstruction, updateInstruction, getPopularInstructions};
 }
