@@ -9,7 +9,7 @@ import {InvalidDataError} from "../api/auth/util";
 
 const schema = Yup.object().shape({
     username: Yup.string().required('Name is required'),
-    email: Yup.string().required('Email is required'),
+    email: Yup.string().email().required('Email is required'),
     password: Yup.string().required('Password is required'),
     repeatPassword: Yup.string().required('You must confirm the password').oneOf([Yup.ref('password')], 'Passwords must match')
 });
