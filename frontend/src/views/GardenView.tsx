@@ -63,6 +63,7 @@ function GardenView() {
 
     const handleAddPlant = (plant: Plant) => {
         setPlants([...plants, plant]);
+        setShowAddModal(false);
     };
 
     return (

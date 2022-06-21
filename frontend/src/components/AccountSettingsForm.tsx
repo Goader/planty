@@ -1,12 +1,12 @@
-import {Link} from "react-router-dom";
-import {Button, Card, Container, Form} from "react-bootstrap";
+import {useNavigate} from "react-router-dom";
+import {Button, Form, Spinner} from "react-bootstrap";
 import {Formik, FormikHelpers} from "formik";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useSettingsService} from "../api/settings";
 import {AccountSettings} from "../model/settings";
 
 function AccountSettingsForm() {
-
+    const navigate = useNavigate();
     const {getSettings, saveSettings} = useSettingsService();
     const [initialValues, setInitialValues] = useState<AccountSettings | null>(null);
 
@@ -22,23 +22,17 @@ function AccountSettingsForm() {
         });
     }, [getSettings]);
 
-    return (
-        <Container>
-            {initialValues !== null && <Card className={'form-card p-5 mx-auto'}>
-                <div className={'center-header'}>
-                    <h3>Your options:</h3>
-                </div>
-                <Formik
-                    onSubmit={submitHandler}
-                    initialValues={initialValues}
-                    validateOnBlur={false}
-                >
-                    {({
-                          handleSubmit,
-                          handleChange,
-                          values,
-                          isValid,
-                          isSubmitting
+    return (initialValues === null ? <Spinner animation={'grow'} variant={'success'}/> : <Formik
+        onSubmit={submitHandler}
+        initialValues={initialValues}
+        validateOnBlur={false}
+    >
+        {({
+              handleSubmit,
+              handleChange,
+              values,
+              isValid,
+              isSubmitting
                       }) => (
                         <Form onSubmit={handleSubmit} noValidate>
                             <Form.Group className={'auth-group'}>
@@ -77,20 +71,14 @@ function AccountSettingsForm() {
                                 <Form.Control.Feedback type={'invalid'}>Error</Form.Control.Feedback>
                             </Form.Group>
 
-                            <Button type={'submit'} className={'mt-3'}
-                                    disabled={!isValid || isSubmitting}>Save</Button>
-
-                            <Link to={'#'}><Button type={'submit'} className={'mt-3'}
-                                                   disabled={!isValid || isSubmitting}>My instructions</Button></Link>
-                            <Link to={'#'}><Button type={'submit'} className={'mt-3'}
-                                                   disabled={!isValid || isSubmitting}>Back to garden</Button></Link>
-
+                            <div className={'d-flex'}>
+                                <Button type={'submit'} className={'me-3'}
+                                        disabled={!isValid || isSubmitting}>Save</Button>
+                                <Button onClick={() => navigate(-1)}>Back</Button>
+                            </div>
                         </Form>
-                    )}
-                </Formik>
-            </Card>}
-        </Container>
-    );
+        )}
+    </Formik>);
 }
 
 export default AccountSettingsForm;

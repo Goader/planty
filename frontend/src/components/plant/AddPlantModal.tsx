@@ -25,7 +25,6 @@ export default function AddPlantModal(props: AddPlantProps) {
             .then(plant => props.onAdd(plant))
             .catch(err => {
                 if (err instanceof InvalidDataError) {
-                    console.log(err.data);
                     for (const field in err.data) {
                         helpers.setFieldError(field, err.data[field][0]);
                     }
