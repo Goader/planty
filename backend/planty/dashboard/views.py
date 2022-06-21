@@ -591,13 +591,13 @@ class InstructionView(APIView):
 
 class PopularInstructionsView(APIView):
     def get(self, request: Request):
-        if 'species' not in request.GET:
+        if 'species' not in request.query_params:
             return Response(data={
                 'species': ['species is a mandatory parameter']
             }, status=status.HTTP_400_BAD_REQUEST)
 
-        species = request.GET['species']
-        N = request.GET.get('limit', 10)
+        species = request.query_params['species']
+        N = request.query_params.get('limit', 10)
 
         suggested = Instruction.objects.filter(public=True, species=species)
         desc_suggested_instruction = suggested.order_by('num_selected').reverse()[:N]
