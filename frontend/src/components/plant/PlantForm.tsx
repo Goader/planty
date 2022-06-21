@@ -45,7 +45,6 @@ export default function PlantForm(props: PlantFormProps) {
                   handleBlur,
                   values,
                   touched,
-                  isValid,
                   errors,
                   isSubmitting,
                   setFieldValue
@@ -56,7 +55,7 @@ export default function PlantForm(props: PlantFormProps) {
                         if (!values.species) {
                             setFieldValue('species', instruction.species);
                         }
-                    }}/> :
+                    }} initialSpecies={values.species}/> :
                     <Form onSubmit={handleSubmit}>
                         <Form.Group className={'auth-group'}>
                             <Form.Label>Name</Form.Label>

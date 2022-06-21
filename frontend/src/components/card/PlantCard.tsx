@@ -11,7 +11,6 @@ function PlantCard({plant, onRemove}: { plant: Plant, onRemove: (id: string) => 
     const handleNavigate = () => {
         navigate("/plants/"+plant.id);
     };
-    console.log(plant);
     return (
         <Card className={'py-4 plant-card'}>
             <Container>
