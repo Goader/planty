@@ -1,5 +1,5 @@
 import {Button, Card, Container} from "react-bootstrap";
-import {Plant} from "../model/plants";
+import {MyEvent, Plant, PlantExtraInfo} from "../model/plants";
 import React, {useEffect, useState} from "react";
 import {Link, useNavigate, useParams} from "react-router-dom";
 
@@ -15,13 +15,13 @@ function PlantDetailsView() {
     const {getPlant} = usePlantService();
 
     const [fetching, setFetching] = useState(true);
-    const [plant, setPlant] = useState<Plant>();
+    const [plant, setPlant] = useState<PlantExtraInfo>();
 
     useEffect(() => {
         if (plantId != null && plantId !== "") {
             getPlant(String(plantId))
                 .then(plant => {
-                    setPlant(plant as Plant);
+                    setPlant(plant as PlantExtraInfo);
                 })
                 .catch(err => navigate('/login'))
                 .finally(() => setFetching(false));
@@ -30,8 +30,32 @@ function PlantDetailsView() {
         }
     }, [navigate, request]);
 
+
+    let listItems = null;
+    if(plant){
+        console.log(plant.events);
+        listItems = plant.events.map((event: MyEvent) =>
+        {
+            return (<li>
+                <div>
+                    <p>{event.date}
+                        <Button>{event.action}</Button>
+                        <Button>done</Button>
+                    </p>
+                </div>
+            </li>
+            );
+        });
+    }
+
     return (
         <Container>
+            <div>
+                <h4>Incoming events:</h4>
+                <ul>{listItems}</ul>
+                <Button>Add new event</Button>
+            </div>
+
             {plant !== null && plant !== undefined &&
                 <Card className={'form-card p-5 mx-auto'}>
                     <div className={'center-header'}>
