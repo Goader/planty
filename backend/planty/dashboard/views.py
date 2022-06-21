@@ -39,7 +39,7 @@ class PlantsView(APIView):
             plant_json = {
                 'id': str(plant.id),
                 'name': plant.name,
-                'photo_url': plant.photo.url if plant.photo.name else None,
+                'photo_url': plant.photo.url if plant.photo else None,
                 'species': plant.species,
 
                 'watering': plant.instruction.watering,
@@ -68,12 +68,12 @@ class PlantsView(APIView):
 
         data = serializer.validated_data
 
-        if 'used_instruction' in data:
+        if 'instruction' in data:
             try:
-                instruction = Instruction.objects.get(pk=data['used_instruction'])
+                instruction = Instruction.objects.get(pk=data['instruction'])
             except Instruction.DoesNotExist:
                 return Response(data={
-                    'used_instruction': ['Instruction with the given ID does not exist']
+                    'instruction': ['Instruction with the given ID does not exist']
                 }, status=status.HTTP_404_NOT_FOUND)
         else:
             instruction: Instruction = Instruction.objects.create(
@@ -97,13 +97,28 @@ class PlantsView(APIView):
         )
         new_plant.save()
 
-        photo_filepath = os.path.join(settings.MEDIA_ROOT, new_plant.photo.name)
-        crop_photo(photo_filepath)
+        if data['photo']:
+            photo_filepath = os.path.join(settings.MEDIA_ROOT, new_plant.photo.name)
+            crop_photo(photo_filepath)
 
-        return Response(status=status.HTTP_201_CREATED)
+        plant_json = {
+            'id': str(new_plant.id),
+            'name': new_plant.name,
+            'photo_url': new_plant.photo.url if new_plant.photo else None,
+            'species': new_plant.species,
+
+            'watering': new_plant.instruction.watering,
+            'insolation': new_plant.instruction.insolation,
+            'fertilizing': new_plant.instruction.fertilizing,
+
+            'other_info': new_plant.other_info
+        }
+
+        return Response(plant_json, status=status.HTTP_201_CREATED)
 
     def put(self, request):
         user: User = request.user
+
         serializer = PlantUpdateSerializer(data=request.data)
 
         if not serializer.is_valid():
@@ -121,12 +136,12 @@ class PlantsView(APIView):
         if plant.user != user:
             return Response(status=status.HTTP_403_FORBIDDEN)
 
-        if 'used_instruction' in data:
+        if 'instruction' in data:
             try:
-                data['used_instruction'] = Instruction.objects.get(pk=data['used_instruction'])
+                data['instruction'] = Instruction.objects.get(pk=data['instruction'])
             except Instruction.DoesNotExist:
                 return Response(data={
-                    'used_instruction': ['There is not Instruction with this ID']
+                    'instruction': ['There is not Instruction with this ID']
                 }, status=status.HTTP_404_NOT_FOUND)
 
         elif 'watering' in data or 'insolation' in data or 'fertilizing' in data:
@@ -145,11 +160,11 @@ class PlantsView(APIView):
             )
             instruction.save()
 
-            data['used_instruction'] = instruction
+            data['instruction'] = instruction
 
         # updating the plant
 
-        plant.instruction = data.get('used_instruction', plant.instruction)
+        plant.instruction = data.get('instruction', plant.instruction)
         plant.name = data.get('name', plant.name)
         plant.species = data.get('species', plant.species)
         plant.photo = data.get('photo', plant.photo)

@@ -4,11 +4,11 @@ import {Button, Col, Container, Row, Spinner} from "react-bootstrap";
 import "./GardenView.scss";
 import '../components/card/PlantCard.scss';
 import PlantCard from "../components/card/PlantCard";
-import {Link} from "react-router-dom";
 import {Plant} from "../model/plants";
 import {UnauthorizedError} from "../api/auth/util";
 import {usePlantService} from "../api/plants";
 import RemovePlantModal from "../components/RemovePlantModal";
+import AddPlantModal from "../components/plant/AddPlantModal";
 
 
 function GardenView() {
@@ -18,6 +18,8 @@ function GardenView() {
 
     const [showModal, setShowModal] = useState(false);
     const [chosenId, setChosenId] = useState("");
+
+    const [showAddModal, setShowAddModal] = useState(false);
 
     const onModalHide = () => {
         setShowModal(false);
@@ -59,6 +61,10 @@ function GardenView() {
         setChosenId(plantId);
     };
 
+    const handleAddPlant = (plant: Plant) => {
+        setPlants([...plants, plant]);
+    };
+
     return (
         <Container>
             {fetching ? <Spinner animation={'grow'} variant={'success'}/> : <>
@@ -70,14 +76,14 @@ function GardenView() {
                     ))}
                 </Row>
                 <div>
-                    <Link to={'/plants/add'}><Button variant={'primary'}>Add plant</Button></Link>
+                    <Button variant={'primary'} onClick={() => setShowAddModal(true)}>Add plant</Button>
                 </div>
                 <RemovePlantModal onHide={onModalHide}
                                   show={showModal}
                                   onDelete={() => handleConfirmedRemove(chosenId)}
                 />
-            </>
-            }
+            </>}
+            <AddPlantModal onHide={() => setShowAddModal(false)} onAdd={handleAddPlant} show={showAddModal}/>
         </Container>
     );
 }

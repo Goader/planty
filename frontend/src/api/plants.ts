@@ -1,6 +1,6 @@
 import {useCallback} from "react";
 import {useAuth} from "./auth/AuthContext";
-import {AddPlantData, Plant, PlantResponse} from "../model/plants";
+import {Plant, PlantFormData, PlantResponse} from "../model/plants";
 
 const plantsUrl = process.env.REACT_APP_API_URL + '/dashboard/plants/';
 
@@ -13,7 +13,7 @@ function convertResponse(response: PlantResponse): Plant {
         insolation: response.insolation,
         fertilizing: response.fertilizing,
         otherInfo: response.other_info,
-        photoUrl: 'http://localhost:3001' + response.photo_url
+        photoUrl: response.photo_url ? 'http://localhost:3001' + response.photo_url : null
     };
 }
 
@@ -26,12 +26,12 @@ export function usePlantService() {
         }).then(response => response.map(plant => convertResponse(plant)));
     }, [request]);
 
-    const savePlant = useCallback((plant: AddPlantData) => {
-        return request({
+    const savePlant = useCallback((plant: PlantFormData) => {
+        return request<PlantResponse>({
             method: 'post',
             url: plantsUrl,
             data: plant
-        });
+        }).then(response => convertResponse(response));
     }, [request]);
 
     const deletePlant = useCallback((id) => {

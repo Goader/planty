@@ -2,10 +2,10 @@ import {Button, Form} from "react-bootstrap";
 import {Formik, FormikHelpers} from "formik";
 import * as Yup from "yup";
 import {SchemaOf} from "yup";
-import {AddPlantData} from "../../model/plants";
+import {PlantFormData} from "../../model/plants";
 import {BaseInstruction} from "../../model/instructions";
 
-const schema: SchemaOf<AddPlantData> = Yup.object().shape({
+const schema: SchemaOf<PlantFormData> = Yup.object().shape({
     name: Yup.string().defined().required('Name is required'),
     species: Yup.string().required(),
     watering: Yup.number().required(),
@@ -79,6 +79,7 @@ export default function InstructionForm(props: InstructionFormProps) {
                         onChange={handleChange}
                         onBlur={handleBlur}
                         isInvalid={touched.watering && !!errors.watering}
+                        min={1}
                     />
                     <Form.Control.Feedback
                         type={'invalid'}>{errors.watering}</Form.Control.Feedback>
@@ -107,6 +108,7 @@ export default function InstructionForm(props: InstructionFormProps) {
                         onChange={handleChange}
                         onBlur={handleBlur}
                         isInvalid={touched.fertilizing && !!errors.fertilizing}
+                        min={1}
                     />
                     <Form.Control.Feedback
                         type={'invalid'}>{errors.fertilizing}</Form.Control.Feedback>
