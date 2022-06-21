@@ -22,6 +22,11 @@ export type CustomEventInfo = {
     description: string
 }
 
+export type CustomEventFormInfo = CustomEventInfo & {
+    plant: string
+    date: Date
+}
+
 export type PlantEventResponse = {
     date: string
     plant: string
