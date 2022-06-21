@@ -91,7 +91,7 @@ export default function PlantForm(props: PlantFormProps) {
                                 onChange={(event) => {
                                     let target = event.currentTarget as HTMLInputElement;
                                     if (target.files === null) {
-                                        setFieldValue('photo', undefined);
+                                        setFieldValue('photo', null);
                                     } else {
                                         toBase64(target.files[0])
                                             .then(value => {
