@@ -2,6 +2,7 @@ import {useCallback} from "react";
 import {PlantEvent, PlantEventDetails, PlantEventResponse} from "../model/calendar";
 import {useAuth} from "./auth/AuthContext";
 import {Plant} from "../model/plants";
+import {CustomEventFormInfo} from "../model/calendar";
 
 const eventsUrl = process.env.REACT_APP_API_URL + '/dashboard/events/';
 
@@ -21,8 +22,17 @@ export function createEventDetails(event: PlantEvent, plant: Plant): PlantEventD
     };
 }
 
+
 export function useEventService() {
     const {request} = useAuth();
+
+    const saveCustomEvent = useCallback((event: CustomEventFormInfo) => {
+        return request({
+            method: 'post',
+            url: eventsUrl,
+            data: event
+        });
+    }, [request]);
 
     const getEvents = useCallback((startDate: Date, endDate: Date) => {
         return request<Array<PlantEventResponse>>({
@@ -51,5 +61,5 @@ export function useEventService() {
         });
     }, [request]);
 
-    return {getEvents};
+    return {getEvents, saveCustomEvent};
 }
